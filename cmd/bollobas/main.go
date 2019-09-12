@@ -13,7 +13,8 @@ import (
 
 var (
 	version                                            = "dev"
-	kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup string
+	kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup,
+	kafkaPassengerIdentityTopic 					  string
 	kafkaTimeout                                      time.Duration
 )
 
@@ -26,7 +27,8 @@ func init() {
 	}
 
 	kafkaBroker = mustGetEnv("BOLLOBAS_KAFKA_CONNECTION_STRING")
-	kafkaDriverIdentityTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_TOPIC", "driver_legacy")
+	kafkaDriverIdentityTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_DRIVER_TOPIC", "driver_account")
+	kafkaPassengerIdentityTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_PASSENGER_TOPIC", "passenger_account")
 	kafkaTimeout = mustGetEnvDurationWithDefault("BOLLOBAS_KAFKA_TIMEOUT", "2s")
 	kafkaGroup = mustGetEnv("BOLLOBAS_KAFKA_GROUP")
 }
@@ -45,10 +47,15 @@ func main() {
 		log.Fatalf("failed to create processor %v", err)
 	}
 
+	paKfkCmp, err := driver.NewKafkaComponent("passenger-identity", kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup)
+	if err != nil {
+		log.Fatalf("failed to create processor %v", err)
+	}
+
 	srv, err := patron.New(
 		name,
 		version,
-		patron.Components(drKfkCmp),
+		patron.Components(drKfkCmp, paKfkCmp),
 	)
 	if err != nil {
 		log.Fatalf("failed to create service %v", err)
@@ -62,7 +69,9 @@ func main() {
 
 func mustGetEnv(key string) string {
 	v, ok := os.LookupEnv(key)
+	fmt.Println(v, ok, key)
 	if !ok {
+		fmt.Println("Exactly!")
 		log.Fatalf("Missing configuration %s", key)
 	}
 	return v
