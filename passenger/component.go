@@ -1,35 +1,69 @@
 package passenger
 
 import (
+	"bollobas"
 	"fmt"
 	"github.com/beatlabs/patron"
 	"github.com/beatlabs/patron/async"
 	"github.com/beatlabs/patron/async/kafka"
 	"github.com/beatlabs/patron/encoding/json"
 	"github.com/beatlabs/patron/errors"
+	"github.com/beatlabs/patron/log"
+
+	"nanomsg.org/go/mangos/v2"
+	"nanomsg.org/go/mangos/v2/protocol/pub"
 	"time"
 )
 
 type KafkaComponent struct {
 	patron.Component
+	mangos.Socket
 }
 
 func (kc *KafkaComponent) Process(msg async.Message) error {
-	
+
 	passenger := Passenger{}
 	err := msg.Decode(&passenger)
 	if err != nil {
 		return errors.Errorf("failed to unmarshal passenger %v", err)
 	}
 
-	fmt.Printf("%+v\n", passenger)
+	kc.publish(passenger)
 
-	//dt := time.Unix(int64(passenger.RegistrationDate), 0)
-	//fmt.Println("REGDATE", dt)
+	return nil
+}
+
+func (kc *KafkaComponent) publish(passenger Passenger) error {
+
+	idt := bollobas.Identity{
+		ID:               passenger.ID,
+		FirstName:        passenger.FirstName,
+		LastName:         passenger.LastName,
+		RegistrationDate: passenger.RegistrationDate,
+		Phone:            fmt.Sprintf("%s %s", passenger.PhonePrefix, passenger.PhoneNo),
+		Type:             "passenger",
+		Email:            passenger.Email,
+	}
+
+	bts, err := json.Encode(idt)
+	if err != nil {
+		log.Fatal(err)
+	}
+	kc.Send(bts)
+
 	return nil
 }
 
 func NewKafkaComponent(name, broker, topic, group string) (*KafkaComponent, error) {
+
+	var sock mangos.Socket
+	var err error
+	if sock, err = pub.NewSocket(); err != nil {
+		log.Fatal("can't get new pub socket: %s", err)
+	}
+	if err = sock.Listen("inproc://passenger-publisher"); err != nil {
+		log.Fatal("can't listen on pub socket: %s", err.Error())
+	}
 
 	kafkaCmp := KafkaComponent{}
 
@@ -44,6 +78,7 @@ func NewKafkaComponent(name, broker, topic, group string) (*KafkaComponent, erro
 	}
 
 	kafkaCmp.Component = cmp
+	kafkaCmp.Socket = sock
 
 	return &kafkaCmp, nil
 }

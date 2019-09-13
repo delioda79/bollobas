@@ -1,6 +1,7 @@
 package driver
 
 import (
+	"bollobas"
 	"fmt"
 	"github.com/beatlabs/patron"
 	"github.com/beatlabs/patron/async"
@@ -8,29 +9,50 @@ import (
 	"github.com/beatlabs/patron/encoding/json"
 	"github.com/beatlabs/patron/errors"
 	"github.com/beatlabs/patron/log"
+	"nanomsg.org/go/mangos/v2/protocol/pub"
 	"time"
 
 	"nanomsg.org/go/mangos/v2"
-	"nanomsg.org/go/mangos/v2/protocol/pub"
-	_ "nanomsg.org/go/mangos/v2/transport/all"
+	_ "nanomsg.org/go/mangos/v2/transport/inproc"
 )
 
 type KafkaComponent struct {
 	patron.Component
+	mangos.Socket
 }
 
 func (kc *KafkaComponent) Process(msg async.Message) error {
-	
+
 	driver := Driver{}
 	err := msg.Decode(&driver)
 	if err != nil {
 		return errors.Errorf("failed to unmarshal driver %v", err)
 	}
 
-	fmt.Printf("%+v\n",driver)
+	kc.publish(driver)
 
-	//dt := time.Unix(int64(driver.RegistrationDate), 0)
-	//fmt.Println("REGDATE", dt)
+	return nil
+}
+
+func (kc *KafkaComponent) publish(driver Driver) error {
+
+	idt := bollobas.Identity{
+		ID:               driver.ID,
+		FirstName:        driver.FirstName,
+		LastName:         driver.LastName,
+		RegistrationDate: driver.RegistrationDate,
+		ReferralCode:     driver.ReferralCode,
+		Phone:            fmt.Sprintf("%s %d %s", driver.AreaPrefix, driver.PhonePrefix, driver.PhoneNo),
+		Type:             "driver",
+		Email:            driver.Email,
+	}
+
+	bts, err := json.Encode(idt)
+	if err != nil {
+		log.Fatal(err)
+	}
+	kc.Send(bts)
+
 	return nil
 }
 
@@ -57,6 +79,7 @@ func NewKafkaComponent(name, broker, topic, group string) (*KafkaComponent, erro
 	}
 
 	kafkaCmp.Component = cmp
+	kafkaCmp.Socket = sock
 
 	return &kafkaCmp, nil
 }

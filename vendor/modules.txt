@@ -1,5 +1,7 @@
 # github.com/DataDog/zstd v1.3.5
 github.com/DataDog/zstd
+# github.com/Microsoft/go-winio v0.4.11
+github.com/Microsoft/go-winio
 # github.com/Shopify/sarama v1.21.0
 github.com/Shopify/sarama
 # github.com/beatlabs/patron v0.25.0
@@ -34,6 +36,8 @@ github.com/golang/protobuf/proto
 github.com/golang/snappy
 # github.com/google/uuid v1.1.0
 github.com/google/uuid
+# github.com/gorilla/websocket v1.4.0
+github.com/gorilla/websocket
 # github.com/joho/godotenv v1.3.0
 github.com/joho/godotenv
 # github.com/julienschmidt/httprouter v1.2.0
@@ -89,3 +93,20 @@ github.com/uber/jaeger-client-go/thrift-gen/baggage
 # github.com/uber/jaeger-lib v1.5.0
 github.com/uber/jaeger-lib/metrics/prometheus
 github.com/uber/jaeger-lib/metrics
+# golang.org/x/sys v0.0.0-20181128092732-4ed8d59d0b35
+golang.org/x/sys/windows
+# nanomsg.org/go/mangos/v2 v2.0.2
+nanomsg.org/go/mangos/v2
+nanomsg.org/go/mangos/v2/protocol/pub
+nanomsg.org/go/mangos/v2/transport/all
+nanomsg.org/go/mangos/v2/errors
+nanomsg.org/go/mangos/v2/protocol
+nanomsg.org/go/mangos/v2/protocol/xpub
+nanomsg.org/go/mangos/v2/transport/inproc
+nanomsg.org/go/mangos/v2/transport/ipc
+nanomsg.org/go/mangos/v2/transport/tcp
+nanomsg.org/go/mangos/v2/transport/tlstcp
+nanomsg.org/go/mangos/v2/transport/ws
+nanomsg.org/go/mangos/v2/transport/wss
+nanomsg.org/go/mangos/v2/internal/core
+nanomsg.org/go/mangos/v2/transport

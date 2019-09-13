@@ -2,6 +2,8 @@ package main
 
 import (
 	"bollobas/driver"
+	"bollobas/mixpanel"
+	"bollobas/passenger"
 	"fmt"
 	"os"
 	"time"
@@ -12,13 +14,11 @@ import (
 )
 
 var (
-	version                                            = "dev"
+	version                     = "dev"
 	kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup,
-	kafkaPassengerIdentityTopic 					  string
-	kafkaTimeout                                      time.Duration
+	kafkaPassengerIdentityTopic string
+	kafkaTimeout time.Duration
 )
-
-
 
 func init() {
 	err := godotenv.Load(".env")
@@ -47,10 +47,13 @@ func main() {
 		log.Fatalf("failed to create processor %v", err)
 	}
 
-	paKfkCmp, err := driver.NewKafkaComponent("passenger-identity", kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup)
+	paKfkCmp, err := passenger.NewKafkaComponent("passenger-identity", kafkaBroker, kafkaPassengerIdentityTopic, kafkaGroup)
 	if err != nil {
 		log.Fatalf("failed to create processor %v", err)
 	}
+
+	mph := mixpanel.NewHandler("The mixpanel handler")
+	mph.Run()
 
 	srv, err := patron.New(
 		name,
@@ -71,7 +74,7 @@ func mustGetEnv(key string) string {
 	v, ok := os.LookupEnv(key)
 	fmt.Println(v, ok, key)
 	if !ok {
-		fmt.Println("Exactly!")
+		fmt.Println("Exactly!", key)
 		log.Fatalf("Missing configuration %s", key)
 	}
 	return v
