@@ -1,4 +1,4 @@
-package passenger
+package driver
 
 import (
 	"bollobas"
@@ -8,11 +8,11 @@ import (
 	"github.com/beatlabs/patron/async/kafka"
 	"github.com/beatlabs/patron/encoding/json"
 	"github.com/beatlabs/patron/errors"
-	"github.com/beatlabs/patron/log"
-
-	"nanomsg.org/go/mangos/v2"
 	"nanomsg.org/go/mangos/v2/protocol/pub"
 	"time"
+
+	"nanomsg.org/go/mangos/v2"
+	_ "nanomsg.org/go/mangos/v2/transport/inproc"
 )
 
 type KafkaComponent struct {
@@ -21,33 +21,32 @@ type KafkaComponent struct {
 }
 
 func (kc *KafkaComponent) Process(msg async.Message) error {
-
-	passenger := Passenger{}
-	err := msg.Decode(&passenger)
+	driver := Driver{}
+	err := msg.Decode(&driver)
 	if err != nil {
-		return errors.Errorf("failed to unmarshal passenger %v", err)
+		return errors.Errorf("failed to unmarshal driver %v", err)
 	}
-
-	kc.publish(passenger)
+	kc.publish(driver)
 
 	return nil
 }
 
-func (kc *KafkaComponent) publish(passenger Passenger) error {
+func (kc *KafkaComponent) publish(driver Driver) error {
 
 	idt := bollobas.Identity{
-		ID:               passenger.ID,
-		FirstName:        passenger.FirstName,
-		LastName:         passenger.LastName,
-		RegistrationDate: passenger.RegistrationDate,
-		Phone:            fmt.Sprintf("%s %s", passenger.PhonePrefix, passenger.PhoneNo),
-		Type:             "passenger",
-		Email:            passenger.Email,
+		ID:               driver.ID,
+		FirstName:        driver.FirstName,
+		LastName:         driver.LastName,
+		RegistrationDate: driver.RegistrationDate,
+		ReferralCode:     driver.ReferralCode,
+		Phone:            fmt.Sprintf("%s %d %s", driver.AreaPrefix, driver.PhonePrefix, driver.PhoneNo),
+		Type:             "driver",
+		Email:            driver.Email,
 	}
 
 	bts, err := json.Encode(idt)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	kc.Send(bts)
 
@@ -55,14 +54,13 @@ func (kc *KafkaComponent) publish(passenger Passenger) error {
 }
 
 func NewKafkaComponent(name, broker, topic, group string) (*KafkaComponent, error) {
-
 	var sock mangos.Socket
 	var err error
 	if sock, err = pub.NewSocket(); err != nil {
-		log.Fatal("can't get new pub socket: %s", err)
+		return nil, errors.Errorf("can't get new pub socket: %s", err)
 	}
-	if err = sock.Listen("inproc://passenger-publisher"); err != nil {
-		log.Fatal("can't listen on pub socket: %s", err.Error())
+	if err = sock.Listen("inproc://driver-publisher"); err != nil {
+		return nil, errors.Errorf("can't listen on pub socket: %s", err.Error())
 	}
 
 	kafkaCmp := KafkaComponent{}

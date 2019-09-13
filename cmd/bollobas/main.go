@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bollobas/driver"
+	"bollobas/ingestion/driver"
 	"bollobas/mixpanel"
-	"bollobas/passenger"
+	"bollobas/ingestion/passenger"
 	"fmt"
 	"os"
 	"time"

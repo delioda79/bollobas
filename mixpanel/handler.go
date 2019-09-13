@@ -7,6 +7,7 @@ import (
 	"github.com/beatlabs/patron/log"
 	"nanomsg.org/go/mangos/v2"
 	"nanomsg.org/go/mangos/v2/protocol/sub"
+	_ "nanomsg.org/go/mangos/v2/transport/inproc"
 )
 
 type Handler struct {
