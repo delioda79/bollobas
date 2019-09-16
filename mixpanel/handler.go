@@ -2,8 +2,11 @@ package mixpanel
 
 import (
 	"bollobas"
+	"bollobas/ciph"
 	"encoding/json"
 	"fmt"
+	"regexp"
+
 	"github.com/beatlabs/patron/log"
 	"nanomsg.org/go/mangos/v2"
 	"nanomsg.org/go/mangos/v2/protocol/sub"
@@ -15,7 +18,7 @@ type Handler struct {
 }
 
 func (hdl *Handler) Run() {
-	go func () {
+	go func() {
 
 		var msg []byte
 		var err error
@@ -40,13 +43,13 @@ func (hdl *Handler) Run() {
 func (hdl *Handler) updateIdentity(idt *bollobas.Identity) {
 	//id := idt.ID
 	prps := &Identity{
-		FirstName: idt.FirstName,
-		LastName: idt.LastName,
+		FirstName:        idt.FirstName,
+		LastName:         idt.LastName,
 		RegistrationDate: idt.RegistrationDate,
-		ReferralCode: idt.ReferralCode,
-		Type: idt.Type,
-		Email: idt.Email,
-		Phone: idt.Phone,
+		ReferralCode:     idt.ReferralCode,
+		Type:             idt.Type,
+		Email:            idt.Email,
+		Phone:            idt.Phone,
 	}
 
 	bts, err := json.Marshal(prps)
@@ -59,6 +62,12 @@ func (hdl *Handler) updateIdentity(idt *bollobas.Identity) {
 	err = json.Unmarshal(bts, &mp)
 
 	fmt.Println(mp)
+
+	//Here be temp cipher code..
+	encodedID := regexp.MustCompile(`(?m).[^-]*.[^-]*$`).ReplaceAllString(idt.ID, "")
+	//fmt.Println(encodedID)
+	ciph.Init()
+	fmt.Println(ciph.DecryptData(encodedID))
 }
 
 func NewHandler(name string) *Handler {
