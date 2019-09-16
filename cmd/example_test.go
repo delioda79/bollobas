@@ -15,20 +15,27 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"testing"
 )
 
-func ExampleMain() {
+func TestTralala(t *testing.T) {
 	//e := cbcEncrypt()
 	//fmt.Printf("Encrypted String : %s\n", e)
-	d := cbcDecrypt("NWZ3R2R4TUNQMEwxUStXdlZ4WUFsQT09Ojq+9N6igSEHCUtHEgUw4QyR", "s0th1s1s0uRpR1v@r3k3Y")
+	d, pars := cbcDecrypt("NWZ3R2R4TUNQMEwxUStXdlZ4WUFsQT09Ojq+9N6igSEHCUtHEgUw4QyR", "s0th1s1s0uRpR1v@r3k3Y")
 	//fmt.Printf("Decrypted String : %s\n", d)
-	_ = d
 
-	fmt.Printf("%s\n", string(d))
-	// Output: testssssssdfd
+	t.Logf("\nd: %s\n\n", string(d))
+	t.Logf("\npars: %s\n\n", pars)
+	t.Logf("\nencrypted_data: %s\n\n", pars[0])
+	t.Logf("\nencryption_key: %s\n\n", pars[1])
+	t.Logf("\ninit_vector: %s\n\n", pars[2])
+	//fmt.Printf("%s\n", string(d))
+	hi := string(d)
+	_ = hi
+	t.Error("yo")
 }
 
-func cbcDecrypt(data string, key string) []byte {
+func cbcDecrypt(data string, key string) ([]byte, [][]byte) {
 	dataClean := strings.ReplaceAll(data, "@", "")
 	dataDecoded, err := base64.StdEncoding.DecodeString(dataClean)
 	if err != nil {
@@ -57,9 +64,10 @@ func cbcDecrypt(data string, key string) []byte {
 		dataRaw = append(dataRaw, 0)
 	}
 
-	lala2 := fmt.Sprintf("encrypted_data: %s, encryption_key: %s, init_vecotr: %s\n", dataRaw, keyDecoded, initVector)
-	_ = lala2
-	return NewCBCDecrypter(dataRaw, keyDecoded, initVector)
+	//lala2 := fmt.Sprintf("encrypted_data: %s, encryption_key: %s, init_vecotr: %s\n", string(dataRaw), string(keyDecoded), string(initVector))
+
+	return NewCBCDecrypter([]byte("1234567890123456"), []byte("1234567890123456"), []byte("1234567890123456")), [][]byte{dataRaw, keyDecoded, initVector}
+	//return NewCBCDecrypter(dataRaw, keyDecoded, initVector), [][]byte{dataRaw, keyDecoded, initVector}
 	//fmt.Printf("Decrypted String[] : %s\n", dStr)
 	//nullC := "\000"
 
