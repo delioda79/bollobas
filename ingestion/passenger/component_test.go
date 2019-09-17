@@ -15,18 +15,23 @@ import (
 )
 
 func TestProcessing(t *testing.T) {
-	cp, err := NewKafkaComponent("component 1", "broker a", "topic a", "group a")
+	purl := "inproc://passenger-publisher"
+
+	cp, err := NewKafkaComponent("component 1", "broker a", "topic a", "group a", purl)
 	assert.Nil(t, err)
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
-	go func(wg *sync.WaitGroup) {
+	wg2 := &sync.WaitGroup{}
+	wg2.Add(1)
 
+	go func(wg *sync.WaitGroup) {
+		wg2.Done()
 		sock, err := sub.NewSocket()
 
 		assert.Nil(t, err)
-		err = sock.Dial("inproc://passenger-publisher")
+		err = sock.Dial(purl)
 		assert.Nil(t, err)
 		err = sock.SetOption(mangos.OptionSubscribe, []byte(""))
 		assert.Nil(t, err)
@@ -42,6 +47,9 @@ func TestProcessing(t *testing.T) {
 
 		wg.Done()
 	}(wg)
+
+	wg2.Wait()
+
 
 	msg := &injestionfakes.FakeMessage{}
 
@@ -67,12 +75,13 @@ func TestProcessing(t *testing.T) {
 
 func TestBusyPort(t *testing.T) {
 
+	purl := "inproc://passenger-publisher"
 	var sock mangos.Socket
 	var err error
 	sock, _ = pub.NewSocket()
-	sock.Listen("inproc://passenger-publisher")
+	sock.Listen(purl)
 
-	cp, err := NewKafkaComponent("component 1", "broker a", "topic a", "group a")
+	cp, err := NewKafkaComponent("component 1", "broker a", "topic a", "group a", purl)
 	assert.NotNil(t, err)
 	assert.Nil(t,cp)
 }

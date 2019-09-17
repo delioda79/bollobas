@@ -54,14 +54,14 @@ func (kc *KafkaComponent) publish(passenger Passenger) error {
 	return nil
 }
 
-func NewKafkaComponent(name, broker, topic, group string) (*KafkaComponent, error) {
+func NewKafkaComponent(name, broker, topic, group, url string) (*KafkaComponent, error) {
 
 	var sock mangos.Socket
 	var err error
 	if sock, err = pub.NewSocket(); err != nil {
 		return nil, errors.Errorf("can't get new pub socket: %s", err)
 	}
-	if err = sock.Listen("inproc://passenger-publisher"); err != nil {
+	if err = sock.Listen(url); err != nil {
 		return nil, errors.Errorf("can't listen on pub socket: %s", err.Error())
 	}
 
