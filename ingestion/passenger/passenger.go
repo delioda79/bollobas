@@ -2,6 +2,7 @@ package passenger
 
 import "time"
 
+// Passenger represents a passenger message coming from kafka
 type Passenger struct {
 	ID string `json:"passenger_id"`
 	Email string

@@ -15,11 +15,13 @@ import (
 	_ "nanomsg.org/go/mangos/v2/transport/inproc"
 )
 
+// KafkaComponent is a receier for a specific kafka topic which will then forward the message as an identity
 type KafkaComponent struct {
 	patron.Component
 	mangos.Socket
 }
 
+// Process is part of the patron interface and processes incoming messages
 func (kc *KafkaComponent) Process(msg async.Message) error {
 	driver := Driver{}
 	err := msg.Decode(&driver)
@@ -53,6 +55,7 @@ func (kc *KafkaComponent) publish(driver Driver) error {
 	return nil
 }
 
+// NewKafkaComponent instantiates a new component
 func NewKafkaComponent(name, broker, topic, group, url string) (*KafkaComponent, error) {
 	var sock mangos.Socket
 	var err error

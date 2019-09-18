@@ -2,6 +2,7 @@ package driver
 
 import "time"
 
+// Driver represents a driver message coming from kafka
 type Driver struct {
 	ID string `json:"driver_id"`
 	Email string
