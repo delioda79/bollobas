@@ -3,12 +3,11 @@ package mixpanel
 import (
 	"bollobas"
 	"encoding/json"
-	"fmt"
 	"github.com/beatlabs/patron/log"
+	"github.com/dukex/mixpanel"
 	"nanomsg.org/go/mangos/v2"
 	"nanomsg.org/go/mangos/v2/protocol/sub"
 	_ "nanomsg.org/go/mangos/v2/transport/inproc"
-	"github.com/dukex/mixpanel"
 )
 
 type Handler struct {
@@ -26,7 +25,6 @@ func (hdl *Handler) Run() {
 
 			if msg, err = hdl.Recv(); err != nil {
 				log.Errorf("cannot recv: %s", err.Error())
-				fmt.Printf("cannot recv: %s\n", err.Error())
 				continue
 			}
 
