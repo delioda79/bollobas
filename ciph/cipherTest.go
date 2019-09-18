@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -61,22 +62,16 @@ func main() {
 
 	mData := "7040"
 	fmt.Println("Data:", mData)
-	encrypted := EncryptData([]byte(mData), key, iv)
+	encrypted := EncryptData([]byte(mData))
 	fmt.Printf("Go encrypt: %s\n", encrypted)
 	//fmt.Println("Encrypt EXPECTED: b0pBMFpSVk1rNVI3anY1bWwwMURBQT09Ojq-9N6igSEHCUtHEgUw4QyR")
 	//fmt.Printf("Go decrypt2: %s\n", DecryptData(encrypted2, key))
 	fmt.Printf("Go decrypt: %s\n", DecryptData(encrypted))
 }
 
-func EncryptData(data []byte, key []byte, iv []byte) string {
+func EncryptData(data []byte) string {
 	paddingData := PKCS5Padding(data, block.BlockSize())
 	cipherData := make([]byte, len(paddingData))
-
-	//fmt.Println("iv2", string(iv))
-	//fmt.Println("lenCipher", len(cipherData))
-	//fmt.Println("key", string(key))
-	//fmt.Println("cipherData:", string(cipherData))
-	//fmt.Println("paddingData:", string(paddingData))
 
 	mode := cipher.NewCBCEncrypter(block, iv)
 	mode.CryptBlocks(cipherData, paddingData)
@@ -105,15 +100,11 @@ func DecryptData(data string) string {
 	//fmt.Println("iv2", string(iv2))
 	mode := cipher.NewCBCDecrypter(block, iv2)
 
-	//fmt.Println("len", len(decodedData))
-	//fmt.Println("key", string(key))
-	//fmt.Println("decodedData:", string(decodedData))
-
 	decodedData2, err := base64.URLEncoding.DecodeString(string(decodedData))
 	if err != nil {
 		panic(err)
 	}
-	//fmt.Println("DecodedData2:", string(decodedData2), len(decodedData2))
+
 	for len(decodedData2)%block.BlockSize() != 0 {
 		decodedData2 = append(decodedData2, 0)
 	}
@@ -122,5 +113,6 @@ func DecryptData(data string) string {
 	if err != nil {
 		panic(err)
 	}
-	return string(decodedData2)
+
+	return regexp.MustCompile(`[^a-zA-Z0-9 -]`).ReplaceAllString(string(decodedData2), "")
 }
