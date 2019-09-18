@@ -3,6 +3,7 @@ package mixpanel
 import (
 	"bollobas"
 	"encoding/json"
+	"fmt"
 	"github.com/beatlabs/patron/log"
 	"github.com/dukex/mixpanel"
 	"nanomsg.org/go/mangos/v2"
@@ -34,7 +35,7 @@ func (hdl *Handler) Run() {
 				log.Errorf("error while receiving message", err)
 				continue
 			}
-
+			fmt.Println(string(msg))
 			hdl.updateIdentity(idt)
 		}
 	}()

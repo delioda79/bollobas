@@ -39,7 +39,7 @@ func (kc *KafkaComponent) publish(driver Driver) error {
 		LastName:         driver.LastName,
 		RegistrationDate: driver.RegistrationDate,
 		ReferralCode:     driver.ReferralCode,
-		Phone:            fmt.Sprintf("%s %d %s", driver.AreaPrefix, driver.PhonePrefix, driver.PhoneNo),
+		Phone:            fmt.Sprintf("%s %s %s", driver.AreaPrefix, driver.PhonePrefix, driver.PhoneNo),
 		Type:             "driver",
 		Email:            driver.Email,
 	}

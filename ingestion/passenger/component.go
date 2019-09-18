@@ -23,6 +23,7 @@ type KafkaComponent struct {
 func (kc *KafkaComponent) Process(msg async.Message) error {
 
 	passenger := Passenger{}
+
 	err := msg.Decode(&passenger)
 	if err != nil {
 		return errors.Errorf("failed to unmarshal passenger %v", err)
