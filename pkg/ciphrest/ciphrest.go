@@ -1,4 +1,4 @@
-package ciph
+package ciphrest
 
 import (
 	"bytes"
@@ -16,7 +16,7 @@ var key []byte
 var iv []byte
 var block cipher.Block
 
-func Init() {
+func init() {
 	var err error
 
 	iv, err = hex.DecodeString("bef4dea2812107094b47120530e10c91")
@@ -40,37 +40,17 @@ func Init() {
 		panic(err)
 	}
 
-	//fmt.Println("Init")
+	fmt.Println("Init")
 }
 
-func PKCS5Padding(ciphertext []byte, blockSize int) []byte {
+func pkcs5Padding(ciphertext []byte, blockSize int) []byte {
 	padding := blockSize - len(ciphertext)%blockSize
 	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
 	return append(ciphertext, padtext...)
 }
 
-func main() {
-	//fmt.Printf("BlockSize: %d\n", block.BlockSize())
-
-	//	encrypted := EncryptToken(key, iv, []byte("fubar"))
-	//	fmt.Printf("Go encrypt: %s\n", encrypted)
-	//	fmt.Printf("Go decrypt: %s\n", DecryptToken(key, iv, encrypted))
-	//var re = regexp.MustCompile(`(?m).[^-]*.[^-]*$`)
-	//var str = `bXdFZjZVOTdIbFJtc1I1Ylo4QXNmZz09Ojq-9N6igSEHCUtHEgUw4QyR-sandbox-dr`
-
-	//fmt.Println(regexp.MustCompile(`(?m).[^-]*.[^-]*$`).ReplaceAllString(str, ""))
-
-	mData := "7040"
-	fmt.Println("Data:", mData)
-	encrypted := EncryptData([]byte(mData))
-	fmt.Printf("Go encrypt: %s\n", encrypted)
-	//fmt.Println("Encrypt EXPECTED: b0pBMFpSVk1rNVI3anY1bWwwMURBQT09Ojq-9N6igSEHCUtHEgUw4QyR")
-	//fmt.Printf("Go decrypt2: %s\n", DecryptData(encrypted2, key))
-	fmt.Printf("Go decrypt: %s\n", DecryptData(encrypted))
-}
-
-func EncryptData(data []byte) string {
-	paddingData := PKCS5Padding(data, block.BlockSize())
+func EncryptByteArray(data []byte) string {
+	paddingData := pkcs5Padding(data, block.BlockSize())
 	cipherData := make([]byte, len(paddingData))
 
 	mode := cipher.NewCBCEncrypter(block, iv)
@@ -82,7 +62,11 @@ func EncryptData(data []byte) string {
 
 }
 
-func DecryptData(data string) string {
+func EncryptString(data string) string {
+	return EncryptByteArray([]byte(data))
+}
+
+func DecryptString(data string) string {
 	//fmt.Println(data)
 	decoded, err := base64.URLEncoding.DecodeString(data)
 	if err != nil {
@@ -115,4 +99,8 @@ func DecryptData(data string) string {
 	}
 
 	return regexp.MustCompile(`[^a-zA-Z0-9 -]`).ReplaceAllString(string(decodedData2), "")
+}
+
+func DecryptByteArray(data []byte) string {
+	return DecryptString(string(data))
 }

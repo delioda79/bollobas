@@ -2,10 +2,9 @@ package mixpanel
 
 import (
 	"bollobas"
-	"bollobas/ciph"
+	"bollobas/pkg/parseid"
 	"encoding/json"
 	"fmt"
-	"regexp"
 
 	"github.com/beatlabs/patron/log"
 	"nanomsg.org/go/mangos/v2"
@@ -64,10 +63,7 @@ func (hdl *Handler) updateIdentity(idt *bollobas.Identity) {
 	fmt.Println(mp)
 
 	//Here be temp cipher code..
-	encodedID := regexp.MustCompile(`(?m).[^-]*.[^-]*$`).ReplaceAllString(idt.ID, "")
-	//fmt.Println(encodedID)
-	ciph.Init()
-	fmt.Println(ciph.DecryptData(encodedID))
+	fmt.Println(parseid.DecryptString(idt.ID))
 }
 
 func NewHandler(name string) *Handler {
