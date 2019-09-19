@@ -1,7 +1,9 @@
 package main
 
 import (
-	"bollobas/driver"
+	"bollobas/ingestion/driver"
+	"bollobas/mixpanel"
+	"bollobas/ingestion/passenger"
 	"fmt"
 	"os"
 	"time"
@@ -12,12 +14,11 @@ import (
 )
 
 var (
-	version                                            = "dev"
-	kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup string
-	kafkaTimeout                                      time.Duration
+	version                     = "dev"
+	kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup,
+	kafkaPassengerIdentityTopic, mpToken string
+	kafkaTimeout time.Duration
 )
-
-
 
 func init() {
 	err := godotenv.Load(".env")
@@ -26,9 +27,11 @@ func init() {
 	}
 
 	kafkaBroker = mustGetEnv("BOLLOBAS_KAFKA_CONNECTION_STRING")
-	kafkaDriverIdentityTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_TOPIC", "driver_legacy")
+	kafkaDriverIdentityTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_DRIVER_TOPIC", "driver_account")
+	kafkaPassengerIdentityTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_PASSENGER_TOPIC", "passenger_account")
 	kafkaTimeout = mustGetEnvDurationWithDefault("BOLLOBAS_KAFKA_TIMEOUT", "2s")
 	kafkaGroup = mustGetEnv("BOLLOBAS_KAFKA_GROUP")
+	mpToken = mustGetEnv("MIXPANEL_TOKEN")
 }
 
 func main() {
@@ -40,15 +43,26 @@ func main() {
 		os.Exit(1)
 	}
 
-	drKfkCmp, err := driver.NewKafkaComponent("driver-identity", kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup)
+
+	durl := "inproc://driver-publisher"
+	drKfkCmp, err := driver.NewKafkaComponent("driver-identity", kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup, durl)
 	if err != nil {
 		log.Fatalf("failed to create processor %v", err)
 	}
 
+	purl := "inproc://passenger-pubisher"
+	paKfkCmp, err := passenger.NewKafkaComponent("passenger-identity", kafkaBroker, kafkaPassengerIdentityTopic, kafkaGroup, purl)
+	if err != nil {
+		log.Fatalf("failed to create processor %v", err)
+	}
+
+	mph := mixpanel.NewHandler(mpToken, []string{purl, durl})
+	mph.Run()
+
 	srv, err := patron.New(
 		name,
 		version,
-		patron.Components(drKfkCmp),
+		patron.Components(drKfkCmp, paKfkCmp),
 	)
 	if err != nil {
 		log.Fatalf("failed to create service %v", err)
@@ -62,7 +76,9 @@ func main() {
 
 func mustGetEnv(key string) string {
 	v, ok := os.LookupEnv(key)
+	fmt.Println(v, ok, key)
 	if !ok {
+		fmt.Println("Exactly!", key)
 		log.Fatalf("Missing configuration %s", key)
 	}
 	return v
