@@ -56,7 +56,7 @@ func main() {
 		log.Fatalf("failed to create processor %v", err)
 	}
 
-	mph := mixpanel.NewHandler("The mixpanel handler", mpToken, []string{purl, durl})
+	mph := mixpanel.NewHandler(mpToken, []string{purl, durl})
 	mph.Run()
 
 	srv, err := patron.New(

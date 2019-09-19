@@ -169,7 +169,7 @@ func TestGettingNewHandler(t *testing.T) {
 	err = s2.Listen(url2)
 	assert.Nil(t, err)
 
-	NewHandler("A name", "atoken", []string{url1, url2})
+	NewHandler("atoken", []string{url1, url2})
 
 	logs := store.GetLogger().GetErrors()
 

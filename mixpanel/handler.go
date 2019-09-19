@@ -75,7 +75,7 @@ func (hdl *Handler) updateIdentity(idt *bollobas.Identity) {
 }
 
 // NewHandler returns a new mixpanel handler
-func NewHandler(name, token string, pubs []string) *Handler {
+func NewHandler(token string, pubs []string) *Handler {
 	var sock mangos.Socket
 	var err error
 
