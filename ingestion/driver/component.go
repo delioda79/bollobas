@@ -15,20 +15,22 @@ import (
 	_ "nanomsg.org/go/mangos/v2/transport/inproc"
 )
 
+// KafkaComponent is a receiver for a specific kafka topic which will then forward the message as an identity
 type KafkaComponent struct {
 	patron.Component
 	mangos.Socket
 }
 
+// Process is part of the patron interface and processes incoming messages
 func (kc *KafkaComponent) Process(msg async.Message) error {
 	driver := Driver{}
 	err := msg.Decode(&driver)
 	if err != nil {
 		return errors.Errorf("failed to unmarshal driver %v", err)
 	}
-	kc.publish(driver)
 
-	return nil
+	return kc.publish(driver)
+
 }
 
 func (kc *KafkaComponent) publish(driver Driver) error {
@@ -39,7 +41,7 @@ func (kc *KafkaComponent) publish(driver Driver) error {
 		LastName:         driver.LastName,
 		RegistrationDate: driver.RegistrationDate,
 		ReferralCode:     driver.ReferralCode,
-		Phone:            fmt.Sprintf("%s %d %s", driver.AreaPrefix, driver.PhonePrefix, driver.PhoneNo),
+		Phone:            fmt.Sprintf("%s %s %s", driver.AreaPrefix, driver.PhonePrefix, driver.PhoneNo),
 		Type:             "driver",
 		Email:            driver.Email,
 	}
@@ -48,18 +50,18 @@ func (kc *KafkaComponent) publish(driver Driver) error {
 	if err != nil {
 		return err
 	}
-	kc.Send(bts)
 
-	return nil
+	return kc.Send(bts)
 }
 
-func NewKafkaComponent(name, broker, topic, group string) (*KafkaComponent, error) {
+// NewKafkaComponent instantiates a new component
+func NewKafkaComponent(name, broker, topic, group, url string) (*KafkaComponent, error) {
 	var sock mangos.Socket
 	var err error
 	if sock, err = pub.NewSocket(); err != nil {
 		return nil, errors.Errorf("can't get new pub socket: %s", err)
 	}
-	if err = sock.Listen("inproc://driver-publisher"); err != nil {
+	if err = sock.Listen(url); err != nil {
 		return nil, errors.Errorf("can't listen on pub socket: %s", err.Error())
 	}
 

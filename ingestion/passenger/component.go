@@ -15,22 +15,23 @@ import (
 	_ "nanomsg.org/go/mangos/v2/transport/inproc"
 )
 
+// KafkaComponent is a receiver for a specific kafka topic which will then forward the message as an identity
 type KafkaComponent struct {
 	patron.Component
 	mangos.Socket
 }
 
+// Process is part of the patron interface and processes incoming messages
 func (kc *KafkaComponent) Process(msg async.Message) error {
 
 	passenger := Passenger{}
+
 	err := msg.Decode(&passenger)
 	if err != nil {
 		return errors.Errorf("failed to unmarshal passenger %v", err)
 	}
 
-	kc.publish(passenger)
-
-	return nil
+	return kc.publish(passenger)
 }
 
 func (kc *KafkaComponent) publish(passenger Passenger) error {
@@ -49,19 +50,19 @@ func (kc *KafkaComponent) publish(passenger Passenger) error {
 	if err != nil {
 		return err
 	}
-	kc.Send(bts)
 
-	return nil
+	return kc.Send(bts)
 }
 
-func NewKafkaComponent(name, broker, topic, group string) (*KafkaComponent, error) {
+// NewKafkaComponent instantiates a new component
+func NewKafkaComponent(name, broker, topic, group, url string) (*KafkaComponent, error) {
 
 	var sock mangos.Socket
 	var err error
 	if sock, err = pub.NewSocket(); err != nil {
 		return nil, errors.Errorf("can't get new pub socket: %s", err)
 	}
-	if err = sock.Listen("inproc://passenger-publisher"); err != nil {
+	if err = sock.Listen(url); err != nil {
 		return nil, errors.Errorf("can't listen on pub socket: %s", err.Error())
 	}
 

@@ -16,7 +16,7 @@ import (
 var (
 	version                     = "dev"
 	kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup,
-	kafkaPassengerIdentityTopic string
+	kafkaPassengerIdentityTopic, mpToken string
 	kafkaTimeout time.Duration
 )
 
@@ -31,6 +31,7 @@ func init() {
 	kafkaPassengerIdentityTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_PASSENGER_TOPIC", "passenger_account")
 	kafkaTimeout = mustGetEnvDurationWithDefault("BOLLOBAS_KAFKA_TIMEOUT", "2s")
 	kafkaGroup = mustGetEnv("BOLLOBAS_KAFKA_GROUP")
+	mpToken = mustGetEnv("MIXPANEL_TOKEN")
 }
 
 func main() {
@@ -42,17 +43,20 @@ func main() {
 		os.Exit(1)
 	}
 
-	drKfkCmp, err := driver.NewKafkaComponent("driver-identity", kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup)
+
+	durl := "inproc://driver-publisher"
+	drKfkCmp, err := driver.NewKafkaComponent("driver-identity", kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup, durl)
 	if err != nil {
 		log.Fatalf("failed to create processor %v", err)
 	}
 
-	paKfkCmp, err := passenger.NewKafkaComponent("passenger-identity", kafkaBroker, kafkaPassengerIdentityTopic, kafkaGroup)
+	purl := "inproc://passenger-pubisher"
+	paKfkCmp, err := passenger.NewKafkaComponent("passenger-identity", kafkaBroker, kafkaPassengerIdentityTopic, kafkaGroup, purl)
 	if err != nil {
 		log.Fatalf("failed to create processor %v", err)
 	}
 
-	mph := mixpanel.NewHandler("The mixpanel handler")
+	mph := mixpanel.NewHandler(mpToken, []string{purl, durl})
 	mph.Run()
 
 	srv, err := patron.New(

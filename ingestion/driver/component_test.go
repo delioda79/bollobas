@@ -4,6 +4,7 @@ import (
 	"bollobas"
 	"bollobas/ingestion/injestionfakes"
 	"encoding/json"
+	"fmt"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"nanomsg.org/go/mangos/v2"
@@ -12,21 +13,26 @@ import (
 	_ "nanomsg.org/go/mangos/v2/transport/all"
 	"sync"
 	"testing"
+	"time"
 )
 
 func TestProcessing(t *testing.T) {
-	cp, err := NewKafkaComponent("component 1", "broker a", "topic a", "group a")
+	durl := fmt.Sprintf("inproc://%d", time.Now().UnixNano())
+	cp, err := NewKafkaComponent("component 1", "broker a", "topic a", "group a", durl)
 	assert.Nil(t, err)
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
-	go func(wg *sync.WaitGroup) {
+	wg2 := &sync.WaitGroup{}
+	wg2.Add(1)
 
+	go func(wg *sync.WaitGroup) {
+		wg2.Done()
 		sock, err := sub.NewSocket()
 
 		assert.Nil(t, err)
-		err = sock.Dial("inproc://driver-publisher")
+		err = sock.Dial(durl)
 		assert.Nil(t, err)
 		err = sock.SetOption(mangos.OptionSubscribe, []byte(""))
 		assert.Nil(t, err)
@@ -43,6 +49,7 @@ func TestProcessing(t *testing.T) {
 		wg.Done()
 	}(wg)
 
+	wg2.Wait()
 	msg := &injestionfakes.FakeMessage{}
 
 	msg.DecodeStub = func(itf interface{}) error {
@@ -66,13 +73,13 @@ func TestProcessing(t *testing.T) {
 }
 
 func TestBusyPort(t *testing.T) {
-
+	durl := fmt.Sprintf("inproc://%d", time.Now().UnixNano())
 	var sock mangos.Socket
 	var err error
 	sock, _ = pub.NewSocket()
-	err = sock.Listen("inproc://driver-publisher")
+	err = sock.Listen(durl)
 assert.Nil(t, err)
-	cp, err := NewKafkaComponent("component 1", "broker a", "topic a", "group a")
+	cp, err := NewKafkaComponent("component 1", "broker a", "topic a", "group a", durl)
 	assert.NotNil(t, err)
 	assert.Nil(t,cp)
 }
