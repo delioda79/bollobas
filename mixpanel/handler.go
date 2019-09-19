@@ -2,8 +2,10 @@ package mixpanel
 
 import (
 	"bollobas"
+	"bollobas/pkg/parseid"
 	"encoding/json"
 	"fmt"
+
 	"github.com/beatlabs/patron/log"
 	"github.com/dukex/mixpanel"
 	"nanomsg.org/go/mangos/v2"
@@ -19,7 +21,7 @@ type Handler struct {
 
 // Run starts the go routine which will receive the messages
 func (hdl *Handler) Run() {
-	go func () {
+	go func() {
 
 		var msg []byte
 		var err error
@@ -46,13 +48,13 @@ func (hdl *Handler) Run() {
 func (hdl *Handler) updateIdentity(idt *bollobas.Identity) {
 	//id := idt.ID
 	prps := &Identity{
-		FirstName: idt.FirstName,
-		LastName: idt.LastName,
+		FirstName:        idt.FirstName,
+		LastName:         idt.LastName,
 		RegistrationDate: idt.RegistrationDate,
-		ReferralCode: idt.ReferralCode,
-		Type: idt.Type,
-		Email: idt.Email,
-		Phone: idt.Phone,
+		ReferralCode:     idt.ReferralCode,
+		Type:             idt.Type,
+		Email:            idt.Email,
+		Phone:            idt.Phone,
 	}
 
 	bts, err := json.Marshal(prps)
