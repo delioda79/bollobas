@@ -11,11 +11,13 @@ import (
 	_ "nanomsg.org/go/mangos/v2/transport/inproc"
 )
 
+// Handler subscribes to messages sent by any registered publisher in the internal registry
 type Handler struct {
 	mangos.Socket
 	mixpanel.Mixpanel
 }
 
+// Run starts the go routine which will receive the messages
 func (hdl *Handler) Run() {
 	go func () {
 
@@ -72,6 +74,7 @@ func (hdl *Handler) updateIdentity(idt *bollobas.Identity) {
 	}
 }
 
+// NewHandler returns a new mixpanel handler
 func NewHandler(name, token string, pubs []string) *Handler {
 	var sock mangos.Socket
 	var err error
