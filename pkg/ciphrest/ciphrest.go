@@ -84,8 +84,9 @@ func DecryptString(data string) string {
 	//fmt.Println("iv2", string(iv2))
 	mode := cipher.NewCBCDecrypter(block, iv2)
 
-	decodedData2, err := base64.URLEncoding.DecodeString(string(decodedData))
+	decodedData2, err := base64.StdEncoding.DecodeString(string(decodedData))
 	if err != nil {
+		//fmt.Println("FUUUUUUU:", string(decodedData))
 		panic(err)
 	}
 
