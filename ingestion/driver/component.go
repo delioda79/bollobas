@@ -15,7 +15,7 @@ import (
 	_ "nanomsg.org/go/mangos/v2/transport/inproc"
 )
 
-// KafkaComponent is a receier for a specific kafka topic which will then forward the message as an identity
+// KafkaComponent is a receiver for a specific kafka topic which will then forward the message as an identity
 type KafkaComponent struct {
 	patron.Component
 	mangos.Socket
@@ -28,9 +28,9 @@ func (kc *KafkaComponent) Process(msg async.Message) error {
 	if err != nil {
 		return errors.Errorf("failed to unmarshal driver %v", err)
 	}
-	kc.publish(driver)
 
-	return nil
+	return kc.publish(driver)
+
 }
 
 func (kc *KafkaComponent) publish(driver Driver) error {
@@ -50,9 +50,8 @@ func (kc *KafkaComponent) publish(driver Driver) error {
 	if err != nil {
 		return err
 	}
-	kc.Send(bts)
 
-	return nil
+	return kc.Send(bts)
 }
 
 // NewKafkaComponent instantiates a new component
