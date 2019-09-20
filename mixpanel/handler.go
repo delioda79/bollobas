@@ -2,7 +2,6 @@ package mixpanel
 
 import (
 	"bollobas"
-	"bollobas/pkg/parseid"
 	"encoding/json"
 	"fmt"
 
