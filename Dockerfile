@@ -1,4 +1,4 @@
-FROM golang:latest as builder
+FROM golang:1.12-alpine3.10 as builder
 RUN cd ..
 RUN mkdir bollobas
 WORKDIR bollobas
