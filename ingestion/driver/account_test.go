@@ -10,22 +10,23 @@ import (
 	"nanomsg.org/go/mangos/v2"
 	"nanomsg.org/go/mangos/v2/protocol/pub"
 	"nanomsg.org/go/mangos/v2/protocol/sub"
-	_ "nanomsg.org/go/mangos/v2/transport/all"
 	"sync"
 	"testing"
 	"time"
 )
 
+
 func TestProcessing(t *testing.T) {
 	durl := fmt.Sprintf("inproc://%d", time.Now().UnixNano())
-	cp, err := NewKafkaComponent("component 1", "broker a", "topic a", "group a", durl)
+	cp, err := NewAccountProcessor(durl)
 	assert.Nil(t, err)
+	cp.Activate(true)
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
 	wg2 := &sync.WaitGroup{}
-	wg2.Add(1)
+	wg2.Add(2)
 
 	go func(wg *sync.WaitGroup) {
 		wg2.Done()
@@ -48,6 +49,11 @@ func TestProcessing(t *testing.T) {
 
 		wg.Done()
 	}(wg)
+	cp.SetPipeEventHook(func(event mangos.PipeEvent, pipe mangos.Pipe) {
+		if event == mangos.PipeEventAttached {
+			wg2.Done()
+		}
+	})
 
 	wg2.Wait()
 	msg := &injestionfakes.FakeMessage{}
@@ -78,8 +84,8 @@ func TestBusyPort(t *testing.T) {
 	var err error
 	sock, _ = pub.NewSocket()
 	err = sock.Listen(durl)
-assert.Nil(t, err)
-	cp, err := NewKafkaComponent("component 1", "broker a", "topic a", "group a", durl)
+	assert.Nil(t, err)
+	cp, err := NewAccountProcessor(durl)
 	assert.NotNil(t, err)
 	assert.Nil(t,cp)
 }

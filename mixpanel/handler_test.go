@@ -7,9 +7,9 @@ import (
 	"bollobas/pkg/logging/store"
 	"encoding/json"
 	"fmt"
+	"github.com/beatlabs/patron/errors"
 	"github.com/beatlabs/patron/log"
 	"github.com/dukex/mixpanel"
-	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"nanomsg.org/go/mangos/v2"
 	"nanomsg.org/go/mangos/v2/protocol/pub"
@@ -19,12 +19,27 @@ import (
 	"time"
 )
 
-func TestRecevedFormatError(t *testing.T) {
+type FakeProcessor struct {
+	mixpanel.Mixpanel
+
+	procreturn error
+}
+
+// Run starts the go routine which will receive the messages
+func (p *FakeProcessor) Process(msg []byte) error {
+
+	return p.procreturn
+}
+
+
+
+func TestReceivedFormatError(t *testing.T) {
 	store.NewLogger()
 	cnt := 1
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
 	log.Setup(store.FactoryLogger, nil)
+
 	sck := &mixpanelfakes.FakeSocket{}
 	sck.RecvStub= func () ([]byte, error) {
 		if cnt <1 {
@@ -33,57 +48,27 @@ func TestRecevedFormatError(t *testing.T) {
 		}
 		wg.Done()
 		cnt--
-		return []byte("dsghdsgjhgdsjhdsa"), nil
+		return []byte("dddfsfddsfds"), nil
 	}
-	hdl := Handler{Socket: sck}
+
+	idp := &FakeProcessor{procreturn: errors.Errorf("error while receiving message")}
+	hdl := Handler{p: idp, Socket: sck}
 	hdl.Run()
 	wg.Wait()
 	errs := store.GetLogger().GetErrors()
 	assert.Len(t, errs, 1)
 
 	assert.Equal(t, "error", errs[0][0])
-	assert.Equal(t, "error while receiving message", errs[0][1])
+	act := errs[0][1].(error)
+	assert.Equal(t, errors.New("error while receiving message").Error(), act.Error())
 }
-
-func TestReceivingError(t *testing.T) {
-	store.NewLogger()
-	cnt := 1
-	wg := &sync.WaitGroup{}
-	wg.Add(2)
-	log.Setup(store.FactoryLogger, nil)
-	sck := &mixpanelfakes.FakeSocket{}
-	sck.RecvStub= func () ([]byte, error) {
-		if cnt <1 {
-			wg.Done()
-			select{}
-		}
-		wg.Done()
-		cnt--
-		return []byte(""), errors.Errorf("An error")
-	}
-	hdl := Handler{Socket: sck}
-	hdl.Run()
-	wg.Wait()
-
-	errs := store.GetLogger().GetErrors()
-	assert.Len(t, errs, 1)
-
-	assert.Equal(t, "error", errs[0][0])
-	assert.Equal(t, "cannot recv: %s", errs[0][1])
-}
-
 
 func TestReceivingCorrectMessage(t *testing.T) {
 	store.NewLogger()
 
 	wg := &sync.WaitGroup{}
-	wg.Add(2)
+	wg.Add(1)
 
-	cl := &mixpanelfakes.FakeMixpanel{}
-	cl.UpdateStub = func(s string, update *mixpanel.Update) error {
-		wg.Done()
-		return nil
-	}
 	cnt := 1
 
 	log.Setup(store.FactoryLogger, nil)
@@ -99,55 +84,15 @@ func TestReceivingCorrectMessage(t *testing.T) {
 		bts, _ := json.Marshal(idt)
 		return bts, nil
 	}
-	hdl := Handler{Socket: sck, Mixpanel: cl}
+	idp := &FakeProcessor{procreturn: nil}
+	hdl := Handler{p: idp, Socket: sck}
 	hdl.Run()
 	wg.Wait()
 
 	errs := store.GetLogger().GetErrors()
 	assert.Len(t, errs, 0)
 
-	assert.Equal(t, 1, cl.UpdateCallCount())
-
 }
-
-func TestImpossibleUpdate(t *testing.T) {
-	store.NewLogger()
-
-	wg := &sync.WaitGroup{}
-	wg.Add(3)
-
-	cl := &mixpanelfakes.FakeMixpanel{}
-	cl.UpdateStub = func(s string, update *mixpanel.Update) error {
-		wg.Done()
-		return errors.New("impossible to update")
-	}
-	cnt := 1
-
-	log.Setup(store.FactoryLogger, nil)
-	sck := &mixpanelfakes.FakeSocket{}
-	sck.RecvStub= func () ([]byte, error) {
-		if cnt <1 {
-			wg.Done()
-			select{}
-		}
-		wg.Done()
-		cnt--
-
-		idt := bollobas.Identity{}
-		bts, _ := json.Marshal(idt)
-		return bts, nil
-	}
-	hdl := Handler{Socket: sck, Mixpanel: cl}
-	hdl.Run()
-	wg.Wait()
-
-	errs := store.GetLogger().GetErrors()
-	assert.Len(t, errs, 1)
-
-	assert.Equal(t, 1, cl.UpdateCallCount())
-
-}
-
 
 func TestGettingNewHandler(t *testing.T) {
 
@@ -169,7 +114,7 @@ func TestGettingNewHandler(t *testing.T) {
 	err = s2.Listen(url2)
 	assert.Nil(t, err)
 
-	NewHandler("atoken", []string{url1, url2})
+	NewHandler(&FakeProcessor{}, []string{url1, url2})
 
 	logs := store.GetLogger().GetErrors()
 

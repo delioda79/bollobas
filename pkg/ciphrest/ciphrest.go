@@ -56,7 +56,8 @@ func EncryptByteArray(data []byte) string {
 	mode := cipher.NewCBCEncrypter(block, iv)
 	mode.CryptBlocks(cipherData, paddingData)
 	//fmt.Println("cipherDataAfter:", string(cipherData))
-	cipherDataAfter := string(base64.URLEncoding.EncodeToString(cipherData))
+	//cipherDataAfter := string(base64.URLEncoding.EncodeToString(cipherData))
+	cipherDataAfter := string(base64.StdEncoding.EncodeToString(cipherData))
 	//fmt.Println("cipherDataAfterBase:", cipherDataAfter)
 	return base64.URLEncoding.EncodeToString([]byte(cipherDataAfter + "::" + string(iv)))
 

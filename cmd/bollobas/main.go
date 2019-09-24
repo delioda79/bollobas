@@ -1,22 +1,31 @@
 package main
 
 import (
+	"bollobas/ingestion"
 	"bollobas/ingestion/driver"
-	"bollobas/mixpanel"
 	"bollobas/ingestion/passenger"
+	"bollobas/ingestion/ride"
+	"bollobas/mixpanel"
+	"bollobas/mixpanel/identity"
+	"bollobas/mixpanel/riderequest"
+	"bollobas/mixpanel/riderequest/cancellation"
+	"bollobas/mixpanel/riderequest/confirmation"
 	"fmt"
+	"github.com/beatlabs/patron/async"
 	"os"
 	"time"
 
 	"github.com/beatlabs/patron"
 	"github.com/beatlabs/patron/log"
 	"github.com/joho/godotenv"
+	mpsdk "github.com/dukex/mixpanel"
 )
 
 var (
 	version                     = "dev"
 	kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup,
-	kafkaPassengerIdentityTopic, mpToken string
+	kafkaPassengerIdentityTopic, mpToken,
+	kkPRRTopic,  kkPRCTopic, kkRTopic  string
 	kafkaTimeout time.Duration
 )
 
@@ -27,15 +36,20 @@ func init() {
 	}
 
 	kafkaBroker = mustGetEnv("BOLLOBAS_KAFKA_CONNECTION_STRING")
-	kafkaDriverIdentityTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_DRIVER_TOPIC", "driver_account")
-	kafkaPassengerIdentityTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_PASSENGER_TOPIC", "passenger_account")
+	kafkaDriverIdentityTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_DRIVER_TOPIC", "driver_analytics")
+	kafkaPassengerIdentityTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_PASSENGER_TOPIC", "passenger_analytics")
 	kafkaTimeout = mustGetEnvDurationWithDefault("BOLLOBAS_KAFKA_TIMEOUT", "2s")
 	kafkaGroup = mustGetEnv("BOLLOBAS_KAFKA_GROUP")
 	mpToken = mustGetEnv("MIXPANEL_TOKEN")
+	kkPRRTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_REQUEST_TOPIC", "request")
+	kkPRCTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_REQUEST_CANCEL_TOPIC", "request_cancel")
+	kkRTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_RIDE_TOPIC", "ride")
 }
 
 func main() {
 	name := "bollobas"
+
+	failure := async.ConsumerRetry(10, 5*time.Second)
 
 	err := patron.Setup(name, version)
 	if err != nil {
@@ -45,24 +59,70 @@ func main() {
 
 
 	durl := "inproc://driver-publisher"
-	drKfkCmp, err := driver.NewKafkaComponent("driver-identity", kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup, durl)
+	drAccProc, err := driver.NewAccountProcessor(durl)
+	drKfkCmp, err := ingestion.NewKafkaComponent("driver-identity", kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup, drAccProc, failure)
 	if err != nil {
 		log.Fatalf("failed to create processor %v", err)
 	}
 
-	purl := "inproc://passenger-pubisher"
-	paKfkCmp, err := passenger.NewKafkaComponent("passenger-identity", kafkaBroker, kafkaPassengerIdentityTopic, kafkaGroup, purl)
+	purl := "inproc://passenger-publisher"
+	paAccProc, err := passenger.NewAccountProcessor(purl)
+	paAccProc.Activate(true)
+	paKfkCmp, err := ingestion.NewKafkaComponent("passenger-identity", kafkaBroker, kafkaPassengerIdentityTopic, kafkaGroup, paAccProc, failure)
 	if err != nil {
 		log.Fatalf("failed to create processor %v", err)
 	}
 
-	mph := mixpanel.NewHandler(mpToken, []string{purl, durl})
+	prurl := "inproc://riderequest-publisher"
+	paRRProc, err := passenger.NewRequestProcessor(prurl)
+	paRRProc.Activate(true)
+	paRRKfkCmp, err := ingestion.NewKafkaComponent("passenger-request", kafkaBroker, kkPRRTopic, kafkaGroup, paRRProc, failure)
+	if err != nil {
+		log.Fatalf("failed to create processor %v", err)
+	}
+
+	pclurl := "inproc://riderequestcancel-publisher"
+	paRCProc, err := passenger.NewCancellationProcessor(pclurl)
+	paRCProc.Activate(true)
+	paRCKfkCmp, err := ingestion.NewKafkaComponent("passenger-cancel", kafkaBroker, kkPRCTopic, kafkaGroup, paRCProc, failure)
+	if err != nil {
+		log.Fatalf("failed to create processor %v", err)
+	}
+
+	pakurl := "inproc://ride-publisher"
+	paRAKProc, err := ride.NewRideProcessor(pakurl)
+	paRAKProc.Activate(true)
+	paRAKKfkCmp, err := ingestion.NewKafkaComponent("ride", kafkaBroker, kkRTopic, kafkaGroup, paRAKProc, failure)
+	if err != nil {
+		log.Fatalf("failed to create processor %v", err)
+	}
+
+	// MIXPANEL handlers
+	mpCl  := mpsdk.New(mpToken, "")
+	// Handler for any identity change from Passegers and Drivers
+	ipr := &identity.Processor{Mixpanel: mpCl}
+	mph := mixpanel.NewHandler(ipr, []string{purl, durl})
 	mph.Run()
+
+	// Handler for ride requests
+	rrp := &riderequest.Processor{Mixpanel: mpCl}
+	rrh := mixpanel.NewHandler(rrp, []string{prurl})
+	rrh.Run()
+
+	// Handler for Request cancellations
+	rrcp := &cancellation.Processor{Mixpanel: mpCl}
+	rrch := mixpanel.NewHandler(rrcp, []string{pclurl})
+	rrch.Run()
+
+	// Handler for Confirmations of rides
+	rrakp := &confirmation.Processor{Mixpanel: mpCl}
+	rrakh := mixpanel.NewHandler(rrakp, []string{pakurl})
+	rrakh.Run()
 
 	srv, err := patron.New(
 		name,
 		version,
-		patron.Components(drKfkCmp, paKfkCmp),
+		patron.Components(drKfkCmp, paKfkCmp, paRRKfkCmp, paRAKKfkCmp, paRCKfkCmp),
 	)
 	if err != nil {
 		log.Fatalf("failed to create service %v", err)

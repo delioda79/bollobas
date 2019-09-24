@@ -1,61 +1,69 @@
-package passenger
+package ride
 
 import (
 	"bollobas"
 	"bollobas/ingestion/injestionfakes"
 	"encoding/json"
-	"github.com/pkg/errors"
+	"fmt"
+	"github.com/beatlabs/patron/errors"
 	"github.com/stretchr/testify/assert"
 	"nanomsg.org/go/mangos/v2"
 	"nanomsg.org/go/mangos/v2/protocol/pub"
 	"nanomsg.org/go/mangos/v2/protocol/sub"
-	_ "nanomsg.org/go/mangos/v2/transport/all"
+	"os"
 	"sync"
 	"testing"
+	"time"
 )
 
 func TestProcessing(t *testing.T) {
-	purl := "inproc://passenger-publisher"
-
-	cp, err := NewKafkaComponent("component 1", "broker a", "topic a", "group a", purl)
+	os.Setenv("BOLLOBAS_LOCATION", "test")
+	durl := fmt.Sprintf("inproc://%d", time.Now().UnixNano())
+	cp, err := NewRideProcessor(durl)
 	assert.Nil(t, err)
+	cp.Activate(true)
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
 	wg2 := &sync.WaitGroup{}
-	wg2.Add(1)
+	wg2.Add(2)
 
 	go func(wg *sync.WaitGroup) {
 		wg2.Done()
 		sock, err := sub.NewSocket()
 
 		assert.Nil(t, err)
-		err = sock.Dial(purl)
+		err = sock.Dial(durl)
 		assert.Nil(t, err)
 		err = sock.SetOption(mangos.OptionSubscribe, []byte(""))
 		assert.Nil(t, err)
-
 		rsp, err := sock.Recv()
 		assert.Nil(t, err)
-
-		idt := &bollobas.Identity{}
+		idt := &bollobas.RideRequest{}
 		err = json.Unmarshal(rsp, idt)
 		assert.Nil(t, err)
 
-		assert.EqualValues(t, "abc", idt.ID)
+		assert.EqualValues(t, 1, idt.RquestID)
 
 		wg.Done()
 	}(wg)
 
+	cp.SetPipeEventHook(func(event mangos.PipeEvent, pipe mangos.Pipe) {
+		if event == mangos.PipeEventAttached {
+			wg2.Done()
+		}
+	})
+
 	wg2.Wait()
-
-
 	msg := &injestionfakes.FakeMessage{}
 
 	msg.DecodeStub = func(itf interface{}) error {
-		psg := itf.(*Passenger)
-		psg.ID = "abc"
+		dr := itf.(*Ride)
+		dr.RequestID = 1
+		dr.Events = []RideEvent{
+			{Key:bollobas.RIDE_CONFIRMED},
+		}
 
 		return nil
 	}
@@ -74,14 +82,14 @@ func TestProcessing(t *testing.T) {
 }
 
 func TestBusyPort(t *testing.T) {
-
-	purl := "inproc://passenger-publisher"
+	durl := fmt.Sprintf("inproc://%d", time.Now().UnixNano())
 	var sock mangos.Socket
 	var err error
 	sock, _ = pub.NewSocket()
-	sock.Listen(purl)
-
-	cp, err := NewKafkaComponent("component 1", "broker a", "topic a", "group a", purl)
+	err = sock.Listen(durl)
+	assert.Nil(t, err)
+	cp, err := NewRideProcessor(durl)
 	assert.NotNil(t, err)
 	assert.Nil(t,cp)
 }
+

@@ -2,6 +2,8 @@ package parseid
 
 import (
 	"bollobas/pkg/ciphrest"
+	"fmt"
+	"os"
 	"regexp"
 )
 
@@ -9,8 +11,14 @@ func main() {
 	//fmt.Println("dfdf")
 }
 
-func EncryptString() {
+func EncryptString(id int, ut string) string {
+	location := os.Getenv("BOLLOBAS_LOCATION")
+	if location == "" {
+		panic("no location provided")
+	}
 
+	strID := fmt.Sprintf("%d", id)
+	return fmt.Sprintf("%s-%s-%s", ciphrest.EncryptString(strID), location, ut)
 }
 
 func DecryptString(id string) string {
