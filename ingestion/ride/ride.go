@@ -5,12 +5,13 @@ import (
 	"bollobas/ingestion"
 	"bollobas/pkg/parseid"
 	"fmt"
+	"time"
+
 	"github.com/beatlabs/patron/async"
 	"github.com/beatlabs/patron/encoding/json"
 	"github.com/beatlabs/patron/log"
 	"github.com/pkg/errors"
 	"nanomsg.org/go/mangos/v2"
-	"time"
 	_ "nanomsg.org/go/mangos/v2/transport/all"
 )
 
@@ -38,34 +39,26 @@ func (kc *RideProcessor) Process(msg async.Message) error {
 
 func (kc *RideProcessor) publish(cr Ride) error {
 
-	for _, ev := range cr.Events {
-		fmt.Println("Ride received", cr)
-		switch ev.Key {
-		case bollobas.RIDE_CONFIRMED:
-			if cr.Duration != nil {
-				continue
-			}
-			fmt.Println("Confimed WHEN?", ev.When, time.Unix(ev.When, 0))
-			idt := bollobas.RideRequestConfirmed{
-				UserID:   parseid.EncryptString(cr.Passenger.PassengerID, "pa"),
-				RquestID: cr.RequestID,
-				Date: time.Unix(ev.When, 0),
-			}
+	log.Debugf("Ride received: %+v | events: %+v", cr, cr.Events)
+	if len(cr.Events) == 0 {
+		log.Debugf("Ready to send")
+		idt := bollobas.RideRequestConfirmed{
+			UserID:   parseid.EncryptString(cr.Passenger.PassengerID, "pa"),
+			RquestID: cr.RequestID,
+			Date:     time.Unix(cr.Created, 0),
+		}
 
-			bts, err := json.Encode(idt)
-			if err != nil {
-				log.Errorf("Error when decoding the event", err)
-				continue
-			}
-
-			err = kc.Send(bts)
-			if err != nil {
-				log.Errorf("Error when sending the event", err)
-			}
-			break
-		default:
+		bts, err := json.Encode(idt)
+		if err != nil {
+			return errors.Errorf("Error when decoding the event %v", err)
+		}
+		log.Debugf("Sending: %+v", idt)
+		err = kc.Send(bts)
+		if err != nil {
+			return errors.Errorf("Error when sending the event: %v", err)
 		}
 	}
+
 	return nil
 }
 
@@ -76,7 +69,9 @@ func NewRideProcessor(url string) (*RideProcessor, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &RideProcessor{Socket: sock, active: false}, nil
+	rp := &RideProcessor{Socket: sock, active: false}
+
+	return rp, nil
 }
 
 // Activate will activate the processor
@@ -86,10 +81,10 @@ func (kc *RideProcessor) Activate(v bool) {
 
 // RideEvent represents a message for a ride coming from kafka
 type RideEvent struct {
-	Who string
+	Who  string
 	What string
 	When int64
-	Key string
+	Key  string
 }
 
 type Passenger struct {
@@ -98,8 +93,8 @@ type Passenger struct {
 
 type Ride struct {
 	Passenger Passenger
-	Events []RideEvent
+	Events    []RideEvent
 	RequestID int `json:"id_request"`
-	Duration interface{}
+	Duration  interface{}
+	Created   int64 `json:"ride_created_at"`
 }
-

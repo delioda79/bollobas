@@ -1,6 +1,8 @@
 package mixpanel
 
 import (
+	"bollobas"
+
 	"github.com/beatlabs/patron/log"
 	"github.com/dukex/mixpanel"
 	"nanomsg.org/go/mangos/v2/protocol/sub"
@@ -12,6 +14,7 @@ import (
 type Handler struct {
 	p Processor
 	mangos.Socket
+	bollobas.ConfigurationManager
 }
 
 func (hdl *Handler) Run() {
@@ -26,6 +29,10 @@ func (hdl *Handler) Run() {
 				continue
 			}
 
+			if hdl.ConfigurationManager != nil && !hdl.Check(msg) {
+				continue
+			}
+
 			err = hdl.p.Process(msg)
 			if err != nil {
 				log.Error(err)
@@ -37,11 +44,10 @@ func (hdl *Handler) Run() {
 type Processor interface {
 	mixpanel.Mixpanel
 	Process(msg []byte) error
-
 }
 
 // NewHandler returns a new Mixpanel handler
-func NewHandler(p Processor, pubs []string) Handler{
+func NewHandler(p Processor, pubs []string, c bollobas.ConfigurationManager) Handler {
 	var sock mangos.Socket
 	var err error
 
@@ -49,7 +55,7 @@ func NewHandler(p Processor, pubs []string) Handler{
 		log.Fatal("can't get new sub socket: %s", err.Error())
 	}
 
-	for _,v := range pubs {
+	for _, v := range pubs {
 		if err = sock.Dial(v); err != nil {
 			log.Fatal("can't dial on sub socket: %s", err.Error())
 		}
@@ -61,6 +67,5 @@ func NewHandler(p Processor, pubs []string) Handler{
 		log.Fatal("cannot subscribe: %s", err.Error())
 	}
 
-
-	return Handler{Socket: sock, p: p}
+	return Handler{Socket: sock, p: p, ConfigurationManager: c}
 }

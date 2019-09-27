@@ -44,7 +44,7 @@ func (kc *AccountProcessor) publish(passenger Passenger) error {
 		FirstName:        passenger.FirstName,
 		LastName:         passenger.LastName,
 		RegistrationDate: passenger.RegistrationDate,
-		Phone:            fmt.Sprintf("%s %s", passenger.PhonePrefix, passenger.PhoneNo),
+		Phone:            fmt.Sprintf("+%s%s", passenger.PhonePrefix, passenger.PhoneNo),
 		Type:             "passenger",
 		Email:            passenger.Email,
 	}

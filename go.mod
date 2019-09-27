@@ -9,5 +9,6 @@ require (
 	github.com/pkg/errors v0.8.0
 	github.com/prometheus/common v0.2.0
 	github.com/stretchr/testify v1.2.2
+	google.golang.org/appengine v1.6.3 // indirect
 	nanomsg.org/go/mangos/v2 v2.0.2
 )

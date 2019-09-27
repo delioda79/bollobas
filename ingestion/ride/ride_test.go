@@ -5,15 +5,16 @@ import (
 	"bollobas/ingestion/injestionfakes"
 	"encoding/json"
 	"fmt"
+	"os"
+	"sync"
+	"testing"
+	"time"
+
 	"github.com/beatlabs/patron/errors"
 	"github.com/stretchr/testify/assert"
 	"nanomsg.org/go/mangos/v2"
 	"nanomsg.org/go/mangos/v2/protocol/pub"
 	"nanomsg.org/go/mangos/v2/protocol/sub"
-	"os"
-	"sync"
-	"testing"
-	"time"
 )
 
 func TestProcessing(t *testing.T) {
@@ -61,9 +62,7 @@ func TestProcessing(t *testing.T) {
 	msg.DecodeStub = func(itf interface{}) error {
 		dr := itf.(*Ride)
 		dr.RequestID = 1
-		dr.Events = []RideEvent{
-			{Key:bollobas.RIDE_CONFIRMED},
-		}
+		dr.Events = []RideEvent{}
 
 		return nil
 	}
@@ -90,6 +89,5 @@ func TestBusyPort(t *testing.T) {
 	assert.Nil(t, err)
 	cp, err := NewRideProcessor(durl)
 	assert.NotNil(t, err)
-	assert.Nil(t,cp)
+	assert.Nil(t, cp)
 }
-

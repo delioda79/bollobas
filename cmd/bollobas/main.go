@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bollobas"
 	"bollobas/ingestion"
 	"bollobas/ingestion/driver"
 	"bollobas/ingestion/passenger"
@@ -10,23 +11,34 @@ import (
 	"bollobas/mixpanel/riderequest"
 	"bollobas/mixpanel/riderequest/cancellation"
 	"bollobas/mixpanel/riderequest/confirmation"
+	"bollobas/pkg/ciphrest"
+	"bollobas/pkg/configclient"
+	"context"
+	"crypto/tls"
+	"encoding/json"
 	"fmt"
-	"github.com/beatlabs/patron/async"
+	"net/http"
 	"os"
 	"time"
 
+	"github.com/beatlabs/patron/async"
+
 	"github.com/beatlabs/patron"
 	"github.com/beatlabs/patron/log"
-	"github.com/joho/godotenv"
 	mpsdk "github.com/dukex/mixpanel"
+	"github.com/joho/godotenv"
 )
 
 var (
-	version                     = "dev"
+	version = "0.0.1"
 	kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup,
 	kafkaPassengerIdentityTopic, mpToken,
-	kkPRRTopic,  kkPRCTopic, kkRTopic  string
-	kafkaTimeout time.Duration
+	kkPRRTopic, kkPRCTopic, kkRTopic string
+	kafkaTimeout                            time.Duration
+	defaultConf                             map[string]interface{}
+	settingsPeriod                          time.Duration
+	restKey, restURL, restMixpanelPath      string
+	cipherKey, cipherInitVec, mixpanelToken string
 )
 
 func init() {
@@ -40,10 +52,26 @@ func init() {
 	kafkaPassengerIdentityTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_PASSENGER_TOPIC", "passenger_analytics")
 	kafkaTimeout = mustGetEnvDurationWithDefault("BOLLOBAS_KAFKA_TIMEOUT", "2s")
 	kafkaGroup = mustGetEnv("BOLLOBAS_KAFKA_GROUP")
-	mpToken = mustGetEnv("MIXPANEL_TOKEN")
+	mpToken = mustGetEnv("BOLLOBAS_MIXPANEL_TOKEN")
 	kkPRRTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_REQUEST_TOPIC", "request")
 	kkPRCTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_REQUEST_CANCEL_TOPIC", "request_cancel")
 	kkRTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_RIDE_TOPIC", "ride")
+	bConf := mustGetEnvWithDefault("BOLLOBAS_BASE_CONF", "{}")
+	restKey = mustGetEnvWithDefault("REST_KEY", "")
+	restURL = mustGetEnvWithDefault("REST_CONNECTION_STRING", "https://0.0.0.0:443")
+	restMixpanelPath = mustGetEnvWithDefault("REST_MIXPANEL_PATH", "/taxidmin/bollobas/mixpanel-passenger-settings")
+	cipherKey = mustGetEnvWithDefault("BOLLOBAS_CIPHER_KEY", "")
+	cipherInitVec = mustGetEnvWithDefault("BOLLOBAS_INIT_VECTOR", "")
+
+	defaultConf = map[string]interface{}{}
+	err = json.Unmarshal([]byte(bConf), &defaultConf)
+	if err != nil {
+		panic(fmt.Sprintf("Wrong configuratiopn provided %v", err))
+	}
+
+	settingsPeriod = mustGetEnvDurationWithDefault("BOLLOBAS_SETTINGS_DURATION", "10s")
+
+	ciphrest.InitCipher(cipherKey, cipherInitVec)
 }
 
 func main() {
@@ -56,7 +84,7 @@ func main() {
 		fmt.Printf("failed to set up logging: %v", err)
 		os.Exit(1)
 	}
-
+	log.Debugf("Starting %s v%s", name, version)
 
 	durl := "inproc://driver-publisher"
 	drAccProc, err := driver.NewAccountProcessor(durl)
@@ -98,25 +126,35 @@ func main() {
 	}
 
 	// MIXPANEL handlers
-	mpCl  := mpsdk.New(mpToken, "")
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	c := &http.Client{Transport: tr}
+
+	//Conf Manager MixPanel
+	cfm := &mixpanel.Configurator{}
+	cfm.Configure(defaultConf)
+	updateSettings(settingsPeriod, cfm)
+
+	mpCl := mpsdk.NewFromClient(c, mpToken, "")
 	// Handler for any identity change from Passegers and Drivers
 	ipr := &identity.Processor{Mixpanel: mpCl}
-	mph := mixpanel.NewHandler(ipr, []string{purl, durl})
+	mph := mixpanel.NewHandler(ipr, []string{purl, durl}, cfm)
 	mph.Run()
 
 	// Handler for ride requests
 	rrp := &riderequest.Processor{Mixpanel: mpCl}
-	rrh := mixpanel.NewHandler(rrp, []string{prurl})
+	rrh := mixpanel.NewHandler(rrp, []string{prurl}, cfm)
 	rrh.Run()
 
 	// Handler for Request cancellations
 	rrcp := &cancellation.Processor{Mixpanel: mpCl}
-	rrch := mixpanel.NewHandler(rrcp, []string{pclurl})
+	rrch := mixpanel.NewHandler(rrcp, []string{pclurl}, cfm)
 	rrch.Run()
 
 	// Handler for Confirmations of rides
 	rrakp := &confirmation.Processor{Mixpanel: mpCl}
-	rrakh := mixpanel.NewHandler(rrakp, []string{pakurl})
+	rrakh := mixpanel.NewHandler(rrakp, []string{pakurl}, cfm)
 	rrakh.Run()
 
 	srv, err := patron.New(
@@ -132,6 +170,31 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to run service %v", err)
 	}
+}
+
+func updateSettings(t time.Duration, cfr bollobas.ConfigurationManager) {
+	cfr.Configure(defaultConf)
+	ticker := time.NewTicker(t)
+	cClient, err := configclient.New(restURL, restKey, restMixpanelPath)
+	if err != nil {
+		log.Debugf("Couldn't create Configuration Client. Resolving to defauls: %v", defaultConf)
+		return
+	}
+
+	go func() {
+		for {
+			<-ticker.C
+			//Logic to get configs here....
+			st, err := cClient.GetSettings(context.TODO())
+			if err == nil {
+				//Configure
+				cfr.Configure(st)
+				log.Debugf("Settings updated with: %v", st)
+			} else {
+				log.Infof("Failed to update settings: %v", err)
+			}
+		}
+	}()
 }
 
 func mustGetEnv(key string) string {

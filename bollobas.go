@@ -44,3 +44,8 @@ type AnalyticsHandler interface{
 	mangos.Socket
 	Run()
 }
+
+type ConfigurationManager interface {
+	Configure(map[string]interface{})
+	Check([]byte) bool
+}

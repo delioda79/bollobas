@@ -4,7 +4,7 @@
 node('slave') {
     def gitUtils = new com.beat.utilities.github()
     def stackUtils = new com.beat.utilities.stack()
-    def project = gitUtils.determineRepoName(env.JOB_NAME)
+    def project = "bollobas"
     def img = null
     def branch = ""
 

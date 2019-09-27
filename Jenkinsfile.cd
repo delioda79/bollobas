@@ -115,14 +115,20 @@ node('slave') {
                 setList += " --values /values.${stack}.yaml"
             }
 
+
+            bollobas_cipher_key_env = "BOLLOBAS_CIPHER_KEY_DEV"
+            bollobas_init_vector_env = "BOLLOBAS_INIT_VECTOR_DEV"
+            bollobas_rest_key_env = "REST_TAXIDMIN_KEY"
+            bollobas_location_env = "${envVarMapping.STACK_NAME}"
+
             if (prod) {
                 envVarMapping = stack_utils.stackVariables(stack)
 
-
                 // /* Setup local variables */
-                bollobas_cipher_key_env = "BOLLOBAS_CIPHER_KEY_PROD"
-                bollobas_init_vector_env = "BOLLOBAS_INIT_VECTOR_PROD"
                 bollobas_mixpanel_token_env = "BOLLOBAS_MIXPANEL_TOKEN_PROD"
+
+                bollobas_log_level_env = "info"
+                bollobas_rest_endpoint_env = "rest${envVarMapping.SUFFIX}"
 
                 helmName = "bollobas"
 
@@ -131,9 +137,9 @@ node('slave') {
 
 
                 // /* Setup local variables */
-                bollobas_cipher_key_env = "BOLLOBAS_CIPHER_KEY_DEV"
-                bollobas_init_vector_env = "BOLLOBAS_INIT_VECTOR_DEV"
                 bollobas_mixpanel_token_env = "BOLLOBAS_MIXPANEL_TOKEN_DEV"
+                bollobas_log_level_env = "debug"
+                bollobas_rest_endpoint_env = "${stack}.rest.sandbox.taxibeat.com"
 
                 helmName = "bollobas-${stack}"
             }
@@ -147,6 +153,11 @@ node('slave') {
                     string(credentialsId: "${bollobas_cipher_key_env}", variable: 'bollobas_cipher_key'),
                     string(credentialsId: "${bollobas_init_vector_env}", variable: 'bollobas_init_vector'),
                     string(credentialsId: "${bollobas_mixpanel_token_env}", variable: 'bollobas_mixpanel_token')
+
+                    string(credentialsId: "${bollobas_log_level_env}", variable: 'bollobas_log_level')
+                    string(credentialsId: "${bollobas_location_env}", variable: 'bollobas_location')
+                    string(credentialsId: "${bollobas_rest_endpoint_env}", variable: 'bollobas_rest_endpoint')
+                    string(credentialsId: "${bollobas_rest_key_env}", variable: 'bollobas_rest_key')
                 ]) {
                     setList = " --set image.registry=${envVarMapManagement.REGISTRY_SERVER}/beat/ \
                                     --set image.tag=${branch_or_tag} \
@@ -155,12 +166,22 @@ node('slave') {
                                     --set env.BOLLOBAS_KAFKA_CONNECTION_STRING=kafka.${envVarMapping.ROUTE53_PRIVATE_DOMAIN}:9092 \
                                     --set env.BOLLOBAS_CIPHER_KEY=${bollobas_cipher_key} \
                                     --set env.BOLLOBAS_INIT_VECTOR=${bollobas_init_vector} \
-                                    --set env.BOLLOBAS_MIXPANEL_TOKEN=${bollobas_mixpanel_token} "
-
-                    if (prod) {
-                        // Here we add the Production Variables
-                        setList +=  " --set env.BOLLOBAS_LOCATION=${envVarMapping.STACK_NAME} "
-                    } else {
+                                    --set env.BOLLOBAS_MIXPANEL_TOKEN=${bollobas_mixpanel_token} \
+                                    --set env.PATRON_LOG_LEVEL:${bollobas_log_level} \
+                                    --set env.PATRON_HTTP_DEFAULT_PORT=8100 \
+                                    --set env.BOLLOBAS_KAFKA_DRIVER_TOPIC: driver_account \
+                                    --set env.BOLLOBAS_KAFKA_PASSENGER_TOPIC: passenger_account \
+                                    --set env.BOLLOBAS_KAFKA_REQUEST_TOPIC: request \
+                                    --set env.BOLLOBAS_KAFKA_REQUEST_CANCEL_TOPIC: request_cancel \
+                                    --set env.BOLLOBAS_KAFKA_RIDE_TOPIC: ride \
+                                    --set env.BOLLOBAS_KAFKA_TIMEOUT: 10s \
+                                    --set env.BOLLOBAS_KAFKA_GROUP: \"arcns1\" \
+                                    --set env.REST_MIXPANEL_PATH: \"/taxidmin/bollobas/mixpanel-passenger-settings\" \
+                                    --set env.BOLLOBAS_SETTINGS_DURATION: \"10s\" \
+                                    --set env.BOLLOBAS_LOCATION: ${bollobas_location} \
+                                    --set env.REST_CONNECTION_STRING: ${bollobas_rest_endpoint}   \
+                                    --set env.REST_KEY: ${bollobas_rest_key}"
+                    if (!prod) {
                         setList +=  " --set ingress.host=${stack}-bollobas "
                     }
 

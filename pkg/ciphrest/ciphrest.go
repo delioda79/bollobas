@@ -16,16 +16,17 @@ var key []byte
 var iv []byte
 var block cipher.Block
 
-func init() {
+//InitCipher sets key and init vector
+func InitCipher(rawKey string, rawIV string) {
 	var err error
 
-	iv, err = hex.DecodeString("bef4dea2812107094b47120530e10c91")
+	iv, err = hex.DecodeString(rawIV)
 	if err != nil {
 		panic(err)
 	}
 
 	//	fmt.Println("iv Length:", len(iv))
-	tKey := strings.ReplaceAll("s0th1s1s0uRpR1v@r3k3Y", "@", "")
+	tKey := strings.ReplaceAll(rawKey, "@", "")
 	key, err = base64.URLEncoding.DecodeString(tKey)
 	if err != nil {
 		panic(err)

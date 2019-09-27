@@ -3,9 +3,10 @@ package confirmation
 import (
 	"bollobas"
 	"encoding/json"
+
 	"github.com/beatlabs/patron/errors"
+	"github.com/beatlabs/patron/log"
 	"github.com/dukex/mixpanel"
-	"github.com/prometheus/common/log"
 	_ "nanomsg.org/go/mangos/v2/transport/inproc"
 )
 
@@ -29,12 +30,14 @@ func (hdl *Processor) Process(msg []byte) error {
 }
 
 func (hdl *Processor) incrementRideCconfirmations(idt *bollobas.RideRequestConfirmed) error {
-	err := hdl.Update(idt.UserID, &mixpanel.Update{Properties: map[string]interface{}{"ConfirmedRides": 1}, Operation:"$add"})
+	log.Debugf("Sending Confirm Ride Request for UserID: %s", idt.UserID)
+
+	err := hdl.Update(idt.UserID, &mixpanel.Update{Properties: map[string]interface{}{"ConfirmedRides": 1}, Operation: "$add"})
 	if err != nil {
 		return errors.Errorf("error while updating the ConfirmationRequest: %v", err)
 	}
 
-	err = hdl.Update(idt.UserID, &mixpanel.Update{Properties: map[string]interface{}{"LastRide": idt.Date}, Operation:"$set"})
+	err = hdl.Update(idt.UserID, &mixpanel.Update{Properties: map[string]interface{}{"LastRide": idt.Date}, Operation: "$set"})
 	if err != nil {
 		return errors.Errorf("error while updating the ConfirmationRequest: %v", err)
 	}
