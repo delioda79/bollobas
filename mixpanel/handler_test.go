@@ -114,7 +114,7 @@ func TestGettingNewHandler(t *testing.T) {
 	err = s2.Listen(url2)
 	assert.Nil(t, err)
 
-	NewHandler(&FakeProcessor{}, []string{url1, url2})
+	NewHandler(&FakeProcessor{}, []string{url1, url2}, nil)
 
 	logs := store.GetLogger().GetErrors()
 
