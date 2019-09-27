@@ -152,11 +152,11 @@ node('slave') {
                 withCredentials([
                     string(credentialsId: "${bollobas_cipher_key_env}", variable: 'bollobas_cipher_key'),
                     string(credentialsId: "${bollobas_init_vector_env}", variable: 'bollobas_init_vector'),
-                    string(credentialsId: "${bollobas_mixpanel_token_env}", variable: 'bollobas_mixpanel_token')
+                    string(credentialsId: "${bollobas_mixpanel_token_env}", variable: 'bollobas_mixpanel_token'),
 
-                    string(credentialsId: "${bollobas_log_level_env}", variable: 'bollobas_log_level')
-                    string(credentialsId: "${bollobas_location_env}", variable: 'bollobas_location')
-                    string(credentialsId: "${bollobas_rest_endpoint_env}", variable: 'bollobas_rest_endpoint')
+                    string(credentialsId: "${bollobas_log_level_env}", variable: 'bollobas_log_level'),
+                    string(credentialsId: "${bollobas_location_env}", variable: 'bollobas_location'),
+                    string(credentialsId: "${bollobas_rest_endpoint_env}", variable: 'bollobas_rest_endpoint'),
                     string(credentialsId: "${bollobas_rest_key_env}", variable: 'bollobas_rest_key')
                 ]) {
                     setList = " --set image.registry=${envVarMapManagement.REGISTRY_SERVER}/beat/ \
@@ -169,8 +169,8 @@ node('slave') {
                                     --set env.BOLLOBAS_MIXPANEL_TOKEN=${bollobas_mixpanel_token} \
                                     --set env.PATRON_LOG_LEVEL:${bollobas_log_level} \
                                     --set env.PATRON_HTTP_DEFAULT_PORT=8100 \
-                                    --set env.BOLLOBAS_KAFKA_DRIVER_TOPIC: driver_account \
-                                    --set env.BOLLOBAS_KAFKA_PASSENGER_TOPIC: passenger_account \
+                                    --set env.BOLLOBAS_KAFKA_DRIVER_TOPIC: driver_analytics \
+                                    --set env.BOLLOBAS_KAFKA_PASSENGER_TOPIC: passenger_analytics \
                                     --set env.BOLLOBAS_KAFKA_REQUEST_TOPIC: request \
                                     --set env.BOLLOBAS_KAFKA_REQUEST_CANCEL_TOPIC: request_cancel \
                                     --set env.BOLLOBAS_KAFKA_RIDE_TOPIC: ride \
