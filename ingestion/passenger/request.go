@@ -4,12 +4,14 @@ import (
 	"bollobas"
 	"bollobas/ingestion"
 	"bollobas/pkg/parseid"
+
 	"github.com/beatlabs/patron/async"
 	"github.com/beatlabs/patron/encoding/json"
 	"github.com/pkg/errors"
 	"nanomsg.org/go/mangos/v2"
 )
 
+//RequestProcessor processes the messages from request topics and forwards a request message
 type RequestProcessor struct {
 	mangos.Socket
 	active bool
@@ -60,12 +62,13 @@ func (kc *RequestProcessor) Activate(v bool) {
 	kc.active = v
 }
 
-// Passenger represents a ride request message coming from kafka
+// RequestRide represents a ride request message coming from kafka
 type RequestRide struct {
-	Passenger 	RequestPassenger `json:"passenger"`
-	RequestID   int `json:"id_request"`
+	Passenger RequestPassenger `json:"passenger"`
+	RequestID int              `json:"id_request"`
 }
 
+//RequestPassenger Struct
 type RequestPassenger struct {
-	ID int`json:"id_passenger"`
+	ID int `json:"id_passenger"`
 }

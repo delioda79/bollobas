@@ -9,7 +9,7 @@ import (
 	"github.com/beatlabs/patron/log"
 
 	"github.com/dukex/mixpanel"
-	_ "nanomsg.org/go/mangos/v2/transport/inproc"
+	_ "nanomsg.org/go/mangos/v2/transport/all" //import
 )
 
 // Processor subscribes to messages sent by any registered publisher in the internal registry
@@ -17,7 +17,7 @@ type Processor struct {
 	mixpanel.Mixpanel
 }
 
-// Run starts the go routine which will receive the messages
+// Process run starts the go routine which will receive the messages
 func (p *Processor) Process(msg []byte) error {
 
 	idt := &bollobas.Identity{}
@@ -61,6 +61,7 @@ func (p *Processor) updateIdentity(idt *bollobas.Identity) error {
 	return nil
 }
 
+//Identity represents a mixpanel identity
 type Identity struct {
 	FirstName        string    `json:"$first_name,omitempty"`
 	LastName         string    `json:"$last_name,omitempty"`

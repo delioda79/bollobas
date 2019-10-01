@@ -1,16 +1,9 @@
 package bollobas
 
 import (
-	"nanomsg.org/go/mangos/v2"
 	"time"
-)
 
-const (
-	PASSENGER_REQUESTS = "request"
-	PASSENGER_CANCEL = "cancel"
-	PSSENGER_ACCEPTANCE_NOTIFIED = "notified"
-
-	RIDE_CONFIRMED = "passenger_ack_notified"
+	"nanomsg.org/go/mangos/v2"
 )
 
 // Identity represents a basic Analytics identity, passengers and drivers
@@ -25,26 +18,29 @@ type Identity struct {
 	Phone            string
 }
 
-
+// RideRequest represents an internal message notifying a ride request
 type RideRequest struct {
 	UserID   string
 	RquestID int
 }
 
+// RideRequestCancellation represents an internal message notifying of a ride request cancellation
 type RideRequestCancellation RideRequest
 
+// RideRequestConfirmed represents an internal message notifying of a ride request confirmed by a driver
 type RideRequestConfirmed struct {
 	UserID   string
 	RquestID int
-	Date time.Time
+	Date     time.Time
 }
 
-
-type AnalyticsHandler interface{
+// AnalyticsHandler is an interface for analytics handlers. A handler will register to internal producers and receive messages
+type AnalyticsHandler interface {
 	mangos.Socket
 	Run()
 }
 
+// ConfigurationManager is a gneral interface which can be used in order to modify a configuration and check for validity
 type ConfigurationManager interface {
 	Configure(map[string]interface{})
 	Check([]byte) bool

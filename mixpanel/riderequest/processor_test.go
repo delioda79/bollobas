@@ -29,9 +29,7 @@ func TestRideRequestProcessWrongFormat(t *testing.T) {
 
 	p := Processor{Mixpanel: cl}
 
-
 	err := p.Process([]byte("dhjzjvkhvcxkjhvckjhvcxkjx"))
-
 
 	assert.Equal(t, errors.New("error unmarshaling the data").Error(), err.Error()[0:27])
 }
@@ -80,6 +78,5 @@ func TestImpossibleRideRequestUpdate(t *testing.T) {
 	assert.Equal(t, errors.New("error while updating the RideRequest: impossible to update").Error(), err.Error())
 
 	assert.Equal(t, 1, cl.UpdateCallCount())
-
 
 }

@@ -5,11 +5,12 @@ import (
 	"github.com/beatlabs/patron/async"
 	"github.com/beatlabs/patron/async/kafka"
 	"github.com/beatlabs/patron/encoding/json"
+	"github.com/beatlabs/patron/errors"
 	"nanomsg.org/go/mangos/v2"
 	"nanomsg.org/go/mangos/v2/protocol/pub"
-	"github.com/beatlabs/patron/errors"
 )
 
+// Processor is an interface for structs able to process kafka messages
 type Processor interface {
 	mangos.Socket
 	Process(msg async.Message) error
@@ -17,7 +18,7 @@ type Processor interface {
 }
 
 // NewPublisher returns a pub socket listening to url
-func NewPublisher(urls []string) (mangos.Socket, error ){
+func NewPublisher(urls []string) (mangos.Socket, error) {
 	var sock mangos.Socket
 	var err error
 	if sock, err = pub.NewSocket(); err != nil {
@@ -32,6 +33,7 @@ func NewPublisher(urls []string) (mangos.Socket, error ){
 	return sock, nil
 }
 
+// KafkaComponent is a patron component for receiving and processing kafka messages
 type KafkaComponent struct {
 	patron.Component
 }

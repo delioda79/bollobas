@@ -7,6 +7,7 @@ import (
 	mixpanela "github.com/dukex/mixpanel"
 )
 
+// FakeMixpanel ...
 type FakeMixpanel struct {
 	AliasStub        func(string, string) error
 	aliasMutex       sync.RWMutex
@@ -49,6 +50,7 @@ type FakeMixpanel struct {
 	invocationsMutex sync.RWMutex
 }
 
+// Alias ...
 func (fake *FakeMixpanel) Alias(arg1 string, arg2 string) error {
 	fake.aliasMutex.Lock()
 	ret, specificReturn := fake.aliasReturnsOnCall[len(fake.aliasArgsForCall)]
@@ -68,18 +70,21 @@ func (fake *FakeMixpanel) Alias(arg1 string, arg2 string) error {
 	return fakeReturns.result1
 }
 
+// AliasCallCount ...
 func (fake *FakeMixpanel) AliasCallCount() int {
 	fake.aliasMutex.RLock()
 	defer fake.aliasMutex.RUnlock()
 	return len(fake.aliasArgsForCall)
 }
 
+// AliasCalls ...
 func (fake *FakeMixpanel) AliasCalls(stub func(string, string) error) {
 	fake.aliasMutex.Lock()
 	defer fake.aliasMutex.Unlock()
 	fake.AliasStub = stub
 }
 
+// AliasArgsForCall ...
 func (fake *FakeMixpanel) AliasArgsForCall(i int) (string, string) {
 	fake.aliasMutex.RLock()
 	defer fake.aliasMutex.RUnlock()
@@ -87,6 +92,7 @@ func (fake *FakeMixpanel) AliasArgsForCall(i int) (string, string) {
 	return argsForCall.arg1, argsForCall.arg2
 }
 
+// AliasReturns ...
 func (fake *FakeMixpanel) AliasReturns(result1 error) {
 	fake.aliasMutex.Lock()
 	defer fake.aliasMutex.Unlock()
@@ -96,6 +102,7 @@ func (fake *FakeMixpanel) AliasReturns(result1 error) {
 	}{result1}
 }
 
+// AliasReturnsOnCall ...
 func (fake *FakeMixpanel) AliasReturnsOnCall(i int, result1 error) {
 	fake.aliasMutex.Lock()
 	defer fake.aliasMutex.Unlock()
@@ -110,6 +117,7 @@ func (fake *FakeMixpanel) AliasReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// Track ...
 func (fake *FakeMixpanel) Track(arg1 string, arg2 string, arg3 *mixpanela.Event) error {
 	fake.trackMutex.Lock()
 	ret, specificReturn := fake.trackReturnsOnCall[len(fake.trackArgsForCall)]
@@ -130,18 +138,21 @@ func (fake *FakeMixpanel) Track(arg1 string, arg2 string, arg3 *mixpanela.Event)
 	return fakeReturns.result1
 }
 
+// TrackCallCount ...
 func (fake *FakeMixpanel) TrackCallCount() int {
 	fake.trackMutex.RLock()
 	defer fake.trackMutex.RUnlock()
 	return len(fake.trackArgsForCall)
 }
 
+// TrackCalls ...
 func (fake *FakeMixpanel) TrackCalls(stub func(string, string, *mixpanela.Event) error) {
 	fake.trackMutex.Lock()
 	defer fake.trackMutex.Unlock()
 	fake.TrackStub = stub
 }
 
+// TrackArgsForCall ...
 func (fake *FakeMixpanel) TrackArgsForCall(i int) (string, string, *mixpanela.Event) {
 	fake.trackMutex.RLock()
 	defer fake.trackMutex.RUnlock()
@@ -149,6 +160,7 @@ func (fake *FakeMixpanel) TrackArgsForCall(i int) (string, string, *mixpanela.Ev
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
+// TrackReturns ...
 func (fake *FakeMixpanel) TrackReturns(result1 error) {
 	fake.trackMutex.Lock()
 	defer fake.trackMutex.Unlock()
@@ -158,6 +170,7 @@ func (fake *FakeMixpanel) TrackReturns(result1 error) {
 	}{result1}
 }
 
+// TrackReturnsOnCall ...
 func (fake *FakeMixpanel) TrackReturnsOnCall(i int, result1 error) {
 	fake.trackMutex.Lock()
 	defer fake.trackMutex.Unlock()
@@ -172,6 +185,7 @@ func (fake *FakeMixpanel) TrackReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// Update ...
 func (fake *FakeMixpanel) Update(arg1 string, arg2 *mixpanela.Update) error {
 	fake.updateMutex.Lock()
 	ret, specificReturn := fake.updateReturnsOnCall[len(fake.updateArgsForCall)]
@@ -191,18 +205,21 @@ func (fake *FakeMixpanel) Update(arg1 string, arg2 *mixpanela.Update) error {
 	return fakeReturns.result1
 }
 
+// UpdateCallCount ...
 func (fake *FakeMixpanel) UpdateCallCount() int {
 	fake.updateMutex.RLock()
 	defer fake.updateMutex.RUnlock()
 	return len(fake.updateArgsForCall)
 }
 
+// UpdateCalls ...
 func (fake *FakeMixpanel) UpdateCalls(stub func(string, *mixpanela.Update) error) {
 	fake.updateMutex.Lock()
 	defer fake.updateMutex.Unlock()
 	fake.UpdateStub = stub
 }
 
+// UpdateArgsForCall ...
 func (fake *FakeMixpanel) UpdateArgsForCall(i int) (string, *mixpanela.Update) {
 	fake.updateMutex.RLock()
 	defer fake.updateMutex.RUnlock()
@@ -210,6 +227,7 @@ func (fake *FakeMixpanel) UpdateArgsForCall(i int) (string, *mixpanela.Update) {
 	return argsForCall.arg1, argsForCall.arg2
 }
 
+// UpdateReturns ...
 func (fake *FakeMixpanel) UpdateReturns(result1 error) {
 	fake.updateMutex.Lock()
 	defer fake.updateMutex.Unlock()
@@ -219,6 +237,7 @@ func (fake *FakeMixpanel) UpdateReturns(result1 error) {
 	}{result1}
 }
 
+// UpdateReturnsOnCall ...
 func (fake *FakeMixpanel) UpdateReturnsOnCall(i int, result1 error) {
 	fake.updateMutex.Lock()
 	defer fake.updateMutex.Unlock()
@@ -233,6 +252,7 @@ func (fake *FakeMixpanel) UpdateReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// Invocations ...
 func (fake *FakeMixpanel) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()

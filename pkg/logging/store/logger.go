@@ -1,28 +1,35 @@
 package store
 
 import (
-	"github.com/beatlabs/patron/log"
 	"sync"
+
+	"github.com/beatlabs/patron/log"
 )
 
-type StoreLogger struct {
+// Logger is a testing helper implementing the logger interface provided by patron. This struct is used
+// in order to capture the logs inside test functions and make assertions on that
+type Logger struct {
 	*sync.Mutex
 	errs [][]interface{}
 }
 
-var logger *StoreLogger
+var logger *Logger
 
-func NewLogger() *StoreLogger {
-	lg := &StoreLogger{
-		errs: [][]interface{}{},
+// NewLogger returns a new logger
+func NewLogger() *Logger {
+	lg := &Logger{
+		errs:  [][]interface{}{},
 		Mutex: &sync.Mutex{},
 	}
 
+	lg.Lock()
 	logger = lg
+	lg.Unlock()
 	return lg
 }
 
-func GetLogger() *StoreLogger {
+// GetLogger returns the current logger
+func GetLogger() *Logger {
 	if logger != nil {
 		return logger
 	}
@@ -30,87 +37,105 @@ func GetLogger() *StoreLogger {
 	return NewLogger()
 }
 
+// FactoryLogger is a function required by patron in order to set the logger
 func FactoryLogger(fls map[string]interface{}) log.Logger {
 	logger := GetLogger()
 	return logger
 }
 
-func (nl *StoreLogger) Sub(map[string]interface{}) log.Logger {
+// Sub is a method requred by patron to create a sub logger
+func (nl *Logger) Sub(map[string]interface{}) log.Logger {
 	return nl
 }
 
-func (nl *StoreLogger) Panic(args ...interface{}) {
+// Panic ...
+func (nl *Logger) Panic(args ...interface{}) {
 	nl.Lock()
 	nl.errs = append(nl.errs, append([]interface{}{"panic"}, args...))
 	nl.Unlock()
 }
 
-func (nl *StoreLogger) Panicf(msg string, args ...interface{}) {
+// Panicf ...
+func (nl *Logger) Panicf(msg string, args ...interface{}) {
 	nl.Lock()
 	nl.errs = append(nl.errs, append([]interface{}{"panic", msg}, args...))
 	nl.Unlock()
 }
 
-func (nl *StoreLogger) Fatal(args ...interface{}) {
+// Fatal ...
+func (nl *Logger) Fatal(args ...interface{}) {
 	nl.Lock()
 	nl.errs = append(nl.errs, append([]interface{}{"fatal"}, args...))
 	nl.Unlock()
 }
 
-func (nl *StoreLogger) Fatalf(msg string, args ...interface{}) {
+// Fatalf ...
+func (nl *Logger) Fatalf(msg string, args ...interface{}) {
 	nl.Lock()
 	nl.errs = append(nl.errs, append([]interface{}{"fatal", msg}, args...))
 	nl.Unlock()
 }
 
-func (nl *StoreLogger) Error(args ...interface{}) {
+// Error ...
+func (nl *Logger) Error(args ...interface{}) {
 	nl.Lock()
 	nl.errs = append(nl.errs, append([]interface{}{"error"}, args...))
 	nl.Unlock()
 }
 
-func (nl *StoreLogger) Errorf(msg string, args ...interface{}) {
+// Errorf ...
+func (nl *Logger) Errorf(msg string, args ...interface{}) {
 	nl.Lock()
 	nl.errs = append(nl.errs, append([]interface{}{"error", msg}, args...))
 	nl.Unlock()
 }
 
-func (nl *StoreLogger) Warn(args ...interface{}) {
+// Warn ...
+func (nl *Logger) Warn(args ...interface{}) {
 	nl.Lock()
 	nl.errs = append(nl.errs, append([]interface{}{"warn"}, args...))
 	nl.Unlock()
 }
 
-func (nl *StoreLogger) Warnf(msg string, args ...interface{}) {
+// Warnf ...
+func (nl *Logger) Warnf(msg string, args ...interface{}) {
 	nl.Lock()
 	nl.errs = append(nl.errs, append([]interface{}{"warn", msg}, args...))
 	nl.Unlock()
 }
 
-func (nl *StoreLogger) Info(args ...interface{}) {
+// Info ...
+func (nl *Logger) Info(args ...interface{}) {
 	nl.Lock()
 	nl.errs = append(nl.errs, append([]interface{}{"info"}, args...))
 	nl.Unlock()
 }
 
-func (nl *StoreLogger) Infof(msg string, args ...interface{}) {
+// Infof ...
+func (nl *Logger) Infof(msg string, args ...interface{}) {
 	nl.Lock()
 	nl.errs = append(nl.errs, append([]interface{}{"info", msg}, args...))
 	nl.Unlock()
 }
 
-func (nl *StoreLogger) Debug(args ...interface{}) {
+// Debug ...
+func (nl *Logger) Debug(args ...interface{}) {
 	nl.Lock()
 	nl.errs = append(nl.errs, append([]interface{}{"debug"}, args...))
 	nl.Unlock()
 }
 
-func (nl *StoreLogger) Debugf(msg string, args ...interface{}) {
+// Debugf ...
+func (nl *Logger) Debugf(msg string, args ...interface{}) {
 	nl.Lock()
 	nl.errs = append(nl.errs, append([]interface{}{"debug", msg}, args...))
 	nl.Unlock()
 }
 
-func (nl *StoreLogger) GetErrors() [][]interface{} {
-	return nl.errs
+// GetErrors ...
+func (nl *Logger) GetErrors() [][]interface{} {
+	nl.Lock()
+	res := nl.errs
+	nl.Unlock()
+	return res
 }

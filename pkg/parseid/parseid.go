@@ -7,10 +7,7 @@ import (
 	"regexp"
 )
 
-func main() {
-	//fmt.Println("dfdf")
-}
-
+// EncryptString encrypts an id with format: encryptedID-location-ut
 func EncryptString(id int, ut string) string {
 	location := os.Getenv("BOLLOBAS_LOCATION")
 	if location == "" {
@@ -21,15 +18,10 @@ func EncryptString(id int, ut string) string {
 	return fmt.Sprintf("%s-%s-%s", ciphrest.EncryptString(strID), location, ut)
 }
 
+// DecryptString decrypts id of a formated string of: encryptedID-location-ut
 func DecryptString(id string) string {
-
-	//Here be temp cipher code..
+	//Extracts encoded id (ignores location-pa/dr suffix)
 	encodedID := regexp.MustCompile(`(?m).[^-]*.[^-]*$`).ReplaceAllString(id, "")
 
-	//fmt.Printf("%s: %s --> %s\n", id, ciphrest.DecryptString(encodedID), ciphrest.EncryptString(ciphrest.DecryptString(encodedID)))
-
 	return ciphrest.DecryptString(encodedID)
-
-	//fmt.Println("decrypted", ciphrest.DecryptString(encodedID))
-	//fmt.Println("re-encrypt", ciphrest.EncryptString(ciphrest.DecryptString(encodedID)))
 }

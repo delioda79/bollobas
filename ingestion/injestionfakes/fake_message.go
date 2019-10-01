@@ -6,6 +6,7 @@ import (
 	"sync"
 )
 
+// FakeMessage ...
 type FakeMessage struct {
 	AckStub        func() error
 	ackMutex       sync.RWMutex
@@ -52,6 +53,7 @@ type FakeMessage struct {
 	invocationsMutex sync.RWMutex
 }
 
+// Ack ...
 func (fake *FakeMessage) Ack() error {
 	fake.ackMutex.Lock()
 	ret, specificReturn := fake.ackReturnsOnCall[len(fake.ackArgsForCall)]
@@ -69,18 +71,21 @@ func (fake *FakeMessage) Ack() error {
 	return fakeReturns.result1
 }
 
+// AckCallCount ...
 func (fake *FakeMessage) AckCallCount() int {
 	fake.ackMutex.RLock()
 	defer fake.ackMutex.RUnlock()
 	return len(fake.ackArgsForCall)
 }
 
+// AckCalls ...
 func (fake *FakeMessage) AckCalls(stub func() error) {
 	fake.ackMutex.Lock()
 	defer fake.ackMutex.Unlock()
 	fake.AckStub = stub
 }
 
+// AckReturns ...
 func (fake *FakeMessage) AckReturns(result1 error) {
 	fake.ackMutex.Lock()
 	defer fake.ackMutex.Unlock()
@@ -90,6 +95,7 @@ func (fake *FakeMessage) AckReturns(result1 error) {
 	}{result1}
 }
 
+// AckReturnsOnCall ...
 func (fake *FakeMessage) AckReturnsOnCall(i int, result1 error) {
 	fake.ackMutex.Lock()
 	defer fake.ackMutex.Unlock()
@@ -104,6 +110,7 @@ func (fake *FakeMessage) AckReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// Context ...
 func (fake *FakeMessage) Context() context.Context {
 	fake.contextMutex.Lock()
 	ret, specificReturn := fake.contextReturnsOnCall[len(fake.contextArgsForCall)]
@@ -121,18 +128,21 @@ func (fake *FakeMessage) Context() context.Context {
 	return fakeReturns.result1
 }
 
+// ContextCallCount ...
 func (fake *FakeMessage) ContextCallCount() int {
 	fake.contextMutex.RLock()
 	defer fake.contextMutex.RUnlock()
 	return len(fake.contextArgsForCall)
 }
 
+// ContextCalls ...
 func (fake *FakeMessage) ContextCalls(stub func() context.Context) {
 	fake.contextMutex.Lock()
 	defer fake.contextMutex.Unlock()
 	fake.ContextStub = stub
 }
 
+// ContextReturns ...
 func (fake *FakeMessage) ContextReturns(result1 context.Context) {
 	fake.contextMutex.Lock()
 	defer fake.contextMutex.Unlock()
@@ -142,6 +152,7 @@ func (fake *FakeMessage) ContextReturns(result1 context.Context) {
 	}{result1}
 }
 
+// ContextReturnsOnCall ...
 func (fake *FakeMessage) ContextReturnsOnCall(i int, result1 context.Context) {
 	fake.contextMutex.Lock()
 	defer fake.contextMutex.Unlock()
@@ -156,6 +167,7 @@ func (fake *FakeMessage) ContextReturnsOnCall(i int, result1 context.Context) {
 	}{result1}
 }
 
+// Decode ...
 func (fake *FakeMessage) Decode(arg1 interface{}) error {
 	fake.decodeMutex.Lock()
 	ret, specificReturn := fake.decodeReturnsOnCall[len(fake.decodeArgsForCall)]
@@ -174,18 +186,21 @@ func (fake *FakeMessage) Decode(arg1 interface{}) error {
 	return fakeReturns.result1
 }
 
+// DecodeCallCount ...
 func (fake *FakeMessage) DecodeCallCount() int {
 	fake.decodeMutex.RLock()
 	defer fake.decodeMutex.RUnlock()
 	return len(fake.decodeArgsForCall)
 }
 
+// DecodeCalls ...
 func (fake *FakeMessage) DecodeCalls(stub func(interface{}) error) {
 	fake.decodeMutex.Lock()
 	defer fake.decodeMutex.Unlock()
 	fake.DecodeStub = stub
 }
 
+// DecodeArgsForCall ...
 func (fake *FakeMessage) DecodeArgsForCall(i int) interface{} {
 	fake.decodeMutex.RLock()
 	defer fake.decodeMutex.RUnlock()
@@ -193,6 +208,7 @@ func (fake *FakeMessage) DecodeArgsForCall(i int) interface{} {
 	return argsForCall.arg1
 }
 
+// DecodeReturns ...
 func (fake *FakeMessage) DecodeReturns(result1 error) {
 	fake.decodeMutex.Lock()
 	defer fake.decodeMutex.Unlock()
@@ -202,6 +218,7 @@ func (fake *FakeMessage) DecodeReturns(result1 error) {
 	}{result1}
 }
 
+// DecodeReturnsOnCall ...
 func (fake *FakeMessage) DecodeReturnsOnCall(i int, result1 error) {
 	fake.decodeMutex.Lock()
 	defer fake.decodeMutex.Unlock()
@@ -216,6 +233,7 @@ func (fake *FakeMessage) DecodeReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// Nack ...
 func (fake *FakeMessage) Nack() error {
 	fake.nackMutex.Lock()
 	ret, specificReturn := fake.nackReturnsOnCall[len(fake.nackArgsForCall)]
@@ -233,18 +251,21 @@ func (fake *FakeMessage) Nack() error {
 	return fakeReturns.result1
 }
 
+// NackCallCount ...
 func (fake *FakeMessage) NackCallCount() int {
 	fake.nackMutex.RLock()
 	defer fake.nackMutex.RUnlock()
 	return len(fake.nackArgsForCall)
 }
 
+// NackCalls ...
 func (fake *FakeMessage) NackCalls(stub func() error) {
 	fake.nackMutex.Lock()
 	defer fake.nackMutex.Unlock()
 	fake.NackStub = stub
 }
 
+// NackReturns ...
 func (fake *FakeMessage) NackReturns(result1 error) {
 	fake.nackMutex.Lock()
 	defer fake.nackMutex.Unlock()
@@ -254,6 +275,7 @@ func (fake *FakeMessage) NackReturns(result1 error) {
 	}{result1}
 }
 
+// NackReturnsOnCall ...
 func (fake *FakeMessage) NackReturnsOnCall(i int, result1 error) {
 	fake.nackMutex.Lock()
 	defer fake.nackMutex.Unlock()
@@ -268,6 +290,7 @@ func (fake *FakeMessage) NackReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// Invocations ...
 func (fake *FakeMessage) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -297,4 +320,3 @@ func (fake *FakeMessage) recordInvocation(key string, args []interface{}) {
 	}
 	fake.invocations[key] = append(fake.invocations[key], args)
 }
-

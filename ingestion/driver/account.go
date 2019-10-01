@@ -4,14 +4,16 @@ import (
 	"bollobas"
 	"bollobas/ingestion"
 	"fmt"
+	"time"
+
 	"github.com/beatlabs/patron/async"
 	"github.com/beatlabs/patron/encoding/json"
 	"github.com/beatlabs/patron/errors"
 	"nanomsg.org/go/mangos/v2"
-	_ "nanomsg.org/go/mangos/v2/transport/all"
-	"time"
+	_ "nanomsg.org/go/mangos/v2/transport/all" //import
 )
 
+// AccountProcessor processes the messages from driver_analytics topics and forwards an account message
 type AccountProcessor struct {
 	mangos.Socket
 	active bool
@@ -53,7 +55,7 @@ func (kc *AccountProcessor) publish(driver Driver) error {
 	return kc.Send(bts)
 }
 
-// NewAccountProcessor instantiates a new component
+// NewAccountProcessor instantiates a new processor
 func NewAccountProcessor(url string) (*AccountProcessor, error) {
 
 	sock, err := ingestion.NewPublisher([]string{url})

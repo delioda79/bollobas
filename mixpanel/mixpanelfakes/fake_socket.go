@@ -7,6 +7,7 @@ import (
 	"nanomsg.org/go/mangos/v2"
 )
 
+// FakeSocket ...
 type FakeSocket struct {
 	CloseStub        func() error
 	closeMutex       sync.RWMutex
@@ -200,6 +201,7 @@ type FakeSocket struct {
 	invocationsMutex sync.RWMutex
 }
 
+// Close ...
 func (fake *FakeSocket) Close() error {
 	fake.closeMutex.Lock()
 	ret, specificReturn := fake.closeReturnsOnCall[len(fake.closeArgsForCall)]
@@ -217,18 +219,21 @@ func (fake *FakeSocket) Close() error {
 	return fakeReturns.result1
 }
 
+// CloseCallCount ...
 func (fake *FakeSocket) CloseCallCount() int {
 	fake.closeMutex.RLock()
 	defer fake.closeMutex.RUnlock()
 	return len(fake.closeArgsForCall)
 }
 
+// CloseCalls ...
 func (fake *FakeSocket) CloseCalls(stub func() error) {
 	fake.closeMutex.Lock()
 	defer fake.closeMutex.Unlock()
 	fake.CloseStub = stub
 }
 
+// CloseReturns ...
 func (fake *FakeSocket) CloseReturns(result1 error) {
 	fake.closeMutex.Lock()
 	defer fake.closeMutex.Unlock()
@@ -238,6 +243,7 @@ func (fake *FakeSocket) CloseReturns(result1 error) {
 	}{result1}
 }
 
+// CloseReturnsOnCall ...
 func (fake *FakeSocket) CloseReturnsOnCall(i int, result1 error) {
 	fake.closeMutex.Lock()
 	defer fake.closeMutex.Unlock()
@@ -252,6 +258,7 @@ func (fake *FakeSocket) CloseReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// Dial ...
 func (fake *FakeSocket) Dial(arg1 string) error {
 	fake.dialMutex.Lock()
 	ret, specificReturn := fake.dialReturnsOnCall[len(fake.dialArgsForCall)]
@@ -270,18 +277,21 @@ func (fake *FakeSocket) Dial(arg1 string) error {
 	return fakeReturns.result1
 }
 
+// DialCallCount ...
 func (fake *FakeSocket) DialCallCount() int {
 	fake.dialMutex.RLock()
 	defer fake.dialMutex.RUnlock()
 	return len(fake.dialArgsForCall)
 }
 
+// DialCalls ...
 func (fake *FakeSocket) DialCalls(stub func(string) error) {
 	fake.dialMutex.Lock()
 	defer fake.dialMutex.Unlock()
 	fake.DialStub = stub
 }
 
+// DialArgsForCall ...
 func (fake *FakeSocket) DialArgsForCall(i int) string {
 	fake.dialMutex.RLock()
 	defer fake.dialMutex.RUnlock()
@@ -289,6 +299,7 @@ func (fake *FakeSocket) DialArgsForCall(i int) string {
 	return argsForCall.arg1
 }
 
+// DialReturns ...
 func (fake *FakeSocket) DialReturns(result1 error) {
 	fake.dialMutex.Lock()
 	defer fake.dialMutex.Unlock()
@@ -298,6 +309,7 @@ func (fake *FakeSocket) DialReturns(result1 error) {
 	}{result1}
 }
 
+// DialReturnsOnCall ...
 func (fake *FakeSocket) DialReturnsOnCall(i int, result1 error) {
 	fake.dialMutex.Lock()
 	defer fake.dialMutex.Unlock()
@@ -312,6 +324,7 @@ func (fake *FakeSocket) DialReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// DialOptions ...
 func (fake *FakeSocket) DialOptions(arg1 string, arg2 map[string]interface{}) error {
 	fake.dialOptionsMutex.Lock()
 	ret, specificReturn := fake.dialOptionsReturnsOnCall[len(fake.dialOptionsArgsForCall)]
@@ -331,18 +344,21 @@ func (fake *FakeSocket) DialOptions(arg1 string, arg2 map[string]interface{}) er
 	return fakeReturns.result1
 }
 
+// DialOptionsCallCount ...
 func (fake *FakeSocket) DialOptionsCallCount() int {
 	fake.dialOptionsMutex.RLock()
 	defer fake.dialOptionsMutex.RUnlock()
 	return len(fake.dialOptionsArgsForCall)
 }
 
+// DialOptionsCalls ...
 func (fake *FakeSocket) DialOptionsCalls(stub func(string, map[string]interface{}) error) {
 	fake.dialOptionsMutex.Lock()
 	defer fake.dialOptionsMutex.Unlock()
 	fake.DialOptionsStub = stub
 }
 
+// DialOptionsArgsForCall ...
 func (fake *FakeSocket) DialOptionsArgsForCall(i int) (string, map[string]interface{}) {
 	fake.dialOptionsMutex.RLock()
 	defer fake.dialOptionsMutex.RUnlock()
@@ -350,6 +366,7 @@ func (fake *FakeSocket) DialOptionsArgsForCall(i int) (string, map[string]interf
 	return argsForCall.arg1, argsForCall.arg2
 }
 
+// DialOptionsReturns ...
 func (fake *FakeSocket) DialOptionsReturns(result1 error) {
 	fake.dialOptionsMutex.Lock()
 	defer fake.dialOptionsMutex.Unlock()
@@ -359,6 +376,7 @@ func (fake *FakeSocket) DialOptionsReturns(result1 error) {
 	}{result1}
 }
 
+// DialOptionsReturnsOnCall ...
 func (fake *FakeSocket) DialOptionsReturnsOnCall(i int, result1 error) {
 	fake.dialOptionsMutex.Lock()
 	defer fake.dialOptionsMutex.Unlock()
@@ -373,6 +391,7 @@ func (fake *FakeSocket) DialOptionsReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// GetOption ...
 func (fake *FakeSocket) GetOption(arg1 string) (interface{}, error) {
 	fake.getOptionMutex.Lock()
 	ret, specificReturn := fake.getOptionReturnsOnCall[len(fake.getOptionArgsForCall)]
@@ -391,18 +410,21 @@ func (fake *FakeSocket) GetOption(arg1 string) (interface{}, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
+// GetOptionCallCount ...
 func (fake *FakeSocket) GetOptionCallCount() int {
 	fake.getOptionMutex.RLock()
 	defer fake.getOptionMutex.RUnlock()
 	return len(fake.getOptionArgsForCall)
 }
 
+// GetOptionCalls ...
 func (fake *FakeSocket) GetOptionCalls(stub func(string) (interface{}, error)) {
 	fake.getOptionMutex.Lock()
 	defer fake.getOptionMutex.Unlock()
 	fake.GetOptionStub = stub
 }
 
+// GetOptionArgsForCall ...
 func (fake *FakeSocket) GetOptionArgsForCall(i int) string {
 	fake.getOptionMutex.RLock()
 	defer fake.getOptionMutex.RUnlock()
@@ -410,6 +432,7 @@ func (fake *FakeSocket) GetOptionArgsForCall(i int) string {
 	return argsForCall.arg1
 }
 
+// GetOptionReturns ...
 func (fake *FakeSocket) GetOptionReturns(result1 interface{}, result2 error) {
 	fake.getOptionMutex.Lock()
 	defer fake.getOptionMutex.Unlock()
@@ -420,6 +443,7 @@ func (fake *FakeSocket) GetOptionReturns(result1 interface{}, result2 error) {
 	}{result1, result2}
 }
 
+// GetOptionReturnsOnCall ...
 func (fake *FakeSocket) GetOptionReturnsOnCall(i int, result1 interface{}, result2 error) {
 	fake.getOptionMutex.Lock()
 	defer fake.getOptionMutex.Unlock()
@@ -436,6 +460,7 @@ func (fake *FakeSocket) GetOptionReturnsOnCall(i int, result1 interface{}, resul
 	}{result1, result2}
 }
 
+// Info ...
 func (fake *FakeSocket) Info() mangos.ProtocolInfo {
 	fake.infoMutex.Lock()
 	ret, specificReturn := fake.infoReturnsOnCall[len(fake.infoArgsForCall)]
@@ -453,18 +478,21 @@ func (fake *FakeSocket) Info() mangos.ProtocolInfo {
 	return fakeReturns.result1
 }
 
+// InfoCallCount ...
 func (fake *FakeSocket) InfoCallCount() int {
 	fake.infoMutex.RLock()
 	defer fake.infoMutex.RUnlock()
 	return len(fake.infoArgsForCall)
 }
 
+// InfoCalls ...
 func (fake *FakeSocket) InfoCalls(stub func() mangos.ProtocolInfo) {
 	fake.infoMutex.Lock()
 	defer fake.infoMutex.Unlock()
 	fake.InfoStub = stub
 }
 
+// InfoReturns ...
 func (fake *FakeSocket) InfoReturns(result1 mangos.ProtocolInfo) {
 	fake.infoMutex.Lock()
 	defer fake.infoMutex.Unlock()
@@ -474,6 +502,7 @@ func (fake *FakeSocket) InfoReturns(result1 mangos.ProtocolInfo) {
 	}{result1}
 }
 
+// InfoReturnsOnCall ...
 func (fake *FakeSocket) InfoReturnsOnCall(i int, result1 mangos.ProtocolInfo) {
 	fake.infoMutex.Lock()
 	defer fake.infoMutex.Unlock()
@@ -488,6 +517,7 @@ func (fake *FakeSocket) InfoReturnsOnCall(i int, result1 mangos.ProtocolInfo) {
 	}{result1}
 }
 
+// Listen ...
 func (fake *FakeSocket) Listen(arg1 string) error {
 	fake.listenMutex.Lock()
 	ret, specificReturn := fake.listenReturnsOnCall[len(fake.listenArgsForCall)]
@@ -506,18 +536,21 @@ func (fake *FakeSocket) Listen(arg1 string) error {
 	return fakeReturns.result1
 }
 
+// ListenCallCount ...
 func (fake *FakeSocket) ListenCallCount() int {
 	fake.listenMutex.RLock()
 	defer fake.listenMutex.RUnlock()
 	return len(fake.listenArgsForCall)
 }
 
+// ListenCalls ...
 func (fake *FakeSocket) ListenCalls(stub func(string) error) {
 	fake.listenMutex.Lock()
 	defer fake.listenMutex.Unlock()
 	fake.ListenStub = stub
 }
 
+// ListenArgsForCall ...
 func (fake *FakeSocket) ListenArgsForCall(i int) string {
 	fake.listenMutex.RLock()
 	defer fake.listenMutex.RUnlock()
@@ -525,6 +558,7 @@ func (fake *FakeSocket) ListenArgsForCall(i int) string {
 	return argsForCall.arg1
 }
 
+// ListenReturns ...
 func (fake *FakeSocket) ListenReturns(result1 error) {
 	fake.listenMutex.Lock()
 	defer fake.listenMutex.Unlock()
@@ -534,6 +568,7 @@ func (fake *FakeSocket) ListenReturns(result1 error) {
 	}{result1}
 }
 
+// ListenReturnsOnCall ...
 func (fake *FakeSocket) ListenReturnsOnCall(i int, result1 error) {
 	fake.listenMutex.Lock()
 	defer fake.listenMutex.Unlock()
@@ -548,6 +583,7 @@ func (fake *FakeSocket) ListenReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// ListenOptions ...
 func (fake *FakeSocket) ListenOptions(arg1 string, arg2 map[string]interface{}) error {
 	fake.listenOptionsMutex.Lock()
 	ret, specificReturn := fake.listenOptionsReturnsOnCall[len(fake.listenOptionsArgsForCall)]
@@ -567,18 +603,21 @@ func (fake *FakeSocket) ListenOptions(arg1 string, arg2 map[string]interface{}) 
 	return fakeReturns.result1
 }
 
+// ListenOptionsCallCount ...
 func (fake *FakeSocket) ListenOptionsCallCount() int {
 	fake.listenOptionsMutex.RLock()
 	defer fake.listenOptionsMutex.RUnlock()
 	return len(fake.listenOptionsArgsForCall)
 }
 
+// ListenOptionsCalls ...
 func (fake *FakeSocket) ListenOptionsCalls(stub func(string, map[string]interface{}) error) {
 	fake.listenOptionsMutex.Lock()
 	defer fake.listenOptionsMutex.Unlock()
 	fake.ListenOptionsStub = stub
 }
 
+// ListenOptionsArgsForCall ...
 func (fake *FakeSocket) ListenOptionsArgsForCall(i int) (string, map[string]interface{}) {
 	fake.listenOptionsMutex.RLock()
 	defer fake.listenOptionsMutex.RUnlock()
@@ -586,6 +625,7 @@ func (fake *FakeSocket) ListenOptionsArgsForCall(i int) (string, map[string]inte
 	return argsForCall.arg1, argsForCall.arg2
 }
 
+// ListenOptionsReturns ...
 func (fake *FakeSocket) ListenOptionsReturns(result1 error) {
 	fake.listenOptionsMutex.Lock()
 	defer fake.listenOptionsMutex.Unlock()
@@ -595,6 +635,7 @@ func (fake *FakeSocket) ListenOptionsReturns(result1 error) {
 	}{result1}
 }
 
+// ListenOptionsReturnsOnCall ...
 func (fake *FakeSocket) ListenOptionsReturnsOnCall(i int, result1 error) {
 	fake.listenOptionsMutex.Lock()
 	defer fake.listenOptionsMutex.Unlock()
@@ -609,6 +650,7 @@ func (fake *FakeSocket) ListenOptionsReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// NewDialer ...
 func (fake *FakeSocket) NewDialer(arg1 string, arg2 map[string]interface{}) (mangos.Dialer, error) {
 	fake.newDialerMutex.Lock()
 	ret, specificReturn := fake.newDialerReturnsOnCall[len(fake.newDialerArgsForCall)]
@@ -628,18 +670,21 @@ func (fake *FakeSocket) NewDialer(arg1 string, arg2 map[string]interface{}) (man
 	return fakeReturns.result1, fakeReturns.result2
 }
 
+// NewDialerCallCount ...
 func (fake *FakeSocket) NewDialerCallCount() int {
 	fake.newDialerMutex.RLock()
 	defer fake.newDialerMutex.RUnlock()
 	return len(fake.newDialerArgsForCall)
 }
 
+// NewDialerCalls ...
 func (fake *FakeSocket) NewDialerCalls(stub func(string, map[string]interface{}) (mangos.Dialer, error)) {
 	fake.newDialerMutex.Lock()
 	defer fake.newDialerMutex.Unlock()
 	fake.NewDialerStub = stub
 }
 
+// NewDialerArgsForCall ...
 func (fake *FakeSocket) NewDialerArgsForCall(i int) (string, map[string]interface{}) {
 	fake.newDialerMutex.RLock()
 	defer fake.newDialerMutex.RUnlock()
@@ -647,6 +692,7 @@ func (fake *FakeSocket) NewDialerArgsForCall(i int) (string, map[string]interfac
 	return argsForCall.arg1, argsForCall.arg2
 }
 
+// NewDialerReturns ...
 func (fake *FakeSocket) NewDialerReturns(result1 mangos.Dialer, result2 error) {
 	fake.newDialerMutex.Lock()
 	defer fake.newDialerMutex.Unlock()
@@ -657,6 +703,7 @@ func (fake *FakeSocket) NewDialerReturns(result1 mangos.Dialer, result2 error) {
 	}{result1, result2}
 }
 
+// NewDialerReturnsOnCall ...
 func (fake *FakeSocket) NewDialerReturnsOnCall(i int, result1 mangos.Dialer, result2 error) {
 	fake.newDialerMutex.Lock()
 	defer fake.newDialerMutex.Unlock()
@@ -673,6 +720,7 @@ func (fake *FakeSocket) NewDialerReturnsOnCall(i int, result1 mangos.Dialer, res
 	}{result1, result2}
 }
 
+// NewListener ...
 func (fake *FakeSocket) NewListener(arg1 string, arg2 map[string]interface{}) (mangos.Listener, error) {
 	fake.newListenerMutex.Lock()
 	ret, specificReturn := fake.newListenerReturnsOnCall[len(fake.newListenerArgsForCall)]
@@ -692,18 +740,21 @@ func (fake *FakeSocket) NewListener(arg1 string, arg2 map[string]interface{}) (m
 	return fakeReturns.result1, fakeReturns.result2
 }
 
+// NewListenerCallCount ...
 func (fake *FakeSocket) NewListenerCallCount() int {
 	fake.newListenerMutex.RLock()
 	defer fake.newListenerMutex.RUnlock()
 	return len(fake.newListenerArgsForCall)
 }
 
+// NewListenerCalls ...
 func (fake *FakeSocket) NewListenerCalls(stub func(string, map[string]interface{}) (mangos.Listener, error)) {
 	fake.newListenerMutex.Lock()
 	defer fake.newListenerMutex.Unlock()
 	fake.NewListenerStub = stub
 }
 
+// NewListenerArgsForCall ...
 func (fake *FakeSocket) NewListenerArgsForCall(i int) (string, map[string]interface{}) {
 	fake.newListenerMutex.RLock()
 	defer fake.newListenerMutex.RUnlock()
@@ -711,6 +762,7 @@ func (fake *FakeSocket) NewListenerArgsForCall(i int) (string, map[string]interf
 	return argsForCall.arg1, argsForCall.arg2
 }
 
+// NewListenerReturns ...
 func (fake *FakeSocket) NewListenerReturns(result1 mangos.Listener, result2 error) {
 	fake.newListenerMutex.Lock()
 	defer fake.newListenerMutex.Unlock()
@@ -721,6 +773,7 @@ func (fake *FakeSocket) NewListenerReturns(result1 mangos.Listener, result2 erro
 	}{result1, result2}
 }
 
+// NewListenerReturnsOnCall ...
 func (fake *FakeSocket) NewListenerReturnsOnCall(i int, result1 mangos.Listener, result2 error) {
 	fake.newListenerMutex.Lock()
 	defer fake.newListenerMutex.Unlock()
@@ -737,6 +790,7 @@ func (fake *FakeSocket) NewListenerReturnsOnCall(i int, result1 mangos.Listener,
 	}{result1, result2}
 }
 
+// OpenContext ...
 func (fake *FakeSocket) OpenContext() (mangos.Context, error) {
 	fake.openContextMutex.Lock()
 	ret, specificReturn := fake.openContextReturnsOnCall[len(fake.openContextArgsForCall)]
@@ -754,18 +808,21 @@ func (fake *FakeSocket) OpenContext() (mangos.Context, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
+// OpenContextCallCount ...
 func (fake *FakeSocket) OpenContextCallCount() int {
 	fake.openContextMutex.RLock()
 	defer fake.openContextMutex.RUnlock()
 	return len(fake.openContextArgsForCall)
 }
 
+// OpenContextCalls ...
 func (fake *FakeSocket) OpenContextCalls(stub func() (mangos.Context, error)) {
 	fake.openContextMutex.Lock()
 	defer fake.openContextMutex.Unlock()
 	fake.OpenContextStub = stub
 }
 
+// OpenContextReturns ...
 func (fake *FakeSocket) OpenContextReturns(result1 mangos.Context, result2 error) {
 	fake.openContextMutex.Lock()
 	defer fake.openContextMutex.Unlock()
@@ -776,6 +833,7 @@ func (fake *FakeSocket) OpenContextReturns(result1 mangos.Context, result2 error
 	}{result1, result2}
 }
 
+// OpenContextReturnsOnCall ...
 func (fake *FakeSocket) OpenContextReturnsOnCall(i int, result1 mangos.Context, result2 error) {
 	fake.openContextMutex.Lock()
 	defer fake.openContextMutex.Unlock()
@@ -792,6 +850,7 @@ func (fake *FakeSocket) OpenContextReturnsOnCall(i int, result1 mangos.Context, 
 	}{result1, result2}
 }
 
+// Recv ...
 func (fake *FakeSocket) Recv() ([]byte, error) {
 	fake.recvMutex.Lock()
 	ret, specificReturn := fake.recvReturnsOnCall[len(fake.recvArgsForCall)]
@@ -809,18 +868,21 @@ func (fake *FakeSocket) Recv() ([]byte, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
+// RecvCallCount ...
 func (fake *FakeSocket) RecvCallCount() int {
 	fake.recvMutex.RLock()
 	defer fake.recvMutex.RUnlock()
 	return len(fake.recvArgsForCall)
 }
 
+// RecvCalls ...
 func (fake *FakeSocket) RecvCalls(stub func() ([]byte, error)) {
 	fake.recvMutex.Lock()
 	defer fake.recvMutex.Unlock()
 	fake.RecvStub = stub
 }
 
+// RecvReturns ...
 func (fake *FakeSocket) RecvReturns(result1 []byte, result2 error) {
 	fake.recvMutex.Lock()
 	defer fake.recvMutex.Unlock()
@@ -831,6 +893,7 @@ func (fake *FakeSocket) RecvReturns(result1 []byte, result2 error) {
 	}{result1, result2}
 }
 
+// RecvReturnsOnCall ...
 func (fake *FakeSocket) RecvReturnsOnCall(i int, result1 []byte, result2 error) {
 	fake.recvMutex.Lock()
 	defer fake.recvMutex.Unlock()
@@ -847,6 +910,7 @@ func (fake *FakeSocket) RecvReturnsOnCall(i int, result1 []byte, result2 error) 
 	}{result1, result2}
 }
 
+// RecvMsg ...
 func (fake *FakeSocket) RecvMsg() (*mangos.Message, error) {
 	fake.recvMsgMutex.Lock()
 	ret, specificReturn := fake.recvMsgReturnsOnCall[len(fake.recvMsgArgsForCall)]
@@ -864,18 +928,21 @@ func (fake *FakeSocket) RecvMsg() (*mangos.Message, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
+// RecvMsgCallCount ...
 func (fake *FakeSocket) RecvMsgCallCount() int {
 	fake.recvMsgMutex.RLock()
 	defer fake.recvMsgMutex.RUnlock()
 	return len(fake.recvMsgArgsForCall)
 }
 
+// RecvMsgCalls ...
 func (fake *FakeSocket) RecvMsgCalls(stub func() (*mangos.Message, error)) {
 	fake.recvMsgMutex.Lock()
 	defer fake.recvMsgMutex.Unlock()
 	fake.RecvMsgStub = stub
 }
 
+// RecvMsgReturns ...
 func (fake *FakeSocket) RecvMsgReturns(result1 *mangos.Message, result2 error) {
 	fake.recvMsgMutex.Lock()
 	defer fake.recvMsgMutex.Unlock()
@@ -886,6 +953,7 @@ func (fake *FakeSocket) RecvMsgReturns(result1 *mangos.Message, result2 error) {
 	}{result1, result2}
 }
 
+// RecvMsgReturnsOnCall ...
 func (fake *FakeSocket) RecvMsgReturnsOnCall(i int, result1 *mangos.Message, result2 error) {
 	fake.recvMsgMutex.Lock()
 	defer fake.recvMsgMutex.Unlock()
@@ -902,6 +970,7 @@ func (fake *FakeSocket) RecvMsgReturnsOnCall(i int, result1 *mangos.Message, res
 	}{result1, result2}
 }
 
+// Send ...
 func (fake *FakeSocket) Send(arg1 []byte) error {
 	var arg1Copy []byte
 	if arg1 != nil {
@@ -925,18 +994,21 @@ func (fake *FakeSocket) Send(arg1 []byte) error {
 	return fakeReturns.result1
 }
 
+// SendCallCount ...
 func (fake *FakeSocket) SendCallCount() int {
 	fake.sendMutex.RLock()
 	defer fake.sendMutex.RUnlock()
 	return len(fake.sendArgsForCall)
 }
 
+// SendCalls ...
 func (fake *FakeSocket) SendCalls(stub func([]byte) error) {
 	fake.sendMutex.Lock()
 	defer fake.sendMutex.Unlock()
 	fake.SendStub = stub
 }
 
+// SendArgsForCall ...
 func (fake *FakeSocket) SendArgsForCall(i int) []byte {
 	fake.sendMutex.RLock()
 	defer fake.sendMutex.RUnlock()
@@ -944,6 +1016,7 @@ func (fake *FakeSocket) SendArgsForCall(i int) []byte {
 	return argsForCall.arg1
 }
 
+// SendReturns ...
 func (fake *FakeSocket) SendReturns(result1 error) {
 	fake.sendMutex.Lock()
 	defer fake.sendMutex.Unlock()
@@ -953,6 +1026,7 @@ func (fake *FakeSocket) SendReturns(result1 error) {
 	}{result1}
 }
 
+// SendReturnsOnCall ...
 func (fake *FakeSocket) SendReturnsOnCall(i int, result1 error) {
 	fake.sendMutex.Lock()
 	defer fake.sendMutex.Unlock()
@@ -967,6 +1041,7 @@ func (fake *FakeSocket) SendReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// SendMsg ...
 func (fake *FakeSocket) SendMsg(arg1 *mangos.Message) error {
 	fake.sendMsgMutex.Lock()
 	ret, specificReturn := fake.sendMsgReturnsOnCall[len(fake.sendMsgArgsForCall)]
@@ -985,18 +1060,21 @@ func (fake *FakeSocket) SendMsg(arg1 *mangos.Message) error {
 	return fakeReturns.result1
 }
 
+// SendMsgCallCount ...
 func (fake *FakeSocket) SendMsgCallCount() int {
 	fake.sendMsgMutex.RLock()
 	defer fake.sendMsgMutex.RUnlock()
 	return len(fake.sendMsgArgsForCall)
 }
 
+// SendMsgCalls ...
 func (fake *FakeSocket) SendMsgCalls(stub func(*mangos.Message) error) {
 	fake.sendMsgMutex.Lock()
 	defer fake.sendMsgMutex.Unlock()
 	fake.SendMsgStub = stub
 }
 
+// SendMsgArgsForCall ...
 func (fake *FakeSocket) SendMsgArgsForCall(i int) *mangos.Message {
 	fake.sendMsgMutex.RLock()
 	defer fake.sendMsgMutex.RUnlock()
@@ -1004,6 +1082,7 @@ func (fake *FakeSocket) SendMsgArgsForCall(i int) *mangos.Message {
 	return argsForCall.arg1
 }
 
+// SendMsgReturns ...
 func (fake *FakeSocket) SendMsgReturns(result1 error) {
 	fake.sendMsgMutex.Lock()
 	defer fake.sendMsgMutex.Unlock()
@@ -1013,6 +1092,7 @@ func (fake *FakeSocket) SendMsgReturns(result1 error) {
 	}{result1}
 }
 
+// SendMsgReturnsOnCall ...
 func (fake *FakeSocket) SendMsgReturnsOnCall(i int, result1 error) {
 	fake.sendMsgMutex.Lock()
 	defer fake.sendMsgMutex.Unlock()
@@ -1027,6 +1107,7 @@ func (fake *FakeSocket) SendMsgReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// SetOption ...
 func (fake *FakeSocket) SetOption(arg1 string, arg2 interface{}) error {
 	fake.setOptionMutex.Lock()
 	ret, specificReturn := fake.setOptionReturnsOnCall[len(fake.setOptionArgsForCall)]
@@ -1046,18 +1127,21 @@ func (fake *FakeSocket) SetOption(arg1 string, arg2 interface{}) error {
 	return fakeReturns.result1
 }
 
+// SetOptionCallCount ...
 func (fake *FakeSocket) SetOptionCallCount() int {
 	fake.setOptionMutex.RLock()
 	defer fake.setOptionMutex.RUnlock()
 	return len(fake.setOptionArgsForCall)
 }
 
+// SetOptionCalls ...
 func (fake *FakeSocket) SetOptionCalls(stub func(string, interface{}) error) {
 	fake.setOptionMutex.Lock()
 	defer fake.setOptionMutex.Unlock()
 	fake.SetOptionStub = stub
 }
 
+// SetOptionArgsForCall ...
 func (fake *FakeSocket) SetOptionArgsForCall(i int) (string, interface{}) {
 	fake.setOptionMutex.RLock()
 	defer fake.setOptionMutex.RUnlock()
@@ -1065,6 +1149,7 @@ func (fake *FakeSocket) SetOptionArgsForCall(i int) (string, interface{}) {
 	return argsForCall.arg1, argsForCall.arg2
 }
 
+// SetOptionReturns ...
 func (fake *FakeSocket) SetOptionReturns(result1 error) {
 	fake.setOptionMutex.Lock()
 	defer fake.setOptionMutex.Unlock()
@@ -1074,6 +1159,7 @@ func (fake *FakeSocket) SetOptionReturns(result1 error) {
 	}{result1}
 }
 
+// SetOptionReturnsOnCall ...
 func (fake *FakeSocket) SetOptionReturnsOnCall(i int, result1 error) {
 	fake.setOptionMutex.Lock()
 	defer fake.setOptionMutex.Unlock()
@@ -1088,6 +1174,7 @@ func (fake *FakeSocket) SetOptionReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+// SetPipeEventHook ...
 func (fake *FakeSocket) SetPipeEventHook(arg1 mangos.PipeEventHook) mangos.PipeEventHook {
 	fake.setPipeEventHookMutex.Lock()
 	ret, specificReturn := fake.setPipeEventHookReturnsOnCall[len(fake.setPipeEventHookArgsForCall)]
@@ -1106,18 +1193,21 @@ func (fake *FakeSocket) SetPipeEventHook(arg1 mangos.PipeEventHook) mangos.PipeE
 	return fakeReturns.result1
 }
 
+// SetPipeEventHookCallCount ...
 func (fake *FakeSocket) SetPipeEventHookCallCount() int {
 	fake.setPipeEventHookMutex.RLock()
 	defer fake.setPipeEventHookMutex.RUnlock()
 	return len(fake.setPipeEventHookArgsForCall)
 }
 
+// SetPipeEventHookCalls ...
 func (fake *FakeSocket) SetPipeEventHookCalls(stub func(mangos.PipeEventHook) mangos.PipeEventHook) {
 	fake.setPipeEventHookMutex.Lock()
 	defer fake.setPipeEventHookMutex.Unlock()
 	fake.SetPipeEventHookStub = stub
 }
 
+// SetPipeEventHookArgsForCall ...
 func (fake *FakeSocket) SetPipeEventHookArgsForCall(i int) mangos.PipeEventHook {
 	fake.setPipeEventHookMutex.RLock()
 	defer fake.setPipeEventHookMutex.RUnlock()
@@ -1125,6 +1215,7 @@ func (fake *FakeSocket) SetPipeEventHookArgsForCall(i int) mangos.PipeEventHook 
 	return argsForCall.arg1
 }
 
+// SetPipeEventHookReturns ...
 func (fake *FakeSocket) SetPipeEventHookReturns(result1 mangos.PipeEventHook) {
 	fake.setPipeEventHookMutex.Lock()
 	defer fake.setPipeEventHookMutex.Unlock()
@@ -1134,6 +1225,7 @@ func (fake *FakeSocket) SetPipeEventHookReturns(result1 mangos.PipeEventHook) {
 	}{result1}
 }
 
+// SetPipeEventHookReturnsOnCall ...
 func (fake *FakeSocket) SetPipeEventHookReturnsOnCall(i int, result1 mangos.PipeEventHook) {
 	fake.setPipeEventHookMutex.Lock()
 	defer fake.setPipeEventHookMutex.Unlock()
@@ -1148,6 +1240,7 @@ func (fake *FakeSocket) SetPipeEventHookReturnsOnCall(i int, result1 mangos.Pipe
 	}{result1}
 }
 
+// Invocations ...
 func (fake *FakeSocket) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()

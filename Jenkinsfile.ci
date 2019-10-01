@@ -42,18 +42,17 @@ node('slave') {
   }
 
   // This needs to be enabled when lint & tests are fixed
-  // stage('Run CI') {
-
-  //   try {
-  //     sh 'make ci'
-  //     currentBuild.result = 'SUCCESS'
-  //   } catch (e) {
-  //     sh 'make ci-cleanup'
-  //     currentBuild.result = 'FAILURE'
-  //     throw e
-  //   } finally {
-  //     def message = "Build <${env.BUILD_URL}console|${env.BUILD_NUMBER}> for <${env.JOB_DISPLAY_URL}|${env.JOB_NAME}> by ${commiter}: ${currentBuild.result} on stage ${STAGE_NAME} in ${currentBuild.durationString.replace(' and counting', '')}"
-  //     notification_utils.slackNotify(currentBuild.result, slackChannel, slackToken, message)
-  //   }
-  // }
+  stage('Run CI') {
+    try {
+      sh 'make ci'
+      currentBuild.result = 'SUCCESS'
+    } catch (e) {
+      sh 'make ci-cleanup'
+      currentBuild.result = 'FAILURE'
+      throw e
+    } finally {
+      def message = "Build <${env.BUILD_URL}console|${env.BUILD_NUMBER}> for <${env.JOB_DISPLAY_URL}|${env.JOB_NAME}> by ${commiter}: ${currentBuild.result} on stage ${STAGE_NAME} in ${currentBuild.durationString.replace(' and counting', '')}"
+      notification_utils.slackNotify(currentBuild.result, slackChannel, slackToken, message)
+    }
+  }
 }

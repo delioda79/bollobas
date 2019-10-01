@@ -4,14 +4,16 @@ import (
 	"bollobas"
 	"bollobas/ingestion"
 	"fmt"
+	"time"
+
 	"github.com/beatlabs/patron/async"
 	"github.com/beatlabs/patron/encoding/json"
 	"github.com/beatlabs/patron/errors"
 	"nanomsg.org/go/mangos/v2"
-	"time"
-	_ "nanomsg.org/go/mangos/v2/transport/all"
+	_ "nanomsg.org/go/mangos/v2/transport/all" //import
 )
 
+//AccountProcessor processes the messages from passenger_analytics topics and forwards an account message
 type AccountProcessor struct {
 	mangos.Socket
 	active bool
@@ -48,7 +50,7 @@ func (kc *AccountProcessor) publish(passenger Passenger) error {
 		Type:             "passenger",
 		Email:            passenger.Email,
 	}
-fmt.Printf("Sending %+v", idt)
+	fmt.Printf("Sending %+v", idt)
 	bts, err := json.Encode(idt)
 	if err != nil {
 		return err
@@ -57,14 +59,14 @@ fmt.Printf("Sending %+v", idt)
 	return kc.Send(bts)
 }
 
-// NewAccountProcessor instantiates a new component
+// NewAccountProcessor instantiates a new processor
 func NewAccountProcessor(url string) (*AccountProcessor, error) {
 
 	sock, err := ingestion.NewPublisher([]string{url})
 	if err != nil {
 		return nil, err
 	}
-	return &AccountProcessor{Socket: sock, active:false}, nil
+	return &AccountProcessor{Socket: sock, active: false}, nil
 }
 
 // Passenger represents a passenger message coming from kafka

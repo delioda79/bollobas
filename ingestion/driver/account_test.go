@@ -15,7 +15,6 @@ import (
 	"time"
 )
 
-
 func TestProcessing(t *testing.T) {
 	durl := fmt.Sprintf("inproc://%d", time.Now().UnixNano())
 	cp, err := NewAccountProcessor(durl)
@@ -87,5 +86,5 @@ func TestBusyPort(t *testing.T) {
 	assert.Nil(t, err)
 	cp, err := NewAccountProcessor(durl)
 	assert.NotNil(t, err)
-	assert.Nil(t,cp)
+	assert.Nil(t, cp)
 }

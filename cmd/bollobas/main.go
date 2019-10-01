@@ -173,12 +173,25 @@ func main() {
 }
 
 func updateSettings(t time.Duration, cfr bollobas.ConfigurationManager) {
-	cfr.Configure(defaultConf)
+	if restURL == "" {
+		cfr.Configure(defaultConf)
+		return
+	}
+
 	ticker := time.NewTicker(t)
 	cClient, err := configclient.New(restURL, restKey, restMixpanelPath)
 	if err != nil {
 		log.Debugf("Couldn't create Configuration Client. Resolving to defauls: %v", defaultConf)
 		return
+	}
+
+	st, err := cClient.GetSettings(context.TODO())
+	if err == nil {
+		//Configure
+		cfr.Configure(st)
+		log.Debugf("Settings updated with: %v", st)
+	} else {
+		log.Infof("Failed to update settings: %v", err)
 	}
 
 	go func() {

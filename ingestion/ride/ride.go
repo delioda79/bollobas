@@ -4,7 +4,6 @@ import (
 	"bollobas"
 	"bollobas/ingestion"
 	"bollobas/pkg/parseid"
-	"fmt"
 	"time"
 
 	"github.com/beatlabs/patron/async"
@@ -12,21 +11,21 @@ import (
 	"github.com/beatlabs/patron/log"
 	"github.com/pkg/errors"
 	"nanomsg.org/go/mangos/v2"
-	_ "nanomsg.org/go/mangos/v2/transport/all"
+	_ "nanomsg.org/go/mangos/v2/transport/all" // import transports (important)
 )
 
-type RideProcessor struct {
+//Processor processes the messages from ride topics and forwards a ride confirmation message
+type Processor struct {
 	mangos.Socket
 	active bool
 }
 
 // Process is part of the patron interface and processes incoming messages
-func (kc *RideProcessor) Process(msg async.Message) error {
+func (kc *Processor) Process(msg async.Message) error {
 	if !kc.active {
 		return nil
 	}
 
-	fmt.Println("RIDE ACTIVE!")
 	cr := Ride{}
 
 	err := msg.Decode(&cr)
@@ -37,7 +36,7 @@ func (kc *RideProcessor) Process(msg async.Message) error {
 	return kc.publish(cr)
 }
 
-func (kc *RideProcessor) publish(cr Ride) error {
+func (kc *Processor) publish(cr Ride) error {
 
 	log.Debugf("Ride received: %+v | events: %+v", cr, cr.Events)
 	if len(cr.Events) == 0 {
@@ -62,38 +61,40 @@ func (kc *RideProcessor) publish(cr Ride) error {
 	return nil
 }
 
-// NewCancellationProcessor instantiates a new component
-func NewRideProcessor(url string) (*RideProcessor, error) {
+// NewRideProcessor instantiates a new processor
+func NewRideProcessor(url string) (*Processor, error) {
 
 	sock, err := ingestion.NewPublisher([]string{url})
 	if err != nil {
 		return nil, err
 	}
-	rp := &RideProcessor{Socket: sock, active: false}
+	rp := &Processor{Socket: sock, active: false}
 
 	return rp, nil
 }
 
 // Activate will activate the processor
-func (kc *RideProcessor) Activate(v bool) {
+func (kc *Processor) Activate(v bool) {
 	kc.active = v
 }
 
-// RideEvent represents a message for a ride coming from kafka
-type RideEvent struct {
+// Event represents a message for a ride coming from kafka
+type Event struct {
 	Who  string
 	What string
 	When int64
 	Key  string
 }
 
+//Passenger represents passenger infos nested inside the ride message from kafka
 type Passenger struct {
 	PassengerID int `json:"id_passenger"`
 }
 
+//Ride ...
 type Ride struct {
 	Passenger Passenger
-	Events    []RideEvent
+	Events    []Event
 	RequestID int `json:"id_request"`
 	Duration  interface{}
 	Created   int64 `json:"ride_created_at"`

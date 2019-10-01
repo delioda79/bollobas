@@ -4,12 +4,14 @@ import (
 	"bollobas"
 	"bollobas/ingestion"
 	"bollobas/pkg/parseid"
+
 	"github.com/beatlabs/patron/async"
 	"github.com/beatlabs/patron/encoding/json"
 	"github.com/pkg/errors"
 	"nanomsg.org/go/mangos/v2"
 )
 
+//CancellationProcessor processes the messages from request_cancel topics and forwards a cancel ride message
 type CancellationProcessor struct {
 	mangos.Socket
 	active bool

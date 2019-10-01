@@ -7,6 +7,10 @@ import (
 	"bollobas/pkg/logging/store"
 	"encoding/json"
 	"fmt"
+	"sync"
+	"testing"
+	"time"
+
 	"github.com/beatlabs/patron/errors"
 	"github.com/beatlabs/patron/log"
 	"github.com/dukex/mixpanel"
@@ -14,9 +18,6 @@ import (
 	"nanomsg.org/go/mangos/v2"
 	"nanomsg.org/go/mangos/v2/protocol/pub"
 	_ "nanomsg.org/go/mangos/v2/transport/inproc"
-	"sync"
-	"testing"
-	"time"
 )
 
 type FakeProcessor struct {
@@ -31,8 +32,6 @@ func (p *FakeProcessor) Process(msg []byte) error {
 	return p.procreturn
 }
 
-
-
 func TestReceivedFormatError(t *testing.T) {
 	store.NewLogger()
 	cnt := 1
@@ -41,10 +40,10 @@ func TestReceivedFormatError(t *testing.T) {
 	log.Setup(store.FactoryLogger, nil)
 
 	sck := &mixpanelfakes.FakeSocket{}
-	sck.RecvStub= func () ([]byte, error) {
-		if cnt <1 {
+	sck.RecvStub = func() ([]byte, error) {
+		if cnt < 1 {
 			wg.Done()
-			select{}
+			select {}
 		}
 		wg.Done()
 		cnt--
@@ -73,9 +72,9 @@ func TestReceivingCorrectMessage(t *testing.T) {
 
 	log.Setup(store.FactoryLogger, nil)
 	sck := &mixpanelfakes.FakeSocket{}
-	sck.RecvStub= func () ([]byte, error) {
-		if cnt <1 {
-			select{}
+	sck.RecvStub = func() ([]byte, error) {
+		if cnt < 1 {
+			select {}
 		}
 		wg.Done()
 		cnt--
@@ -98,7 +97,6 @@ func TestGettingNewHandler(t *testing.T) {
 
 	store.NewLogger()
 	log.Setup(store.FactoryLogger, nil)
-
 
 	var s, s2 mangos.Socket
 	var err error

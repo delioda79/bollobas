@@ -7,7 +7,7 @@ import (
 	"github.com/beatlabs/patron/errors"
 	"github.com/beatlabs/patron/log"
 	"github.com/dukex/mixpanel"
-	_ "nanomsg.org/go/mangos/v2/transport/inproc"
+	_ "nanomsg.org/go/mangos/v2/transport/all" //import
 )
 
 // Processor subscribes to messages sent by any registered publisher in the internal registry
@@ -15,7 +15,7 @@ type Processor struct {
 	mixpanel.Mixpanel
 }
 
-// Run starts the go routine which will receive the messages
+// Process starts the go routine which will receive the messages
 func (hdl *Processor) Process(msg []byte) error {
 
 	idt := &bollobas.RideRequestConfirmed{}

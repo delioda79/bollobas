@@ -8,15 +8,17 @@ import (
 	"nanomsg.org/go/mangos/v2/protocol/sub"
 
 	"nanomsg.org/go/mangos/v2"
-	_ "nanomsg.org/go/mangos/v2/transport/inproc"
+	_ "nanomsg.org/go/mangos/v2/transport/all" //import
 )
 
+//Handler Struct
 type Handler struct {
 	p Processor
 	mangos.Socket
 	bollobas.ConfigurationManager
 }
 
+//Run method
 func (hdl *Handler) Run() {
 	go func() {
 
@@ -32,7 +34,7 @@ func (hdl *Handler) Run() {
 			if hdl.ConfigurationManager != nil && !hdl.Check(msg) {
 				continue
 			}
-
+			
 			err = hdl.p.Process(msg)
 			if err != nil {
 				log.Error(err)
@@ -41,6 +43,7 @@ func (hdl *Handler) Run() {
 	}()
 }
 
+//Processor Interface
 type Processor interface {
 	mixpanel.Mixpanel
 	Process(msg []byte) error

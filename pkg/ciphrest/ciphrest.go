@@ -7,7 +7,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"regexp"
 	"strings"
 )
@@ -25,7 +24,6 @@ func InitCipher(rawKey string, rawIV string) {
 		panic(err)
 	}
 
-	//	fmt.Println("iv Length:", len(iv))
 	tKey := strings.ReplaceAll(rawKey, "@", "")
 	key, err = base64.URLEncoding.DecodeString(tKey)
 	if err != nil {
@@ -40,8 +38,6 @@ func InitCipher(rawKey string, rawIV string) {
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println("Init")
 }
 
 func pkcs5Padding(ciphertext []byte, blockSize int) []byte {
@@ -50,31 +46,37 @@ func pkcs5Padding(ciphertext []byte, blockSize int) []byte {
 	return append(ciphertext, padtext...)
 }
 
+// EncryptByteArray encrypts a bytearray with preset key/iv
 func EncryptByteArray(data []byte) string {
+	if block == nil {
+		panic(errors.New("key/iv have not been set! Run InitCipher before attempting to encrypt/decrypt"))
+	}
+
 	paddingData := pkcs5Padding(data, block.BlockSize())
 	cipherData := make([]byte, len(paddingData))
 
 	mode := cipher.NewCBCEncrypter(block, iv)
 	mode.CryptBlocks(cipherData, paddingData)
-	//fmt.Println("cipherDataAfter:", string(cipherData))
-	//cipherDataAfter := string(base64.URLEncoding.EncodeToString(cipherData))
 	cipherDataAfter := string(base64.StdEncoding.EncodeToString(cipherData))
-	//fmt.Println("cipherDataAfterBase:", cipherDataAfter)
 	return base64.URLEncoding.EncodeToString([]byte(cipherDataAfter + "::" + string(iv)))
 
 }
 
+// EncryptString wraps EncryptByteArray, expecting a string
 func EncryptString(data string) string {
 	return EncryptByteArray([]byte(data))
 }
 
+// DecryptString decrypts a string with preset key/iv
 func DecryptString(data string) string {
-	//fmt.Println(data)
+	if block == nil {
+		panic(errors.New("key/iv have not been set! Run InitCipher before attempting to encrypt/decrypt"))
+	}
+
 	decoded, err := base64.URLEncoding.DecodeString(data)
 	if err != nil {
 		panic(err)
 	}
-	//fmt.Println("Decodedbase64:", decoded, len(decoded))
 	dataSplit := strings.Split(string(decoded), "::")
 	if len(dataSplit) != 2 {
 		panic(errors.New("could not split data"))
@@ -83,12 +85,10 @@ func DecryptString(data string) string {
 	decodedData := []byte(dataSplit[0])
 	iv2 := []byte(dataSplit[1])
 
-	//fmt.Println("iv2", string(iv2))
 	mode := cipher.NewCBCDecrypter(block, iv2)
 
 	decodedData2, err := base64.StdEncoding.DecodeString(string(decodedData))
 	if err != nil {
-		//fmt.Println("FUUUUUUU:", string(decodedData))
 		panic(err)
 	}
 
@@ -104,6 +104,7 @@ func DecryptString(data string) string {
 	return regexp.MustCompile(`[^a-zA-Z0-9 -]`).ReplaceAllString(string(decodedData2), "")
 }
 
+// DecryptByteArray wraps Decrypt String, expecting a byte array
 func DecryptByteArray(data []byte) string {
 	return DecryptString(string(data))
 }

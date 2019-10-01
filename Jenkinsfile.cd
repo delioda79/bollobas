@@ -68,17 +68,17 @@ node('slave') {
     }
 
     // This needs to be enabled when lint & tests are fixed
-    // stage('Run tests') {
-    //     try {
-    //         sh 'make ci'
-    //     } catch (e) {
-    //         sh 'make ci-cleanup'
-    //         notification_utils.slackNotifyDeploymentFailure(stacks, STAGE_NAME)
-    //         print(e)
-    //         throw e
-    //     } finally {
-    //     }
-    // }
+    stage('Run tests') {
+        try {
+            sh 'make ci'
+        } catch (e) {
+            sh 'make ci-cleanup'
+            notification_utils.slackNotifyDeploymentFailure(stacks, STAGE_NAME)
+            print(e)
+            throw e
+        } finally {
+        }
+    }
 
     stage("Helm lint") {
         try {
@@ -119,7 +119,6 @@ node('slave') {
             bollobas_cipher_key_env = "BOLLOBAS_CIPHER_KEY_DEV"
             bollobas_init_vector_env = "BOLLOBAS_INIT_VECTOR_DEV"
             bollobas_rest_key_env = "REST_TAXIDMIN_KEY"
-            bollobas_location_env = "${envVarMapping.STACK_NAME}"
 
             if (prod) {
                 envVarMapping = stack_utils.stackVariables(stack)
@@ -127,8 +126,9 @@ node('slave') {
                 // /* Setup local variables */
                 bollobas_mixpanel_token_env = "BOLLOBAS_MIXPANEL_TOKEN_PROD"
 
+                bollobas_rest_endpoint_env = "https://rest${envVarMapping.SUFFIX}"
+                bollobas_location_env = "${stack}"
                 bollobas_log_level_env = "info"
-                bollobas_rest_endpoint_env = "rest${envVarMapping.SUFFIX}"
 
                 helmName = "bollobas"
 
@@ -138,8 +138,9 @@ node('slave') {
 
                 // /* Setup local variables */
                 bollobas_mixpanel_token_env = "BOLLOBAS_MIXPANEL_TOKEN_DEV"
+                bollobas_rest_endpoint_env = "https://${stack}.rest.sandbox.taxibeat.com"
+                bollobas_location_env = "sandbox"
                 bollobas_log_level_env = "debug"
-                bollobas_rest_endpoint_env = "${stack}.rest.sandbox.taxibeat.com"
 
                 helmName = "bollobas-${stack}"
             }
@@ -154,9 +155,6 @@ node('slave') {
                     string(credentialsId: "${bollobas_init_vector_env}", variable: 'bollobas_init_vector'),
                     string(credentialsId: "${bollobas_mixpanel_token_env}", variable: 'bollobas_mixpanel_token'),
 
-                    string(credentialsId: "${bollobas_log_level_env}", variable: 'bollobas_log_level'),
-                    string(credentialsId: "${bollobas_location_env}", variable: 'bollobas_location'),
-                    string(credentialsId: "${bollobas_rest_endpoint_env}", variable: 'bollobas_rest_endpoint'),
                     string(credentialsId: "${bollobas_rest_key_env}", variable: 'bollobas_rest_key')
                 ]) {
                     setList = " --set image.registry=${envVarMapManagement.REGISTRY_SERVER}/beat/ \
@@ -167,20 +165,20 @@ node('slave') {
                                     --set env.BOLLOBAS_CIPHER_KEY=${bollobas_cipher_key} \
                                     --set env.BOLLOBAS_INIT_VECTOR=${bollobas_init_vector} \
                                     --set env.BOLLOBAS_MIXPANEL_TOKEN=${bollobas_mixpanel_token} \
-                                    --set env.PATRON_LOG_LEVEL:${bollobas_log_level} \
+                                    --set env.PATRON_LOG_LEVEL=${bollobas_log_level_env} \
                                     --set env.PATRON_HTTP_DEFAULT_PORT=8100 \
-                                    --set env.BOLLOBAS_KAFKA_DRIVER_TOPIC: driver_analytics \
-                                    --set env.BOLLOBAS_KAFKA_PASSENGER_TOPIC: passenger_analytics \
-                                    --set env.BOLLOBAS_KAFKA_REQUEST_TOPIC: request \
-                                    --set env.BOLLOBAS_KAFKA_REQUEST_CANCEL_TOPIC: request_cancel \
-                                    --set env.BOLLOBAS_KAFKA_RIDE_TOPIC: ride \
-                                    --set env.BOLLOBAS_KAFKA_TIMEOUT: 10s \
-                                    --set env.BOLLOBAS_KAFKA_GROUP: \"arcns1\" \
-                                    --set env.REST_MIXPANEL_PATH: \"/taxidmin/bollobas/mixpanel-passenger-settings\" \
-                                    --set env.BOLLOBAS_SETTINGS_DURATION: \"10s\" \
-                                    --set env.BOLLOBAS_LOCATION: ${bollobas_location} \
-                                    --set env.REST_CONNECTION_STRING: ${bollobas_rest_endpoint}   \
-                                    --set env.REST_KEY: ${bollobas_rest_key}"
+                                    --set env.BOLLOBAS_KAFKA_DRIVER_TOPIC=driver_analytics \
+                                    --set env.BOLLOBAS_KAFKA_PASSENGER_TOPIC=passenger_analytics \
+                                    --set env.BOLLOBAS_KAFKA_REQUEST_TOPIC=request \
+                                    --set env.BOLLOBAS_KAFKA_REQUEST_CANCEL_TOPIC=request_cancel \
+                                    --set env.BOLLOBAS_KAFKA_RIDE_TOPIC=ride \
+                                    --set env.BOLLOBAS_KAFKA_TIMEOUT=10s \
+                                    --set env.BOLLOBAS_KAFKA_GROUP=arcns1 \
+                                    --set env.REST_MIXPANEL_PATH=/taxidmin/bollobas/mixpanel-passenger-settings \
+                                    --set env.BOLLOBAS_SETTINGS_DURATION=10s \
+                                    --set env.BOLLOBAS_LOCATION=${bollobas_location_env} \
+                                    --set env.REST_CONNECTION_STRING=${bollobas_rest_endpoint_env}   \
+                                    --set env.REST_KEY=${bollobas_rest_key}"
                     if (!prod) {
                         setList +=  " --set ingress.host=${stack}-bollobas "
                     }

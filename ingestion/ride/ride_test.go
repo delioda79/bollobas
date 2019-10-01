@@ -3,6 +3,7 @@ package ride
 import (
 	"bollobas"
 	"bollobas/ingestion/injestionfakes"
+	"bollobas/pkg/ciphrest"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -19,6 +20,7 @@ import (
 
 func TestProcessing(t *testing.T) {
 	os.Setenv("BOLLOBAS_LOCATION", "test")
+	ciphrest.InitCipher("44441s111111R1222221", "11111111112222222222333333333344")
 	durl := fmt.Sprintf("inproc://%d", time.Now().UnixNano())
 	cp, err := NewRideProcessor(durl)
 	assert.Nil(t, err)
@@ -62,7 +64,7 @@ func TestProcessing(t *testing.T) {
 	msg.DecodeStub = func(itf interface{}) error {
 		dr := itf.(*Ride)
 		dr.RequestID = 1
-		dr.Events = []RideEvent{}
+		dr.Events = []Event{}
 
 		return nil
 	}

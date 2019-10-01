@@ -6,13 +6,14 @@ import (
 	_ "bollobas/mixpanel/mixpanelfakes"
 	"bollobas/pkg/logging/store"
 	"encoding/json"
+	"sync"
+	"testing"
+
 	"github.com/beatlabs/patron/errors"
 	"github.com/beatlabs/patron/log"
 	"github.com/dukex/mixpanel"
 	"github.com/stretchr/testify/assert"
 	_ "nanomsg.org/go/mangos/v2/transport/inproc"
-	"sync"
-	"testing"
 )
 
 func TestIdentityProcessWrongFormat(t *testing.T) {
@@ -29,9 +30,7 @@ func TestIdentityProcessWrongFormat(t *testing.T) {
 
 	p := Processor{Mixpanel: cl}
 
-
 	err := p.Process([]byte("dhjzjvkhvcxkjhvckjhvcxkjx"))
-
 
 	assert.Equal(t, errors.New("error unmarshaling the data").Error(), err.Error()[0:27])
 }
@@ -80,6 +79,5 @@ func TestImpossibleIdentityUpdate(t *testing.T) {
 	assert.Equal(t, errors.New("error while updating the identity: impossible to update").Error(), err.Error())
 
 	assert.Equal(t, 1, cl.UpdateCallCount())
-
 
 }

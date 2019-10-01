@@ -4,24 +4,26 @@ import (
 	"bollobas"
 	"bollobas/ingestion"
 	"bollobas/ingestion/injestionfakes"
+	"bollobas/pkg/ciphrest"
 	"bollobas/pkg/parseid"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
+	"sync"
+	"testing"
+	"time"
+
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"nanomsg.org/go/mangos/v2"
 	"nanomsg.org/go/mangos/v2/protocol/pub"
 	"nanomsg.org/go/mangos/v2/protocol/sub"
 	_ "nanomsg.org/go/mangos/v2/transport/all"
-	"os"
-	"strconv"
-	"sync"
-	"testing"
-	"time"
 )
 
 func TestProcessing(t *testing.T) {
-	purl :=  fmt.Sprintf("inproc://passenger-publisher-%d", time.Now().UnixNano())
+	purl := fmt.Sprintf("inproc://passenger-publisher-%d", time.Now().UnixNano())
 
 	cp, err := NewAccountProcessor(purl)
 	assert.Nil(t, err)
@@ -39,10 +41,9 @@ func TestProcessing(t *testing.T) {
 	HelpProcessing(t, purl, cp, msg)
 }
 
-
 func TestAccountBusyPorts(t *testing.T) {
 	purl := fmt.Sprintf("inproc://passenger-publisher-%d", time.Now().UnixNano())
-	HelpBusyPort(t, purl, func(url string) (ingestion.Processor, error) {return NewAccountProcessor(url)})
+	HelpBusyPort(t, purl, func(url string) (ingestion.Processor, error) { return NewAccountProcessor(url) })
 }
 
 func HelpBusyPort(t *testing.T, url string, factory func(string) (ingestion.Processor, error)) {
@@ -55,7 +56,7 @@ func HelpBusyPort(t *testing.T, url string, factory func(string) (ingestion.Proc
 
 	cp, err := factory(purl)
 	assert.NotNil(t, err)
-	assert.Nil(t,cp)
+	assert.Nil(t, cp)
 }
 
 func HelpProcessing(t *testing.T, purl string, cp ingestion.Processor, msg *injestionfakes.FakeMessage) {
@@ -105,12 +106,12 @@ func HelpProcessing(t *testing.T, purl string, cp ingestion.Processor, msg *inje
 	assert.NotNil(t, err)
 }
 
-
 func TestIDEnc(t *testing.T) {
 	os.Setenv("BOLLOBAS_LOCATION", "sandbox")
-	//id1 := "QmYzSDhLaFB4UlFvSXp5X0o4YTR6Zz09Ojq-9N6igSEHCUtHEgUw4QyR-sandbox-pa"
+
+	ciphrest.InitCipher("44441s111111R1222221", "11111111112222222222333333333344")
+
 	id2 := "QmYzSDhLaFB4UlFvSXp5L0o4YTR6Zz09Ojq-9N6igSEHCUtHEgUw4QyR-sandbox-pa"
-	//fmt.Println(parseid.DecryptString(id1))
 	fmt.Println(parseid.DecryptString(id2))
 	idint, _ := strconv.Atoi(parseid.DecryptString(id2))
 	encd := parseid.EncryptString(idint, "pa")
