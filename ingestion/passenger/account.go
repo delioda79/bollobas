@@ -4,6 +4,7 @@ import (
 	"bollobas"
 	"bollobas/ingestion"
 	"fmt"
+	"github.com/prometheus/common/log"
 	"time"
 
 	"github.com/beatlabs/patron/async"
@@ -50,7 +51,9 @@ func (kc *AccountProcessor) publish(passenger Passenger) error {
 		Type:             "passenger",
 		Email:            passenger.Email,
 	}
-	fmt.Printf("Sending %+v", idt)
+
+	log.Debugf("Sending passenger %+v", idt)
+
 	bts, err := json.Encode(idt)
 	if err != nil {
 		return err

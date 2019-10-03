@@ -51,7 +51,7 @@ func (kc *Processor) publish(cr Ride) error {
 		if err != nil {
 			return errors.Errorf("Error when decoding the event %v", err)
 		}
-		log.Debugf("Sending: %+v", idt)
+		log.Debugf("Sending ride confirmation: %+v", idt)
 		err = kc.Send(bts)
 		if err != nil {
 			return errors.Errorf("Error when sending the event: %v", err)

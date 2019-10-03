@@ -4,6 +4,7 @@ import (
 	"bollobas"
 	"bollobas/ingestion"
 	"bollobas/pkg/parseid"
+	"github.com/beatlabs/patron/log"
 
 	"github.com/beatlabs/patron/async"
 	"github.com/beatlabs/patron/encoding/json"
@@ -43,6 +44,8 @@ func (kc *CancellationProcessor) publish(cr CancelRideRequest) error {
 	if err != nil {
 		return err
 	}
+
+	log.Debugf("Sending request cancellation %+v", idt)
 
 	return kc.Send(bts)
 }
