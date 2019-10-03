@@ -4,7 +4,8 @@ import (
 	"bollobas"
 	"bollobas/ingestion"
 	"fmt"
-	"github.com/prometheus/common/log"
+	"github.com/beatlabs/patron/log"
+
 	"time"
 
 	"github.com/beatlabs/patron/async"
