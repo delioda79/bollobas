@@ -32,6 +32,10 @@ func (p *FakeProcessor) Process(msg []byte) error {
 	return p.procreturn
 }
 
+func (p *FakeProcessor) Topic() string {
+	return "atopic"
+}
+
 func TestReceivedFormatError(t *testing.T) {
 	store.NewLogger()
 	cnt := 1

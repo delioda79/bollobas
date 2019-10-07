@@ -14,7 +14,7 @@ func TestCancellationProcessing(t *testing.T) {
 	os.Setenv("BOLLOBAS_LOCATION", "local")
 	purl := fmt.Sprintf("inproc://passenger-publisher-%d", time.Now().UnixNano())
 
-	cp, err := NewCancellationProcessor(purl)
+	cp, err := NewCancellationProcessor(purl,"", "")
 	assert.Nil(t, err)
 	cp.Activate(true)
 
@@ -33,5 +33,5 @@ func TestCancellationProcessing(t *testing.T) {
 func TestCancellationBusyPorts(t *testing.T) {
 	purl := fmt.Sprintf("inproc://passenger-cancellation-%d", time.Now().UnixNano())
 
-	HelpBusyPort(t, purl, func(url string) (ingestion.Processor, error) { return NewCancellationProcessor(url) })
+	HelpBusyPort(t, purl, func(url string) (ingestion.Processor, error) { return NewCancellationProcessor(url,"", "") })
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bollobas"
+	"bollobas/configuration"
 	"bollobas/ingestion"
 	"bollobas/ingestion/driver"
 	"bollobas/ingestion/passenger"
@@ -12,8 +12,6 @@ import (
 	"bollobas/mixpanel/riderequest/cancellation"
 	"bollobas/mixpanel/riderequest/confirmation"
 	"bollobas/pkg/ciphrest"
-	"bollobas/pkg/configclient"
-	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -58,7 +56,7 @@ func init() {
 	kkRTopic = mustGetEnvWithDefault("BOLLOBAS_KAFKA_RIDE_TOPIC", "ride")
 	bConf := mustGetEnvWithDefault("BOLLOBAS_BASE_CONF", "{}")
 	restKey = mustGetEnvWithDefault("REST_KEY", "")
-	restURL = mustGetEnvWithDefault("REST_CONNECTION_STRING", "https://0.0.0.0:443")
+	restURL = getEnvWithDefault("REST_CONNECTION_STRING", "")
 	restMixpanelPath = mustGetEnvWithDefault("REST_MIXPANEL_PATH", "/taxidmin/bollobas/mixpanel-passenger-settings")
 	cipherKey = mustGetEnvWithDefault("BOLLOBAS_CIPHER_KEY", "")
 	cipherInitVec = mustGetEnvWithDefault("BOLLOBAS_INIT_VECTOR", "")
@@ -94,7 +92,7 @@ func main() {
 	}
 
 	purl := "inproc://passenger-publisher"
-	paAccProc, err := passenger.NewAccountProcessor(purl)
+	paAccProc, err := passenger.NewAccountProcessor(purl, "kafka", kafkaPassengerIdentityTopic)
 	paAccProc.Activate(true)
 	paKfkCmp, err := ingestion.NewKafkaComponent("passenger-identity", kafkaBroker, kafkaPassengerIdentityTopic, kafkaGroup, paAccProc, failure)
 	if err != nil {
@@ -102,7 +100,7 @@ func main() {
 	}
 
 	prurl := "inproc://riderequest-publisher"
-	paRRProc, err := passenger.NewRequestProcessor(prurl)
+	paRRProc, err := passenger.NewRequestProcessor(prurl, "kafka", kkPRRTopic)
 	paRRProc.Activate(true)
 	paRRKfkCmp, err := ingestion.NewKafkaComponent("passenger-request", kafkaBroker, kkPRRTopic, kafkaGroup, paRRProc, failure)
 	if err != nil {
@@ -110,7 +108,7 @@ func main() {
 	}
 
 	pclurl := "inproc://riderequestcancel-publisher"
-	paRCProc, err := passenger.NewCancellationProcessor(pclurl)
+	paRCProc, err := passenger.NewCancellationProcessor(pclurl, "kafka", kkPRCTopic)
 	paRCProc.Activate(true)
 	paRCKfkCmp, err := ingestion.NewKafkaComponent("passenger-cancel", kafkaBroker, kkPRCTopic, kafkaGroup, paRCProc, failure)
 	if err != nil {
@@ -118,7 +116,7 @@ func main() {
 	}
 
 	pakurl := "inproc://ride-publisher"
-	paRAKProc, err := ride.NewRideProcessor(pakurl)
+	paRAKProc, err := ride.NewRideProcessor(pakurl, "kafka", kkRTopic)
 	paRAKProc.Activate(true)
 	paRAKKfkCmp, err := ingestion.NewKafkaComponent("ride", kafkaBroker, kkRTopic, kafkaGroup, paRAKProc, failure)
 	if err != nil {
@@ -134,7 +132,17 @@ func main() {
 	//Conf Manager MixPanel
 	cfm := &mixpanel.Configurator{}
 	cfm.Configure(defaultConf)
-	updateSettings(settingsPeriod, cfm)
+
+	plCfg := configuration.RestPoller{
+		Manager:cfm,
+		RestURL: restURL,
+		PollingPeriod:settingsPeriod,
+		DefaultConf:defaultConf,
+		RestKey:restKey,
+		Path:restMixpanelPath,
+	}
+
+	plCfg.UpdateSettings()
 
 	mpCl := mpsdk.NewFromClient(c, mpToken, "")
 	// Handler for any identity change from Passegers and Drivers
@@ -172,44 +180,6 @@ func main() {
 	}
 }
 
-func updateSettings(t time.Duration, cfr bollobas.ConfigurationManager) {
-	if restURL == "" {
-		cfr.Configure(defaultConf)
-		return
-	}
-
-	ticker := time.NewTicker(t)
-	cClient, err := configclient.New(restURL, restKey, restMixpanelPath)
-	if err != nil {
-		log.Debugf("Couldn't create Configuration Client. Resolving to defauls: %v", defaultConf)
-		return
-	}
-
-	st, err := cClient.GetSettings(context.TODO())
-	if err == nil {
-		//Configure
-		cfr.Configure(st)
-		log.Debugf("Settings updated with: %v", st)
-	} else {
-		log.Infof("Failed to update settings: %v", err)
-	}
-
-	go func() {
-		for {
-			<-ticker.C
-			//Logic to get configs here....
-			st, err := cClient.GetSettings(context.TODO())
-			if err == nil {
-				//Configure
-				cfr.Configure(st)
-				log.Debugf("Settings updated with: %v", st)
-			} else {
-				log.Infof("Failed to update settings: %v", err)
-			}
-		}
-	}()
-}
-
 func mustGetEnv(key string) string {
 	v, ok := os.LookupEnv(key)
 	fmt.Println(v, ok, key)
@@ -239,4 +209,12 @@ func mustGetEnvDurationWithDefault(key, def string) time.Duration {
 	}
 
 	return dur
+}
+
+func getEnvWithDefault(key, def string) string {
+	v, ok := os.LookupEnv(key)
+	if !ok {
+		return def
+	}
+	return v
 }

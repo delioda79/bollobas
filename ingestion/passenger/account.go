@@ -19,21 +19,28 @@ import (
 type AccountProcessor struct {
 	mangos.Socket
 	active bool
+	provider string
+	topic string
 }
 
 // Process is part of the patron interface and processes incoming messages
 func (kc *AccountProcessor) Process(msg async.Message) error {
+	start := time.Now()
+
 	if !kc.active {
+		ingestion.ObserveCount(kc.provider, kc.topic, false, true)
 		return nil
 	}
 	passenger := Passenger{}
 
 	err := msg.Decode(&passenger)
 	if err != nil {
+		ingestion.ObserveCount(kc.provider, kc.topic, true, false)
 		return errors.Errorf("failed to unmarshal passenger %v", err)
 	}
 
-	return kc.publish(passenger)
+	ingestion.ObserveCount(kc.provider, kc.topic, true, true)
+	return kc.publish(passenger, start)
 }
 
 // Activate will activate the processor
@@ -41,7 +48,7 @@ func (kc *AccountProcessor) Activate(v bool) {
 	kc.active = v
 }
 
-func (kc *AccountProcessor) publish(passenger Passenger) error {
+func (kc *AccountProcessor) publish(passenger Passenger, start time.Time) error {
 
 	idt := bollobas.Identity{
 		ID:               passenger.ID,
@@ -60,17 +67,25 @@ func (kc *AccountProcessor) publish(passenger Passenger) error {
 		return err
 	}
 
-	return kc.Send(bts)
+	err = kc.Send(bts)
+	if err != nil {
+		return err
+	}
+
+	ingestion.ObserveRepublishedCount("identity", "passenger")
+	ingestion.ObserveLatency(kc.provider, kc.topic, time.Since(start))
+
+	return nil
 }
 
 // NewAccountProcessor instantiates a new processor
-func NewAccountProcessor(url string) (*AccountProcessor, error) {
+func NewAccountProcessor(url, provider, topic string) (*AccountProcessor, error) {
 
 	sock, err := ingestion.NewPublisher([]string{url})
 	if err != nil {
 		return nil, err
 	}
-	return &AccountProcessor{Socket: sock, active: false}, nil
+	return &AccountProcessor{Socket: sock, active: false, provider:provider, topic:topic}, nil
 }
 
 // Passenger represents a passenger message coming from kafka

@@ -51,6 +51,12 @@ func (p *Processor) incrementRideRequests(idt *bollobas.RideRequest) error {
 	return nil
 }
 
+
+// Topic returns the topic
+func (p *Processor)  Topic() string {
+	return "ride_request"
+}
+
 // RideRequest represents a ride request message
 type RideRequest struct {
 	Request int `json:"RequestedRides"`

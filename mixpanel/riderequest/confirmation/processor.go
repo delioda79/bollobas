@@ -44,3 +44,8 @@ func (hdl *Processor) incrementRideCconfirmations(idt *bollobas.RideRequestConfi
 
 	return nil
 }
+
+// Topic returns the topic
+func (hdl *Processor)  Topic() string {
+	return "ride_request_confirmation"
+}

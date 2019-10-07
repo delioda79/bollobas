@@ -5,6 +5,7 @@ import (
 	"bollobas/ingestion"
 	"bollobas/pkg/parseid"
 	"github.com/beatlabs/patron/log"
+	"time"
 
 	"github.com/beatlabs/patron/async"
 	"github.com/beatlabs/patron/encoding/json"
@@ -16,24 +17,32 @@ import (
 type CancellationProcessor struct {
 	mangos.Socket
 	active bool
+	topic string
+	provider string
 }
 
 // Process is part of the patron interface and processes incoming messages
 func (kc *CancellationProcessor) Process(msg async.Message) error {
+	start := time.Now()
+
 	if !kc.active {
+		ingestion.ObserveCount(kc.provider, kc.topic, false, true)
 		return nil
 	}
+
 	cr := CancelRideRequest{}
 
 	err := msg.Decode(&cr)
 	if err != nil {
+		ingestion.ObserveCount(kc.provider, kc.topic, true, false)
 		return errors.Errorf("failed to unmarshal ride cancellation %v", err)
 	}
 
-	return kc.publish(cr)
+	ingestion.ObserveCount(kc.provider, kc.topic, true, true)
+	return kc.publish(cr, start)
 }
 
-func (kc *CancellationProcessor) publish(cr CancelRideRequest) error {
+func (kc *CancellationProcessor) publish(cr CancelRideRequest, start time.Time) error {
 
 	idt := bollobas.RideRequest{
 		UserID:   parseid.EncryptString(cr.PassengerID, "pa"),
@@ -47,17 +56,25 @@ func (kc *CancellationProcessor) publish(cr CancelRideRequest) error {
 
 	log.Debugf("Sending request cancellation %+v", idt)
 
-	return kc.Send(bts)
+	err = kc.Send(bts)
+	if err != nil {
+		return err
+	}
+
+	ingestion.ObserveRepublishedCount("cancellation", "ride_request")
+	ingestion.ObserveLatency(kc.provider, kc.topic, time.Since(start))
+
+	return nil
 }
 
 // NewCancellationProcessor instantiates a new component
-func NewCancellationProcessor(url string) (*CancellationProcessor, error) {
+func NewCancellationProcessor(url string, provider, topic string) (*CancellationProcessor, error) {
 
 	sock, err := ingestion.NewPublisher([]string{url})
 	if err != nil {
 		return nil, err
 	}
-	return &CancellationProcessor{Socket: sock, active: false}, nil
+	return &CancellationProcessor{Socket: sock, active: false, provider:provider, topic:topic}, nil
 }
 
 // Activate will activate the processor

@@ -51,6 +51,11 @@ func (hdl *Processor) incrementRideCancellations(idt *bollobas.RideRequestCancel
 	return nil
 }
 
+// Topic returns the topic
+func (hdl *Processor)  Topic() string {
+	return "ride_request_cancellation"
+}
+
 // RideRequestCancellation represents a message notifying of a ride cancellation by a passenger
 type RideRequestCancellation struct {
 	Cancel int `json:"CancelledRequests"`

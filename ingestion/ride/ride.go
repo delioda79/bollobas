@@ -18,11 +18,16 @@ import (
 type Processor struct {
 	mangos.Socket
 	active bool
+	provider string
+	topic string
 }
 
 // Process is part of the patron interface and processes incoming messages
 func (kc *Processor) Process(msg async.Message) error {
+	start := time.Now()
+
 	if !kc.active {
+		ingestion.ObserveCount(kc.provider, kc.topic, false, true)
 		return nil
 	}
 
@@ -30,13 +35,15 @@ func (kc *Processor) Process(msg async.Message) error {
 
 	err := msg.Decode(&cr)
 	if err != nil {
+		ingestion.ObserveCount(kc.provider, kc.topic, true, false)
 		return errors.Errorf("failed to unmarshal ride cancellation %v", err)
 	}
 
-	return kc.publish(cr)
+	ingestion.ObserveCount(kc.provider, kc.topic, true, true)
+	return kc.publish(cr, start)
 }
 
-func (kc *Processor) publish(cr Ride) error {
+func (kc *Processor) publish(cr Ride, start time.Time) error {
 
 	log.Debugf("Ride received: %+v | events: %+v", cr, cr.Events)
 	if len(cr.Events) == 0 {
@@ -52,23 +59,27 @@ func (kc *Processor) publish(cr Ride) error {
 			return errors.Errorf("Error when decoding the event %v", err)
 		}
 		log.Debugf("Sending ride confirmation: %+v", idt)
+
 		err = kc.Send(bts)
 		if err != nil {
 			return errors.Errorf("Error when sending the event: %v", err)
 		}
+
+		ingestion.ObserveLatency(kc.provider, kc.topic, time.Since(start))
+		ingestion.ObserveRepublishedCount("confirmation", "ride_request")
 	}
 
 	return nil
 }
 
 // NewRideProcessor instantiates a new processor
-func NewRideProcessor(url string) (*Processor, error) {
+func NewRideProcessor(url string, provider, topic string) (*Processor, error) {
 
 	sock, err := ingestion.NewPublisher([]string{url})
 	if err != nil {
 		return nil, err
 	}
-	rp := &Processor{Socket: sock, active: false}
+	rp := &Processor{Socket: sock, active: false, provider:provider, topic:topic}
 
 	return rp, nil
 }

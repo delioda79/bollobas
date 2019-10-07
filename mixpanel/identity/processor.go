@@ -61,6 +61,11 @@ func (p *Processor) updateIdentity(idt *bollobas.Identity) error {
 	return nil
 }
 
+// Topic returns the topic
+func (p *Processor)  Topic() string {
+	return "identity"
+}
+
 //Identity represents a mixpanel identity
 type Identity struct {
 	FirstName        string    `json:"$first_name,omitempty"`

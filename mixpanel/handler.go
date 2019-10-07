@@ -2,6 +2,7 @@ package mixpanel
 
 import (
 	"bollobas"
+	"time"
 
 	"github.com/beatlabs/patron/log"
 	"github.com/dukex/mixpanel"
@@ -31,14 +32,22 @@ func (hdl *Handler) Run() {
 				continue
 			}
 
+			start := time.Now()
+
 			if hdl.ConfigurationManager != nil && !hdl.Check(msg) {
+				ObserveCount("mangos", hdl.p.Topic(), false, true)
 				continue
 			}
 			
 			err = hdl.p.Process(msg)
 			if err != nil {
+				ObserveCount("mangos", hdl.p.Topic(), true, false)
 				log.Error(err)
+				continue
 			}
+
+			ObserveCount("mangos", hdl.p.Topic(), true, true)
+			ObserveLatency("mangos", hdl.p.Topic(), time.Since(start))
 		}
 	}()
 }
@@ -47,6 +56,7 @@ func (hdl *Handler) Run() {
 type Processor interface {
 	mixpanel.Mixpanel
 	Process(msg []byte) error
+	Topic() string
 }
 
 // NewHandler returns a new Mixpanel handler

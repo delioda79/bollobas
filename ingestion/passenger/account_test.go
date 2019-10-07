@@ -25,7 +25,7 @@ import (
 func TestProcessing(t *testing.T) {
 	purl := fmt.Sprintf("inproc://passenger-publisher-%d", time.Now().UnixNano())
 
-	cp, err := NewAccountProcessor(purl)
+	cp, err := NewAccountProcessor(purl, "", "")
 	assert.Nil(t, err)
 	cp.Activate(true)
 
@@ -43,7 +43,7 @@ func TestProcessing(t *testing.T) {
 
 func TestAccountBusyPorts(t *testing.T) {
 	purl := fmt.Sprintf("inproc://passenger-publisher-%d", time.Now().UnixNano())
-	HelpBusyPort(t, purl, func(url string) (ingestion.Processor, error) { return NewAccountProcessor(url) })
+	HelpBusyPort(t, purl, func(url string) (ingestion.Processor, error) { return NewAccountProcessor(url,"", "") })
 }
 
 func HelpBusyPort(t *testing.T, url string, factory func(string) (ingestion.Processor, error)) {
