@@ -17,6 +17,7 @@ import (
 type AccountProcessor struct {
 	mangos.Socket
 	active bool
+	market string
 }
 
 // Process is part of the patron interface and processes incoming messages
@@ -45,6 +46,7 @@ func (kc *AccountProcessor) publish(driver Driver) error {
 		Phone:            fmt.Sprintf("+%s%s%s", driver.AreaPrefix, driver.PhonePrefix, driver.PhoneNo),
 		Type:             "driver",
 		Email:            driver.Email,
+		Market:           kc.market,
 	}
 
 	bts, err := json.Encode(idt)
@@ -56,13 +58,13 @@ func (kc *AccountProcessor) publish(driver Driver) error {
 }
 
 // NewAccountProcessor instantiates a new processor
-func NewAccountProcessor(url string) (*AccountProcessor, error) {
+func NewAccountProcessor(url, market string) (*AccountProcessor, error) {
 
 	sock, err := ingestion.NewPublisher([]string{url})
 	if err != nil {
 		return nil, err
 	}
-	return &AccountProcessor{Socket: sock, active: false}, nil
+	return &AccountProcessor{Socket: sock, active: false, market: market}, nil
 }
 
 // Activate will activate the processor

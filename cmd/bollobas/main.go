@@ -36,11 +36,22 @@ var (
 	defaultConf                             map[string]interface{}
 	settingsPeriod                          time.Duration
 	restKey, restURL, restMixpanelPath      string
-	cipherKey, cipherInitVec, mixpanelToken string
+	cipherKey, cipherInitVec,
+	location, mixpanelToken, appName string
 )
 
 func init() {
-	err := godotenv.Load(".env")
+
+	appName = "bollobas"
+	err := patron.Setup(appName, version)
+	if err != nil {
+		fmt.Printf("failed to set up logging: %v", err)
+		os.Exit(1)
+	}
+
+	log.Debugf("Starting %s v%s", appName, version)
+
+	err = godotenv.Load(".env")
 	if err != nil {
 		log.Debugf("no .env file exists: %v", err)
 	}
@@ -60,6 +71,7 @@ func init() {
 	restMixpanelPath = mustGetEnvWithDefault("REST_MIXPANEL_PATH", "/taxidmin/bollobas/mixpanel-passenger-settings")
 	cipherKey = mustGetEnvWithDefault("BOLLOBAS_CIPHER_KEY", "")
 	cipherInitVec = mustGetEnvWithDefault("BOLLOBAS_INIT_VECTOR", "")
+	location = mustGetEnv("BOLLOBAS_LOCATION")
 
 	defaultConf = map[string]interface{}{}
 	err = json.Unmarshal([]byte(bConf), &defaultConf)
@@ -73,26 +85,18 @@ func init() {
 }
 
 func main() {
-	name := "bollobas"
 
 	failure := async.ConsumerRetry(10, 5*time.Second)
 
-	err := patron.Setup(name, version)
-	if err != nil {
-		fmt.Printf("failed to set up logging: %v", err)
-		os.Exit(1)
-	}
-	log.Debugf("Starting %s v%s", name, version)
-
 	durl := "inproc://driver-publisher"
-	drAccProc, err := driver.NewAccountProcessor(durl)
+	drAccProc, err := driver.NewAccountProcessor(durl, location)
 	drKfkCmp, err := ingestion.NewKafkaComponent("driver-identity", kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup, drAccProc, failure)
 	if err != nil {
 		log.Fatalf("failed to create processor %v", err)
 	}
 
 	purl := "inproc://passenger-publisher"
-	paAccProc, err := passenger.NewAccountProcessor(purl, "kafka", kafkaPassengerIdentityTopic)
+	paAccProc, err := passenger.NewAccountProcessor(purl, "kafka", kafkaPassengerIdentityTopic, location)
 	paAccProc.Activate(true)
 	paKfkCmp, err := ingestion.NewKafkaComponent("passenger-identity", kafkaBroker, kafkaPassengerIdentityTopic, kafkaGroup, paAccProc, failure)
 	if err != nil {
@@ -166,7 +170,7 @@ func main() {
 	rrakh.Run()
 
 	srv, err := patron.New(
-		name,
+		appName,
 		version,
 		patron.Components(drKfkCmp, paKfkCmp, paRRKfkCmp, paRAKKfkCmp, paRCKfkCmp),
 	)
@@ -182,9 +186,7 @@ func main() {
 
 func mustGetEnv(key string) string {
 	v, ok := os.LookupEnv(key)
-	fmt.Println(v, ok, key)
 	if !ok {
-		fmt.Println("Exactly!", key)
 		log.Fatalf("Missing configuration %s", key)
 	}
 	return v

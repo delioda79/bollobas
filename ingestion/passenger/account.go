@@ -18,9 +18,10 @@ import (
 //AccountProcessor processes the messages from passenger_analytics topics and forwards an account message
 type AccountProcessor struct {
 	mangos.Socket
-	active bool
+	active   bool
 	provider string
-	topic string
+	topic    string
+	market string
 }
 
 // Process is part of the patron interface and processes incoming messages
@@ -35,7 +36,6 @@ func (kc *AccountProcessor) Process(msg async.Message) error {
 
 	err := msg.Decode(&passenger)
 	if err != nil {
-		ingestion.ObserveCount(kc.provider, kc.topic, true, false)
 		return errors.Errorf("failed to unmarshal passenger %v", err)
 	}
 
@@ -58,6 +58,7 @@ func (kc *AccountProcessor) publish(passenger Passenger, start time.Time) error 
 		Phone:            fmt.Sprintf("+%s%s", passenger.PhonePrefix, passenger.PhoneNo),
 		Type:             "passenger",
 		Email:            passenger.Email,
+		Market:           kc.market,
 	}
 
 	log.Debugf("Sending passenger %+v", idt)
@@ -79,13 +80,13 @@ func (kc *AccountProcessor) publish(passenger Passenger, start time.Time) error 
 }
 
 // NewAccountProcessor instantiates a new processor
-func NewAccountProcessor(url, provider, topic string) (*AccountProcessor, error) {
+func NewAccountProcessor(url, provider, topic, market string) (*AccountProcessor, error) {
 
 	sock, err := ingestion.NewPublisher([]string{url})
 	if err != nil {
 		return nil, err
 	}
-	return &AccountProcessor{Socket: sock, active: false, provider:provider, topic:topic}, nil
+	return &AccountProcessor{Socket: sock, active: false, provider: provider, topic: topic, market: market}, nil
 }
 
 // Passenger represents a passenger message coming from kafka

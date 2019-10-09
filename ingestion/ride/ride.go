@@ -17,9 +17,9 @@ import (
 //Processor processes the messages from ride topics and forwards a ride confirmation message
 type Processor struct {
 	mangos.Socket
-	active bool
+	active   bool
 	provider string
-	topic string
+	topic    string
 }
 
 // Process is part of the patron interface and processes incoming messages
@@ -73,13 +73,13 @@ func (kc *Processor) publish(cr Ride, start time.Time) error {
 }
 
 // NewRideProcessor instantiates a new processor
-func NewRideProcessor(url string, provider, topic string) (*Processor, error) {
+func NewRideProcessor(url, provider, topic string) (*Processor, error) {
 
 	sock, err := ingestion.NewPublisher([]string{url})
 	if err != nil {
 		return nil, err
 	}
-	rp := &Processor{Socket: sock, active: false, provider:provider, topic:topic}
+	rp := &Processor{Socket: sock, active: false, provider: provider, topic: topic}
 
 	return rp, nil
 }

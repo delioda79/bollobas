@@ -39,6 +39,7 @@ func (p *Processor) updateIdentity(idt *bollobas.Identity) error {
 		Type:             idt.Type,
 		Email:            idt.Email,
 		Phone:            idt.Phone,
+		Market:           idt.Market,
 	}
 
 	bts, err := json.Marshal(prps)
@@ -62,7 +63,7 @@ func (p *Processor) updateIdentity(idt *bollobas.Identity) error {
 }
 
 // Topic returns the topic
-func (p *Processor)  Topic() string {
+func (p *Processor) Topic() string {
 	return "identity"
 }
 
@@ -75,4 +76,5 @@ type Identity struct {
 	Email            string    `json:"$email,omitempty"`
 	ReferralCode     string    `json:"referral_code,omitempty"`
 	Phone            string    `json:"$phone,omitempty"`
+	Market           string    `json:"market,omitempty"`
 }

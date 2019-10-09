@@ -16,8 +16,8 @@ import (
 //CancellationProcessor processes the messages from request_cancel topics and forwards a cancel ride message
 type CancellationProcessor struct {
 	mangos.Socket
-	active bool
-	topic string
+	active   bool
+	topic    string
 	provider string
 }
 
@@ -68,13 +68,13 @@ func (kc *CancellationProcessor) publish(cr CancelRideRequest, start time.Time) 
 }
 
 // NewCancellationProcessor instantiates a new component
-func NewCancellationProcessor(url string, provider, topic string) (*CancellationProcessor, error) {
+func NewCancellationProcessor(url, provider, topic string) (*CancellationProcessor, error) {
 
 	sock, err := ingestion.NewPublisher([]string{url})
 	if err != nil {
 		return nil, err
 	}
-	return &CancellationProcessor{Socket: sock, active: false, provider:provider, topic:topic}, nil
+	return &CancellationProcessor{Socket: sock, active: false, provider: provider, topic: topic}, nil
 }
 
 // Activate will activate the processor

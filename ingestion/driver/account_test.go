@@ -17,7 +17,7 @@ import (
 
 func TestProcessing(t *testing.T) {
 	durl := fmt.Sprintf("inproc://%d", time.Now().UnixNano())
-	cp, err := NewAccountProcessor(durl)
+	cp, err := NewAccountProcessor(durl, "")
 	assert.Nil(t, err)
 	cp.Activate(true)
 
@@ -84,7 +84,7 @@ func TestBusyPort(t *testing.T) {
 	sock, _ = pub.NewSocket()
 	err = sock.Listen(durl)
 	assert.Nil(t, err)
-	cp, err := NewAccountProcessor(durl)
+	cp, err := NewAccountProcessor(durl, "")
 	assert.NotNil(t, err)
 	assert.Nil(t, cp)
 }

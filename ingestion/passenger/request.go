@@ -16,9 +16,9 @@ import (
 //RequestProcessor processes the messages from request topics and forwards a request message
 type RequestProcessor struct {
 	mangos.Socket
-	active bool
+	active   bool
 	provider string
-	topic string
+	topic    string
 }
 
 // Process is part of the patron interface and processes incoming messages
@@ -67,13 +67,13 @@ func (kc *RequestProcessor) publish(cr RequestRide, start time.Time) error {
 }
 
 // NewRequestProcessor instantiates a new component
-func NewRequestProcessor(url string, provider, topic string) (*RequestProcessor, error) {
+func NewRequestProcessor(url, provider, topic string) (*RequestProcessor, error) {
 
 	sock, err := ingestion.NewPublisher([]string{url})
 	if err != nil {
 		return nil, err
 	}
-	return &RequestProcessor{Socket: sock, active: false, provider:provider, topic:topic}, nil
+	return &RequestProcessor{Socket: sock, active: false, provider: provider, topic: topic}, nil
 }
 
 // Activate will activate the processor

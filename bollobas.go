@@ -16,6 +16,7 @@ type Identity struct {
 	Email            string
 	ReferralCode     string
 	Phone            string
+	Market           string
 }
 
 // RideRequest represents an internal message notifying a ride request
