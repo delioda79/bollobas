@@ -1,11 +1,6 @@
 package passenger
 
 import (
-	"bollobas"
-	"bollobas/ingestion"
-	"bollobas/ingestion/injestionfakes"
-	"bollobas/pkg/ciphrest"
-	"bollobas/pkg/parseid"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -13,6 +8,12 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/taxibeat/bollobas"
+	"github.com/taxibeat/bollobas/ingestion"
+	"github.com/taxibeat/bollobas/ingestion/injestionfakes"
+	"github.com/taxibeat/bollobas/pkg/ciphrest"
+	"github.com/taxibeat/bollobas/pkg/parseid"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -43,7 +44,7 @@ func TestProcessing(t *testing.T) {
 
 func TestAccountBusyPorts(t *testing.T) {
 	purl := fmt.Sprintf("inproc://passenger-publisher-%d", time.Now().UnixNano())
-	HelpBusyPort(t, purl, func(url string) (ingestion.Processor, error) { return NewAccountProcessor(url,"", "", "") })
+	HelpBusyPort(t, purl, func(url string) (ingestion.Processor, error) { return NewAccountProcessor(url, "", "", "") })
 }
 
 func HelpBusyPort(t *testing.T, url string, factory func(string) (ingestion.Processor, error)) {

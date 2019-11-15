@@ -1,18 +1,19 @@
 package cancellation
 
 import (
-	"bollobas"
-	"bollobas/mixpanel/mixpanelfakes"
-	_ "bollobas/mixpanel/mixpanelfakes"
-	"bollobas/pkg/logging/store"
 	"encoding/json"
+	"sync"
+	"testing"
+
 	"github.com/beatlabs/patron/errors"
 	"github.com/beatlabs/patron/log"
 	"github.com/dukex/mixpanel"
 	"github.com/stretchr/testify/assert"
+	"github.com/taxibeat/bollobas"
+	"github.com/taxibeat/bollobas/mixpanel/mixpanelfakes"
+	_ "github.com/taxibeat/bollobas/mixpanel/mixpanelfakes"
+	"github.com/taxibeat/bollobas/pkg/logging/store"
 	_ "nanomsg.org/go/mangos/v2/transport/inproc"
-	"sync"
-	"testing"
 )
 
 func TestCancellationRequestProcessWrongFormat(t *testing.T) {

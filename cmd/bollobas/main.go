@@ -1,23 +1,24 @@
 package main
 
 import (
-	"bollobas/configuration"
-	"bollobas/ingestion"
-	"bollobas/ingestion/driver"
-	"bollobas/ingestion/passenger"
-	"bollobas/ingestion/ride"
-	"bollobas/mixpanel"
-	"bollobas/mixpanel/identity"
-	"bollobas/mixpanel/riderequest"
-	"bollobas/mixpanel/riderequest/cancellation"
-	"bollobas/mixpanel/riderequest/confirmation"
-	"bollobas/pkg/ciphrest"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/taxibeat/bollobas/configuration"
+	"github.com/taxibeat/bollobas/ingestion"
+	"github.com/taxibeat/bollobas/ingestion/driver"
+	"github.com/taxibeat/bollobas/ingestion/passenger"
+	"github.com/taxibeat/bollobas/ingestion/ride"
+	"github.com/taxibeat/bollobas/mixpanel"
+	"github.com/taxibeat/bollobas/mixpanel/identity"
+	"github.com/taxibeat/bollobas/mixpanel/riderequest"
+	"github.com/taxibeat/bollobas/mixpanel/riderequest/cancellation"
+	"github.com/taxibeat/bollobas/mixpanel/riderequest/confirmation"
+	"github.com/taxibeat/bollobas/pkg/ciphrest"
 
 	"github.com/beatlabs/patron/async"
 
@@ -32,10 +33,10 @@ var (
 	kafkaBroker, kafkaDriverIdentityTopic, kafkaGroup,
 	kafkaPassengerIdentityTopic, mpToken,
 	kkPRRTopic, kkPRCTopic, kkRTopic string
-	kafkaTimeout                            time.Duration
-	defaultConf                             map[string]interface{}
-	settingsPeriod                          time.Duration
-	restKey, restURL, restMixpanelPath      string
+	kafkaTimeout                       time.Duration
+	defaultConf                        map[string]interface{}
+	settingsPeriod                     time.Duration
+	restKey, restURL, restMixpanelPath string
 	cipherKey, cipherInitVec,
 	location, mixpanelToken, appName string
 )
@@ -138,12 +139,12 @@ func main() {
 	cfm.Configure(defaultConf)
 
 	plCfg := configuration.RestPoller{
-		Manager:cfm,
-		RestURL: restURL,
-		PollingPeriod:settingsPeriod,
-		DefaultConf:defaultConf,
-		RestKey:restKey,
-		Path:restMixpanelPath,
+		Manager:       cfm,
+		RestURL:       restURL,
+		PollingPeriod: settingsPeriod,
+		DefaultConf:   defaultConf,
+		RestKey:       restKey,
+		Path:          restMixpanelPath,
 	}
 
 	plCfg.UpdateSettings()

@@ -1,9 +1,10 @@
 package identity
 
 import (
-	"bollobas"
 	"encoding/json"
 	"time"
+
+	"github.com/taxibeat/bollobas"
 
 	"github.com/beatlabs/patron/errors"
 	"github.com/beatlabs/patron/log"

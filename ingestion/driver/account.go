@@ -1,10 +1,11 @@
 package driver
 
 import (
-	"bollobas"
-	"bollobas/ingestion"
 	"fmt"
 	"time"
+
+	"github.com/taxibeat/bollobas"
+	"github.com/taxibeat/bollobas/ingestion"
 
 	"github.com/beatlabs/patron/async"
 	"github.com/beatlabs/patron/encoding/json"

@@ -1,10 +1,11 @@
 package parseid
 
 import (
-	"bollobas/pkg/ciphrest"
 	"fmt"
 	"os"
 	"testing"
+
+	"github.com/taxibeat/bollobas/pkg/ciphrest"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -1,11 +1,12 @@
 package configuration
 
 import (
-	"bollobas"
-	"bollobas/pkg/configclient"
 	"context"
-	"github.com/beatlabs/patron/log"
 	"time"
+
+	"github.com/beatlabs/patron/log"
+	"github.com/taxibeat/bollobas"
+	"github.com/taxibeat/bollobas/pkg/configclient"
 )
 
 // RestPoller is use dto poll rest for configuration updates
@@ -13,7 +14,7 @@ type RestPoller struct {
 	Manager       bollobas.ConfigurationManager
 	RestURL       string
 	PollingPeriod time.Duration
-	DefaultConf   map[string] interface{}
+	DefaultConf   map[string]interface{}
 	RestKey       string
 	Path          string
 }

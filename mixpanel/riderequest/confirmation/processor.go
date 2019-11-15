@@ -1,8 +1,9 @@
 package confirmation
 
 import (
-	"bollobas"
 	"encoding/json"
+
+	"github.com/taxibeat/bollobas"
 
 	"github.com/beatlabs/patron/errors"
 	"github.com/beatlabs/patron/log"
@@ -46,6 +47,6 @@ func (hdl *Processor) incrementRideCconfirmations(idt *bollobas.RideRequestConfi
 }
 
 // Topic returns the topic
-func (hdl *Processor)  Topic() string {
+func (hdl *Processor) Topic() string {
 	return "ride_request_confirmation"
 }

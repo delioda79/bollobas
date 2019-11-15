@@ -1,10 +1,11 @@
 package ride
 
 import (
-	"bollobas"
-	"bollobas/ingestion"
-	"bollobas/pkg/parseid"
 	"time"
+
+	"github.com/taxibeat/bollobas"
+	"github.com/taxibeat/bollobas/ingestion"
+	"github.com/taxibeat/bollobas/pkg/parseid"
 
 	"github.com/beatlabs/patron/async"
 	"github.com/beatlabs/patron/encoding/json"

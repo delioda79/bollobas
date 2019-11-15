@@ -1,24 +1,25 @@
 package configuration
 
 import (
-	"bollobas/mixpanel"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/taxibeat/bollobas/mixpanel"
 )
 
 func TestPoll(t *testing.T) {
 
-	tcs := []struct{
+	tcs := []struct {
 		status int
-		cfg []byte
-		xp bool
-	} {
-		{status: http.StatusOK, cfg: []byte(`{"mixpanel_passenger_enabled": true}`), xp: true },
-		{status: http.StatusOK, cfg: []byte(`{"mixpanel_passenger_enabled": false}`), xp: false },
-		{status: http.StatusNotFound, cfg: []byte(`{"mixpanel_passenger_enabled": true}`), xp: false },
+		cfg    []byte
+		xp     bool
+	}{
+		{status: http.StatusOK, cfg: []byte(`{"mixpanel_passenger_enabled": true}`), xp: true},
+		{status: http.StatusOK, cfg: []byte(`{"mixpanel_passenger_enabled": false}`), xp: false},
+		{status: http.StatusNotFound, cfg: []byte(`{"mixpanel_passenger_enabled": true}`), xp: false},
 	}
 
 	for _, v := range tcs {
@@ -30,17 +31,17 @@ func TestPoll(t *testing.T) {
 
 		defer ts.Close()
 
-		cnf :=  &mixpanel.Configurator{}
+		cnf := &mixpanel.Configurator{}
 		pll := RestPoller{
-			Manager: cnf,
-			RestURL: ts.URL,
-			PollingPeriod: time.Millisecond*100,
+			Manager:       cnf,
+			RestURL:       ts.URL,
+			PollingPeriod: time.Millisecond * 100,
 		}
 
 		pll.UpdateSettings()
 
-		time.Sleep(time.Millisecond*150)
-		assert.Equal(t,cnf.Check([]byte("")), v.xp)
+		time.Sleep(time.Millisecond * 150)
+		assert.Equal(t, cnf.Check([]byte("")), v.xp)
 	}
 
 }

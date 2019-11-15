@@ -1,11 +1,12 @@
 package passenger
 
 import (
-	"bollobas"
-	"bollobas/ingestion"
-	"bollobas/pkg/parseid"
-	"github.com/beatlabs/patron/log"
 	"time"
+
+	"github.com/beatlabs/patron/log"
+	"github.com/taxibeat/bollobas"
+	"github.com/taxibeat/bollobas/ingestion"
+	"github.com/taxibeat/bollobas/pkg/parseid"
 
 	"github.com/beatlabs/patron/async"
 	"github.com/beatlabs/patron/encoding/json"

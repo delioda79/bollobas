@@ -1,10 +1,11 @@
 package passenger
 
 import (
-	"bollobas"
-	"bollobas/ingestion"
 	"fmt"
+
 	"github.com/beatlabs/patron/log"
+	"github.com/taxibeat/bollobas"
+	"github.com/taxibeat/bollobas/ingestion"
 
 	"time"
 
@@ -21,7 +22,7 @@ type AccountProcessor struct {
 	active   bool
 	provider string
 	topic    string
-	market string
+	market   string
 }
 
 // Process is part of the patron interface and processes incoming messages

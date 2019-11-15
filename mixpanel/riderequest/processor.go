@@ -1,8 +1,9 @@
 package riderequest
 
 import (
-	"bollobas"
 	"encoding/json"
+
+	"github.com/taxibeat/bollobas"
 
 	"github.com/beatlabs/patron/errors"
 	"github.com/beatlabs/patron/log"
@@ -51,9 +52,8 @@ func (p *Processor) incrementRideRequests(idt *bollobas.RideRequest) error {
 	return nil
 }
 
-
 // Topic returns the topic
-func (p *Processor)  Topic() string {
+func (p *Processor) Topic() string {
 	return "ride_request"
 }
 

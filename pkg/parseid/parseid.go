@@ -1,10 +1,11 @@
 package parseid
 
 import (
-	"bollobas/pkg/ciphrest"
 	"fmt"
 	"os"
 	"regexp"
+
+	"github.com/taxibeat/bollobas/pkg/ciphrest"
 )
 
 // EncryptString encrypts an id with format: encryptedID-location-ut

@@ -1,15 +1,16 @@
 package ride
 
 import (
-	"bollobas"
-	"bollobas/ingestion/injestionfakes"
-	"bollobas/pkg/ciphrest"
 	"encoding/json"
 	"fmt"
 	"os"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/taxibeat/bollobas"
+	"github.com/taxibeat/bollobas/ingestion/injestionfakes"
+	"github.com/taxibeat/bollobas/pkg/ciphrest"
 
 	"github.com/beatlabs/patron/errors"
 	"github.com/stretchr/testify/assert"
@@ -22,7 +23,7 @@ func TestProcessing(t *testing.T) {
 	os.Setenv("BOLLOBAS_LOCATION", "test")
 	ciphrest.InitCipher("44441s111111R1222221", "11111111112222222222333333333344")
 	durl := fmt.Sprintf("inproc://%d", time.Now().UnixNano())
-	cp, err := NewRideProcessor(durl,"", "")
+	cp, err := NewRideProcessor(durl, "", "")
 	assert.Nil(t, err)
 	cp.Activate(true)
 
@@ -89,7 +90,7 @@ func TestBusyPort(t *testing.T) {
 	sock, _ = pub.NewSocket()
 	err = sock.Listen(durl)
 	assert.Nil(t, err)
-	cp, err := NewRideProcessor(durl,"", "")
+	cp, err := NewRideProcessor(durl, "", "")
 	assert.NotNil(t, err)
 	assert.Nil(t, cp)
 }

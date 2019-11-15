@@ -1,8 +1,9 @@
 package mixpanel
 
 import (
-	"bollobas"
 	"time"
+
+	"github.com/taxibeat/bollobas"
 
 	"github.com/beatlabs/patron/log"
 	"github.com/dukex/mixpanel"
@@ -38,7 +39,7 @@ func (hdl *Handler) Run() {
 				ObserveCount("mangos", hdl.p.Topic(), false, true)
 				continue
 			}
-			
+
 			err = hdl.p.Process(msg)
 			if err != nil {
 				ObserveCount("mangos", hdl.p.Topic(), true, false)

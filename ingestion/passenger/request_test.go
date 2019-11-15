@@ -1,12 +1,13 @@
 package passenger
 
 import (
-	"bollobas/ingestion"
-	"bollobas/ingestion/injestionfakes"
 	"fmt"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/taxibeat/bollobas/ingestion"
+	"github.com/taxibeat/bollobas/ingestion/injestionfakes"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -15,7 +16,7 @@ func TestRequestProcessing(t *testing.T) {
 	os.Setenv("BOLLOBAS_LOCATION", "local")
 	purl := fmt.Sprintf("inproc://passenger-publisher-%d", time.Now().UnixNano())
 
-	cp, err := NewRequestProcessor(purl,"", "")
+	cp, err := NewRequestProcessor(purl, "", "")
 	assert.Nil(t, err)
 	cp.Activate(true)
 
@@ -34,5 +35,5 @@ func TestRequestProcessing(t *testing.T) {
 func TestRequestBusyPorts(t *testing.T) {
 	purl := fmt.Sprintf("inproc://passenger-cancellation-%d", time.Now().UnixNano())
 
-	HelpBusyPort(t, purl, func(url string) (ingestion.Processor, error) { return NewRequestProcessor(url,"", "") })
+	HelpBusyPort(t, purl, func(url string) (ingestion.Processor, error) { return NewRequestProcessor(url, "", "") })
 }

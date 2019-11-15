@@ -1,15 +1,16 @@
 package mixpanel
 
 import (
-	"bollobas"
-	"bollobas/mixpanel/mixpanelfakes"
-	_ "bollobas/mixpanel/mixpanelfakes"
-	"bollobas/pkg/logging/store"
 	"encoding/json"
 	"fmt"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/taxibeat/bollobas"
+	"github.com/taxibeat/bollobas/mixpanel/mixpanelfakes"
+	_ "github.com/taxibeat/bollobas/mixpanel/mixpanelfakes"
+	"github.com/taxibeat/bollobas/pkg/logging/store"
 
 	"github.com/beatlabs/patron/errors"
 	"github.com/beatlabs/patron/log"

@@ -1,21 +1,21 @@
 package mixpanel
 
-
 import (
-	"github.com/prometheus/client_golang/prometheus"
 	"strconv"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 var (
-	topicCounter  = prometheus.NewCounterVec(
+	topicCounter = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: "bollobas",
 			Subsystem: "mixpanel",
 			Name:      "messages_total",
 			Help:      "Counts every time a message gets receiver by the mixpanel services",
 		},
-		[]string{"provider", "topic", "processed","success"},
+		[]string{"provider", "topic", "processed", "success"},
 	)
 
 	messageProcessingLatency = prometheus.NewHistogramVec(
