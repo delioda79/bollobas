@@ -21,7 +21,9 @@ import (
 
 func TestProcessing(t *testing.T) {
 	os.Setenv("BOLLOBAS_LOCATION", "test")
-	ciphrest.InitCipher("44441s111111R1222221", "11111111112222222222333333333344")
+	err := ciphrest.InitCipher("44441s111111R1222221", "11111111112222222222333333333344")
+	assert.NoError(t, err)
+
 	durl := fmt.Sprintf("inproc://%d", time.Now().UnixNano())
 	cp, err := NewRideProcessor(durl, "", "")
 	assert.Nil(t, err)

@@ -77,12 +77,15 @@ func init() {
 	defaultConf = map[string]interface{}{}
 	err = json.Unmarshal([]byte(bConf), &defaultConf)
 	if err != nil {
-		panic(fmt.Sprintf("Wrong configuratiopn provided %v", err))
+		log.Fatalf("Wrong configuration provided %v", err)
 	}
 
 	settingsPeriod = mustGetEnvDurationWithDefault("BOLLOBAS_SETTINGS_DURATION", "10s")
 
-	ciphrest.InitCipher(cipherKey, cipherInitVec)
+	err = ciphrest.InitCipher(cipherKey, cipherInitVec)
+	if err != nil {
+		log.Fatalf("Could not initialize cipher %v", err)
+	}
 }
 
 func main() {

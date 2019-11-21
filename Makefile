@@ -16,10 +16,13 @@ stop:
 lint:
 	go fmt ./...
 	golint `go list ./...`
+
 test:
-	go test ./...
+	go test ./... -mod=vendor -cover -race -timeout 60s
+
 coverage:
 	go test -coverprofile=coverage.out ./... && go tool cover -html=coverage.out
+
 ci:
 	docker-compose down
 	docker-compose up -d --build

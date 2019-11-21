@@ -16,18 +16,18 @@ var iv []byte
 var block cipher.Block
 
 //InitCipher sets key and init vector
-func InitCipher(rawKey string, rawIV string) {
+func InitCipher(rawKey string, rawIV string) error {
 	var err error
 
 	iv, err = hex.DecodeString(rawIV)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	tKey := strings.ReplaceAll(rawKey, "@", "")
 	key, err = base64.URLEncoding.DecodeString(tKey)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	for len(key) < 32 {
@@ -36,20 +36,22 @@ func InitCipher(rawKey string, rawIV string) {
 
 	block, err = aes.NewCipher(key)
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }
 
-func pkcs5Padding(ciphertext []byte, blockSize int) []byte {
-	padding := blockSize - len(ciphertext)%blockSize
-	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
-	return append(ciphertext, padtext...)
+func pkcs5Padding(cipherText []byte, blockSize int) []byte {
+	padding := blockSize - len(cipherText)%blockSize
+	padText := bytes.Repeat([]byte{byte(padding)}, padding)
+	return append(cipherText, padText...)
 }
 
-// EncryptByteArray encrypts a bytearray with preset key/iv
-func EncryptByteArray(data []byte) string {
+// EncryptByteArray encrypts a byte array with preset key/iv
+func EncryptByteArray(data []byte) (string, error) {
 	if block == nil {
-		panic(errors.New("key/iv have not been set! Run InitCipher before attempting to encrypt/decrypt"))
+		return "", errors.New("key/iv have not been set! Run InitCipher before attempting to encrypt/decrypt")
 	}
 
 	paddingData := pkcs5Padding(data, block.BlockSize())
@@ -57,29 +59,29 @@ func EncryptByteArray(data []byte) string {
 
 	mode := cipher.NewCBCEncrypter(block, iv)
 	mode.CryptBlocks(cipherData, paddingData)
-	cipherDataAfter := string(base64.StdEncoding.EncodeToString(cipherData))
-	return base64.URLEncoding.EncodeToString([]byte(cipherDataAfter + "::" + string(iv)))
+	cipherDataAfter := base64.StdEncoding.EncodeToString(cipherData)
+	return base64.URLEncoding.EncodeToString([]byte(cipherDataAfter + "::" + string(iv))), nil
 
 }
 
 // EncryptString wraps EncryptByteArray, expecting a string
-func EncryptString(data string) string {
+func EncryptString(data string) (string, error) {
 	return EncryptByteArray([]byte(data))
 }
 
 // DecryptString decrypts a string with preset key/iv
-func DecryptString(data string) string {
+func DecryptString(data string) (string, error) {
 	if block == nil {
-		panic(errors.New("key/iv have not been set! Run InitCipher before attempting to encrypt/decrypt"))
+		return "", errors.New("key/iv have not been set! Run InitCipher before attempting to encrypt/decrypt")
 	}
 
 	decoded, err := base64.URLEncoding.DecodeString(data)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	dataSplit := strings.Split(string(decoded), "::")
 	if len(dataSplit) != 2 {
-		panic(errors.New("could not split data"))
+		return "", errors.New("could not split data")
 	}
 
 	decodedData := []byte(dataSplit[0])
@@ -89,7 +91,7 @@ func DecryptString(data string) string {
 
 	decodedData2, err := base64.StdEncoding.DecodeString(string(decodedData))
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	for len(decodedData2)%block.BlockSize() != 0 {
@@ -97,14 +99,16 @@ func DecryptString(data string) string {
 	}
 
 	mode.CryptBlocks(decodedData2, decodedData2)
+
+	compiledString, err := regexp.Compile(`[^a-zA-Z0-9 -]`)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return regexp.MustCompile(`[^a-zA-Z0-9 -]`).ReplaceAllString(string(decodedData2), "")
+	return compiledString.ReplaceAllString(string(decodedData2), ""), nil
 }
 
 // DecryptByteArray wraps Decrypt String, expecting a byte array
-func DecryptByteArray(data []byte) string {
+func DecryptByteArray(data []byte) (string, error) {
 	return DecryptString(string(data))
 }

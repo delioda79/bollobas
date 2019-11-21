@@ -110,13 +110,15 @@ func HelpProcessing(t *testing.T, purl string, cp ingestion.Processor, msg *inje
 func TestIDEnc(t *testing.T) {
 	os.Setenv("BOLLOBAS_LOCATION", "sandbox")
 
-	ciphrest.InitCipher("44441s111111R1222221", "11111111112222222222333333333344")
+	err := ciphrest.InitCipher("44441s111111R1222221", "11111111112222222222333333333344")
+	assert.NoError(t, err)
 
-	id2 := "QmYzSDhLaFB4UlFvSXp5L0o4YTR6Zz09Ojq-9N6igSEHCUtHEgUw4QyR-sandbox-pa"
-	fmt.Println(parseid.DecryptString(id2))
-	idint, _ := strconv.Atoi(parseid.DecryptString(id2))
-	encd := parseid.EncryptString(idint, "pa")
-	fmt.Println(encd)
-	fmt.Println(id2)
-	fmt.Println(id2 == encd)
+	id2 := "VU90NVIwTzhWWHB0b0dSZ3dwcnVMZz09OjoRERERESIiIiIiMzMzMzNE-sandbox-pa"
+	decryptedString, err := parseid.DecryptString(id2)
+	assert.NoError(t, err)
+	idInt, err := strconv.Atoi(decryptedString)
+	assert.NoError(t, err)
+	encd, err := parseid.EncryptString(idInt, "pa")
+	assert.NoError(t, err)
+	assert.Equal(t, id2, encd)
 }

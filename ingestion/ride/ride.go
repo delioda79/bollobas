@@ -49,8 +49,14 @@ func (kc *Processor) publish(cr Ride, start time.Time) error {
 	log.Debugf("Ride received: %+v | events: %+v", cr, cr.Events)
 	if len(cr.Events) == 0 {
 		log.Debugf("Ready to send")
+		passengerID, err := parseid.EncryptString(cr.Passenger.PassengerID, "pa")
+		if err != nil {
+			log.Errorf("error encrypting passenger ID: %v", err)
+			return err
+		}
+
 		idt := bollobas.RideRequestConfirmed{
-			UserID:   parseid.EncryptString(cr.Passenger.PassengerID, "pa"),
+			UserID:   passengerID,
 			RquestID: cr.RequestID,
 			Date:     time.Unix(cr.Created, 0),
 		}

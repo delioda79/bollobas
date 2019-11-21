@@ -44,9 +44,14 @@ func (kc *CancellationProcessor) Process(msg async.Message) error {
 }
 
 func (kc *CancellationProcessor) publish(cr CancelRideRequest, start time.Time) error {
+	passengerID, err := parseid.EncryptString(cr.PassengerID, "pa")
+	if err != nil {
+		log.Errorf("error encrypting passenger ID: %v", err)
+		return err
+	}
 
 	idt := bollobas.RideRequest{
-		UserID:   parseid.EncryptString(cr.PassengerID, "pa"),
+		UserID:   passengerID,
 		RquestID: cr.RequestID,
 	}
 

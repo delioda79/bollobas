@@ -43,9 +43,14 @@ func (kc *RequestProcessor) Process(msg async.Message) error {
 }
 
 func (kc *RequestProcessor) publish(cr RequestRide, start time.Time) error {
+	passengerID, err := parseid.EncryptString(cr.Passenger.ID, "pa")
+	if err != nil {
+		log.Errorf("error encrypting passenger ID: %v", err)
+		return err
+	}
 
 	idt := bollobas.RideRequest{
-		UserID:   parseid.EncryptString(cr.Passenger.ID, "pa"),
+		UserID:   passengerID,
 		RquestID: cr.RequestID,
 	}
 
