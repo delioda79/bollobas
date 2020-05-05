@@ -1,0 +1,34 @@
+version: '3.2'
+services:
+  bollobas-dev:
+    image: bollobas
+    build: .
+    container_name: bollobas-dev
+    restart: on-failure
+    ports:
+      - "50000:50000"
+    depends_on:
+      - bollobas_db
+
+  bollobas_ci:
+    image: bollobas_ci
+    container_name: bollobas_ci
+    build:
+      context: ./../../../
+      dockerfile: infra/build/Dockerfile.ci
+    env_file:
+      - ../../../config/.env.ci
+    depends_on:
+      - bollobas_db
+
+  bollobas_db:
+    image: registry.private.k8s.sandbox.thebeat.co/beat/dockerstack_mysql_db:5.7-pe
+    container_name: bollobas_db
+    hostname: bollobas_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "a123456"
+      MYSQL_USERNAME: "root"
+      MYSQL_PASSWORD: "a123456"
+      TIMEZONE: "UTC"
+      MYSQL_DATABASE: "bollobas_test"
