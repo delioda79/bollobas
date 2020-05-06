@@ -16,7 +16,7 @@ import (
 func TestGetAllAggregatedTrips(t *testing.T) {
 	st, err := storagetest.SetConfig()
 	assert.Nil(t, err)
-	at  := sql.NewAggregatedTripsRepository(context.Background(), st)
+	at := sql.NewAggregatedTripsRepository(context.Background(), st)
 	err = populateAggregatedTripsTable(at)
 	assert.Nil(t, err)
 
@@ -30,13 +30,12 @@ func TestGetAllAggregatedTrips(t *testing.T) {
 	assert.Equal(t, "Test1", rr[1].SupplierID)
 }
 
-
 func populateAggregatedTripsTable(r *sql.AggregatedTripsRepo) error {
 	ctx := context.Background()
 	r.DB().Exec(ctx, "TRUNCATE aggregated_trips")
 	a := &internal.AggregatedTrips{
-		Date: time.Now(),
-		SupplierID: "Test1",
+		Date:              time.Now(),
+		SupplierID:        "Test1",
 		TotalDistTraveled: 10.45,
 	}
 
@@ -44,8 +43,8 @@ func populateAggregatedTripsTable(r *sql.AggregatedTripsRepo) error {
 		return err
 	}
 	a = &internal.AggregatedTrips{
-		Date: time.Now(),
-		SupplierID: "Test2",
+		Date:              time.Now(),
+		SupplierID:        "Test2",
 		TotalDistTraveled: 10.46,
 	}
 	return r.Add(context.Background(), a)

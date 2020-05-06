@@ -16,7 +16,7 @@ import (
 func TestGetAllOperatorStats(t *testing.T) {
 	st, err := storagetest.SetConfig()
 	assert.Nil(t, err)
-	at  := sql.NewOperatorStatsRepository(context.Background(), st)
+	at := sql.NewOperatorStatsRepository(context.Background(), st)
 	err = populateOperatorStatsTable(at)
 	assert.Nil(t, err)
 
@@ -34,25 +34,24 @@ func TestGetAllOperatorStats(t *testing.T) {
 	assert.Equal(t, 3, rr[0].Gender)
 }
 
-
 func populateOperatorStatsTable(r *sql.OperatorStatsRepo) error {
 	ctx := context.Background()
 	r.DB().Exec(ctx, "TRUNCATE operator_stats")
 	a := &internal.OperatorStats{
-		Date: time.Now(),
+		Date:       time.Now(),
 		OperatorID: 1,
-		Gender:3,
-		AgeRange:"AgeRange1",
+		Gender:     3,
+		AgeRange:   "AgeRange1",
 	}
 
 	if err := r.Add(ctx, a); err != nil {
 		return err
 	}
 	a = &internal.OperatorStats{
-		Date: time.Now(),
+		Date:       time.Now(),
 		OperatorID: 2,
-		Gender:1,
-		AgeRange:"AgeRange2",
+		Gender:     1,
+		AgeRange:   "AgeRange2",
 	}
 	return r.Add(context.Background(), a)
 }

@@ -7,9 +7,9 @@ import (
 	"github.com/beatlabs/patron/client/sql"
 	"github.com/taxibeat/bollobas/internal/config"
 	"os"
+	"github.com/beatlabs/patron/log"
 	// this is the mysqld driver, thsi comment is needed by the smart linter...
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/beatlabs/patron/log"
 )
 
 var (

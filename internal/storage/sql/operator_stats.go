@@ -52,12 +52,12 @@ func (va *OperatorStatsRepo) Add(ctx context.Context, r *internal.OperatorStats)
 		"date, " +
 		"operator_id, " +
 		"gender, " +
-	"completed_trips, " +
-	"days_since, " +
-	"age_range, " +
-	"hours_connected, " +
-	"trip_hours, " +
-	"tot_revenue" +
+		"completed_trips, " +
+		"days_since, " +
+		"age_range, " +
+		"hours_connected, " +
+		"trip_hours, " +
+		"tot_revenue" +
 		") " +
 		"VALUES (?,?,?,?,?,?,?,?,?)"
 

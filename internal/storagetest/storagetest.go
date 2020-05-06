@@ -30,5 +30,4 @@ func SetConfig() (*sql.Store, error) {
 	// black box handle
 	return sql.New(cfg)
 
-
 }

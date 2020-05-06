@@ -52,7 +52,7 @@ type Configuration struct {
 	KafkaGroup                  sync.String `env:"BOLLOBAS_KAFKA_GROUP"`
 	KafkaDriverIdentityTopic    sync.String `seed:"driver_analytics" env:"BOLLOBAS_KAFKA_DRIVER_TOPIC"`
 	KafkaPassengerIdentityTopic sync.String `seed:"passenger_analytics" env:"BOLLOBAS_KAFKA_PASSENGER_TOPIC"`
-	KafkaTimeout                Duration  	`seed:"2s" env:"BOLLOBAS_KAFKA_TIMEOUT"`
+	KafkaTimeout                Duration    `seed:"2s" env:"BOLLOBAS_KAFKA_TIMEOUT"`
 	RestURL                     sync.String `seed:"" env:"PIGEON_REST_URL"`
 	RestKey                     sync.String `seed:"" env:"REST_KEY"`
 	MpToken                     sync.String `env:"BOLLOBAS_MIXPANEL_TOKEN"`
@@ -65,12 +65,12 @@ type Configuration struct {
 	CipherInitVec               sync.String `seed:"" env:"BOLLOBAS_INIT_VECTOR"`
 	Location                    sync.String `seed:"" env:"BOLLOBAS_LOCATION"`
 	DBUsername                  sync.String `env:"MYSQL_USERNAME"`
-	DBPassword 					sync.String `env:"MYSQL_PASS"`
-	DBWriteHost					sync.String `env:"MYSQL_WRITE"`
-	DBReadHost					sync.String `env:"MYSQL_READ"`
-	DBPort 						sync.String `env:"MYSQL_PORT"`
-	DBName						sync.String `env:"MYSQL_DB"`
-	SettingsPeriod              Duration  	`seed:"60s" env:"BOLLOBAS_SETTINGS_DURATION"`
+	DBPassword                  sync.String `env:"MYSQL_PASS"`
+	DBWriteHost                 sync.String `env:"MYSQL_WRITE"`
+	DBReadHost                  sync.String `env:"MYSQL_READ"`
+	DBPort                      sync.String `env:"MYSQL_PORT"`
+	DBName                      sync.String `env:"MYSQL_DB"`
+	SettingsPeriod              Duration    `seed:"60s" env:"BOLLOBAS_SETTINGS_DURATION"`
 }
 
 // NewConfig instantiates a new configuration object
