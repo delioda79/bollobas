@@ -151,12 +151,15 @@ node('slave') {
             kubeconfig_id = "KUBECONFIG_${envVarMapping.KUBERNETES_CLUSTER}"
 
             try {
-
+                dbCreds = BOLLOBAS_DB_PASSWORD_DEV
+                if (prod) {
+                    dbCreds = BOLLOBAS_DB_PASSWORD_PROD
+                }
                 withCredentials([
                     string(credentialsId: "${bollobas_cipher_key_env}", variable: 'bollobas_cipher_key'),
                     string(credentialsId: "${bollobas_init_vector_env}", variable: 'bollobas_init_vector'),
                     string(credentialsId: "${bollobas_mixpanel_token_env}", variable: 'bollobas_mixpanel_token'),
-
+                    usernamePassword(credentialsId: "${dbCreds}", usernameVariable: 'bollobasDbUserName', passwordVariable: 'bollobasDbPassword')
                     string(credentialsId: "${bollobas_rest_key_env}", variable: 'bollobas_rest_key')
                 ]) {
                     setList = " --set image.registry=${envVarMapManagement.REGISTRY_SERVER}/beat/ \
@@ -175,6 +178,8 @@ node('slave') {
                                     --set env.BOLLOBAS_KAFKA_REQUEST_CANCEL_TOPIC=request_cancel \
                                     --set env.BOLLOBAS_KAFKA_RIDE_TOPIC=ride \
                                     --set env.BOLLOBAS_KAFKA_TIMEOUT=10s \
+                                    --set env.MYSQL_USERNAME=${bollobasDbUserName} \
+                                    --set env.MYSQL_PASS=${bollobasDbPassword} \
                                     --set env.BOLLOBAS_KAFKA_GROUP=arcns1 \
                                     --set env.REST_MIXPANEL_PATH=/taxidmin/bollobas/mixpanel-passenger-settings \
                                     --set env.BOLLOBAS_SETTINGS_DURATION=10s \

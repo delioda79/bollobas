@@ -26,6 +26,7 @@ coverage:
 
 ci:
 	docker-compose -f infra/deploy/local/docker-compose.yml down
+	sleep 3
 	docker-compose -f infra/deploy/local/docker-compose.yml build bollobas_ci
 	docker-compose -f infra/deploy/local/docker-compose.yml run bollobas_ci ./script/sql/exec_migrations.sh
 	docker-compose -f infra/deploy/local/docker-compose.yml run bollobas_ci ./script/ci.sh
