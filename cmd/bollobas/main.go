@@ -30,7 +30,7 @@ import (
 
 	"time"
 
-	semhttp "github.com/taxibeat/bollobas/internal/semovi/ingestion/http"
+	semhttp "github.com/taxibeat/bollobas/internal/semovi/rest/http"
 
 	mpsdk "github.com/dukex/mixpanel"
 	"github.com/joho/godotenv"
@@ -79,7 +79,7 @@ func main() {
 
 	// Setup HTTP route builder with a singe GET route
 	rrb := phttp.NewRoutesBuilder()
-	appendRoutes(rrb, semhttp.Routes())
+	appendRoutes(rrb, semhttp.Routes(ctx, store))
 
 	//Set up Kafka
 	rt := uint(10)

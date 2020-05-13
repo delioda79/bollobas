@@ -14,11 +14,11 @@ type TrafficIncidentsRepository interface {
 // TrafficIncident represents the stats for traffic incident report
 type TrafficIncident struct {
 	ID             int64     `json:"id"`
-	Date           time.Time `json:"date" transl:"tiempo_hecho"`
-	Type           int       `json:"type" transl:"hecho_trans"`
-	Plates         string    `json:"plates" transl:"placa"`
-	Licence        string    `json:"licence" transl:"licencia"`
-	TravelDistance string    `json:"travel_distance" transl:"distancia_viaje"`
-	TravelTime     string    `json:"travel_time" transl:"tiempo_viaje"`
-	Coordinates    string    `json:"coordinates" transl:"ubicación"`
+	Date           time.Time `transl:"date" json:"tiempo_hecho"`
+	Type           int       `transl:"type" json:"hecho_trans"`
+	Plates         string    `transl:"plates" json:"placa"`
+	Licence        string    `transl:"licence" json:"licencia"`
+	TravelDistance string    `transl:"travel_distance" json:"distancia_viaje"`
+	TravelTime     string    `transl:"travel_time" json:"tiempo_viaje"`
+	Coordinates    string    `transl:"coordinates" json:"ubicación"`
 }

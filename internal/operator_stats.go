@@ -1,23 +1,26 @@
 package internal
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 // OperatorStatsRepository allows to manipulate the operator stats
 type OperatorStatsRepository interface {
-	GetAll() ([]AggregatedTrips, error)
-	Add(trips *AggregatedTrips)
+	GetAll(ctx context.Context) ([]OperatorStats, error)
+	Add(ctx context.Context, trips *OperatorStats) error
 }
 
 // OperatorStats represents the stats for report 2
 type OperatorStats struct {
 	ID             int64     `json:"id"`
-	Date           time.Time `json:"date" transl:"fecha_produccion"`
-	OperatorID     int       `json:"operator_id" transl:"id_operador"`
-	Gender         int       `json:"gender" transl:"genero"`
-	CompletedTrips int       `json:"completed_trips" transl:"cant_viajes"`
-	DaysSince      int       `json:"days_since" transl:"tiempo_registro"`
-	AgeRange       string    `json:"age_range" transl:"edad"`
-	HoursConnected string    `json:"hours_connected" transl:"horas_conectado"`
-	TripHours      string    `json:"trip_hours" transl:"horas_viaje"`
-	TotRevenue     string    `json:"tot_revenue" transl:"ingreso_totales"`
+	Date           time.Time `transl:"date" json:"fecha_produccion"`
+	OperatorID     int       `transl:"operator_id" json:"id_operador"`
+	Gender         int       `transl:"gender" json:"genero"`
+	CompletedTrips int       `transl:"completed_trips" json:"cant_viajes"`
+	DaysSince      int       `transl:"days_since" json:"tiempo_registro"`
+	AgeRange       string    `transl:"age_range" json:"edad"`
+	HoursConnected string    `transl:"hours_connected" json:"horas_conectado"`
+	TripHours      string    `transl:"trip_hours" json:"horas_viaje"`
+	TotRevenue     string    `transl:"tot_revenue" json:"ingreso_totales"`
 }
