@@ -2,8 +2,9 @@ package ingestion
 
 import (
 	"fmt"
-	"github.com/beatlabs/patron"
 	"time"
+
+	"github.com/beatlabs/patron"
 
 	"github.com/beatlabs/patron/component/async"
 	"github.com/beatlabs/patron/component/async/kafka"
@@ -16,7 +17,6 @@ import (
 
 // Processor is an interface for structs able to process kafka messages
 type Processor interface {
-	mangos.Socket
 	Process(msg async.Message) error
 	Activate(v bool)
 }
@@ -43,7 +43,7 @@ type KafkaComponent struct {
 }
 
 // NewKafkaComponent instantiates a new component
-func NewKafkaComponent(name, cgroup string, topic, broker []string, processor Processor, rt uint, rtw time.Duration) (*KafkaComponent, error) {
+func NewKafkaComponent(name, cname, cgroup string, topic, broker []string, processor Processor, rt uint, rtw time.Duration) (*KafkaComponent, error) {
 
 	kafkaCmp := KafkaComponent{}
 
@@ -52,7 +52,7 @@ func NewKafkaComponent(name, cgroup string, topic, broker []string, processor Pr
 		return nil, err
 	}
 
-	bld := async.New("driver-kafka-cmp", cf, processor.Process)
+	bld := async.New(cname, cf, processor.Process)
 	cmp, err := bld.WithRetries(rt).WithRetryWait(rtw).Create()
 	if err != nil {
 		return nil, err

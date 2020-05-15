@@ -3,13 +3,14 @@ package passenger
 import (
 	"encoding/json"
 	"fmt"
-	bollobas "github.com/taxibeat/bollobas/internal/mixpanel"
-	"nanomsg.org/go/mangos/v2"
 	"os"
 	"strconv"
 	"sync"
 	"testing"
 	"time"
+
+	bollobas "github.com/taxibeat/bollobas/internal/mixpanel"
+	"nanomsg.org/go/mangos/v2"
 
 	"github.com/taxibeat/bollobas/internal/ingestion"
 	"github.com/taxibeat/bollobas/internal/ingestion/injestionfakes"
@@ -22,6 +23,11 @@ import (
 	"nanomsg.org/go/mangos/v2/protocol/sub"
 	_ "nanomsg.org/go/mangos/v2/transport/all"
 )
+
+type mangosProcessor interface {
+	mangos.Socket
+	ingestion.Processor
+}
 
 func TestProcessing(t *testing.T) {
 	purl := fmt.Sprintf("inproc://passenger-publisher-%d", time.Now().UnixNano())
@@ -60,7 +66,7 @@ func HelpBusyPort(t *testing.T, url string, factory func(string) (ingestion.Proc
 	assert.Nil(t, cp)
 }
 
-func HelpProcessing(t *testing.T, purl string, cp ingestion.Processor, msg *injestionfakes.FakeMessage) {
+func HelpProcessing(t *testing.T, purl string, cp mangosProcessor, msg *injestionfakes.FakeMessage) {
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)

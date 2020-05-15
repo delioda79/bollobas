@@ -15,7 +15,7 @@ type OperatorStatsRepository interface {
 type OperatorStats struct {
 	ID             int64     `json:"id"`
 	Date           time.Time `transl:"date" json:"fecha_produccion"`
-	OperatorID     int       `transl:"operator_id" json:"id_operador"`
+	OperatorID     string    `transl:"operator_id" json:"id_operador"`
 	Gender         int       `transl:"gender" json:"genero"`
 	CompletedTrips int       `transl:"completed_trips" json:"cant_viajes"`
 	DaysSince      int       `transl:"days_since" json:"tiempo_registro"`

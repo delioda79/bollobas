@@ -2,12 +2,12 @@ package sql
 
 import (
 	"context"
+
 	"github.com/taxibeat/bollobas/internal"
 )
 
 // OperatorStatsRepo implements the interface for MySQL
 type OperatorStatsRepo struct {
-	context.Context
 	*Store
 	table string
 }
@@ -72,18 +72,14 @@ func (va *OperatorStatsRepo) Add(ctx context.Context, r *internal.OperatorStats)
 		&r.TripHours,
 		&r.TotRevenue,
 	)
-	if err != nil {
-		return err
-	}
-	r.ID, err = rr.LastInsertId()
-	if err != nil {
-		return err
+	if err == nil {
+		r.ID, err = rr.LastInsertId()
 	}
 
-	return nil
+	return err
 }
 
 // NewOperatorStatsRepository creates a new repo
-func NewOperatorStatsRepository(ctx context.Context, store *Store) *OperatorStatsRepo {
-	return &OperatorStatsRepo{ctx, store, "operator_stats"}
+func NewOperatorStatsRepository(store *Store) *OperatorStatsRepo {
+	return &OperatorStatsRepo{store, "operator_stats"}
 }

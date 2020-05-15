@@ -2,9 +2,10 @@ package http
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/taxibeat/bollobas/internal"
 	"github.com/taxibeat/bollobas/internal/storage/sql"
-	"net/http"
 
 	phttp "github.com/beatlabs/patron/component/http"
 )
@@ -16,14 +17,14 @@ const (
 )
 
 // Routes returns an array of all served routes
-func Routes(ctx context.Context, st *sql.Store) []*phttp.RouteBuilder {
-	or := sql.NewOperatorStatsRepository(ctx, st)
-	ar := sql.NewAggregatedTripsRepository(ctx, st)
-	tr := sql.NewTrafficIncidentsRepository(ctx, st)
+func Routes(st *sql.Store) []*phttp.RouteBuilder {
+	or := sql.NewOperatorStatsRepository(st)
+	ar := sql.NewAggregatedTripsRepository(st)
+	tr := sql.NewTrafficIncidentsRepository(st)
 	routes := [...]route{
-		route{http.MethodGet, "/viajes_agregados", &AggregatedRidesHandler{Rp:ar}},
-		route{http.MethodGet, "/stats_operador", &OperatorStatsHandler{Rp:or}},
-		route{http.MethodGet, "/hecho_transito", &TrafficIncidentsHandler{Rp:tr}},
+		route{http.MethodGet, "/viajes_agregados", &AggregatedRidesHandler{Rp: ar}},
+		route{http.MethodGet, "/stats_operador", &OperatorStatsHandler{Rp: or}},
+		route{http.MethodGet, "/hecho_transito", &TrafficIncidentsHandler{Rp: tr}},
 	}
 	rb := make([]*phttp.RouteBuilder, len(routes))
 	for i, r := range routes {
@@ -40,7 +41,7 @@ type handler interface {
 type route struct {
 	method   string
 	endpoint string
-	handler handler
+	handler  handler
 }
 
 func (r *route) ToPatronBuilder() *phttp.RouteBuilder {

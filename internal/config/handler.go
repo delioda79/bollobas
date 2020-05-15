@@ -59,6 +59,7 @@ type Configuration struct {
 	KkPRRTopic                  sync.String `seed:"request" env:"BOLLOBAS_KAFKA_REQUEST_TOPIC"`
 	KkPRCTopic                  sync.String `seed:"request_cancel" env:"BOLLOBAS_KAFKA_REQUEST_CANCEL_TOPIC"`
 	KkRTopic                    sync.String `seed:"ride" env:"BOLLOBAS_KAFKA_RIDE_TOPIC"`
+	KkSOTopic                   sync.String `seed:"stats_operador" env:"BOLLOBAS_KAFKA_STATS_OPERADOR_TOPIC"`
 	BConf                       sync.String `seed:"{}" env:"BOLLOBAS_BASE_CONF"`
 	RestMixpanelPath            sync.String `seed:"/taxidmin/bollobas/mixpanel-passenger-settings" env:"REST_MIXPANEL_PATH"`
 	CipherKey                   sync.String `seed:"" env:"BOLLOBAS_CIPHER_KEY"`

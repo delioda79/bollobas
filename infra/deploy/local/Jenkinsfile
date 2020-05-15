@@ -24,17 +24,6 @@ node('slave') {
       }
     }
 
-    stage('Run CI') {
-        try {
-            sh 'make ci'
-            result = 'SUCCESS'
-        } catch (e) {
-            sh 'make ci-cleanup'
-            result = 'FAILURE'
-            throw e
-        }
-    }
-
     // Build image
     stage('Build docker image') {
       /* If a valid push is made, build image */

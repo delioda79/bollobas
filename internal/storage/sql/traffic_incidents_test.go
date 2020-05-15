@@ -4,19 +4,21 @@ package sql_test
 
 import (
 	"context"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/taxibeat/bollobas/internal"
 	"github.com/taxibeat/bollobas/internal/storage/sql"
 
-	"github.com/taxibeat/bollobas/internal/storagetest"
 	"testing"
 	"time"
+
+	"github.com/taxibeat/bollobas/internal/storagetest"
 )
 
 func TestGetAllTrafficIncidents(t *testing.T) {
 	st, err := storagetest.SetConfig()
 	assert.Nil(t, err)
-	at := sql.NewTrafficIncidentsRepository(context.Background(), st)
+	at := sql.NewTrafficIncidentsRepository(st)
 	err = populateTrafficIncidentsTable(at)
 	assert.Nil(t, err)
 

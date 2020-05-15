@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/beatlabs/patron/client/sql"
-	"github.com/taxibeat/bollobas/internal/config"
 	"os"
+
+	"github.com/beatlabs/patron/client/sql"
 	"github.com/beatlabs/patron/log"
+	"github.com/taxibeat/bollobas/internal/config"
+
 	// this is the mysqld driver, thsi comment is needed by the smart linter...
 	_ "github.com/go-sql-driver/mysql"
 )

@@ -4,19 +4,21 @@ package sql_test
 
 import (
 	"context"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/taxibeat/bollobas/internal"
 	"github.com/taxibeat/bollobas/internal/storage/sql"
 
-	"github.com/taxibeat/bollobas/internal/storagetest"
 	"testing"
 	"time"
+
+	"github.com/taxibeat/bollobas/internal/storagetest"
 )
 
 func TestGetAllOperatorStats(t *testing.T) {
 	st, err := storagetest.SetConfig()
 	assert.Nil(t, err)
-	at := sql.NewOperatorStatsRepository(context.Background(), st)
+	at := sql.NewOperatorStatsRepository(st)
 	err = populateOperatorStatsTable(at)
 	assert.Nil(t, err)
 
@@ -39,7 +41,7 @@ func populateOperatorStatsTable(r *sql.OperatorStatsRepo) error {
 	r.DB().Exec(ctx, "TRUNCATE operator_stats")
 	a := &internal.OperatorStats{
 		Date:       time.Now(),
-		OperatorID: 1,
+		OperatorID: "ass",
 		Gender:     3,
 		AgeRange:   "AgeRange1",
 	}
@@ -49,7 +51,7 @@ func populateOperatorStatsTable(r *sql.OperatorStatsRepo) error {
 	}
 	a = &internal.OperatorStats{
 		Date:       time.Now(),
-		OperatorID: 2,
+		OperatorID: "asd",
 		Gender:     1,
 		AgeRange:   "AgeRange2",
 	}

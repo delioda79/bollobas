@@ -8,7 +8,6 @@ import (
 
 // TrafficIncidentsRepo implements the interface for MySQL
 type TrafficIncidentsRepo struct {
-	context.Context
 	*Store
 	table string
 }
@@ -79,6 +78,6 @@ func (ti *TrafficIncidentsRepo) Add(ctx context.Context, i *internal.TrafficInci
 }
 
 // NewTrafficIncidentsRepository creates a new repo
-func NewTrafficIncidentsRepository(ctx context.Context, store *Store) *TrafficIncidentsRepo {
-	return &TrafficIncidentsRepo{ctx, store, "traffic_incidents"}
+func NewTrafficIncidentsRepository(store *Store) *TrafficIncidentsRepo {
+	return &TrafficIncidentsRepo{store, "traffic_incidents"}
 }

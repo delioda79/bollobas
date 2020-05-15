@@ -2,12 +2,12 @@ package sql
 
 import (
 	"context"
+
 	"github.com/taxibeat/bollobas/internal"
 )
 
 // AggregatedTripsRepo implements the interface for MySQL
 type AggregatedTripsRepo struct {
-	context.Context
 	*Store
 	table string
 }
@@ -123,6 +123,6 @@ func (va *AggregatedTripsRepo) Add(ctx context.Context, r *internal.AggregatedTr
 }
 
 // NewAggregatedTripsRepository creates a new repo
-func NewAggregatedTripsRepository(ctx context.Context, store *Store) *AggregatedTripsRepo {
-	return &AggregatedTripsRepo{ctx, store, "aggregated_trip"}
+func NewAggregatedTripsRepository(store *Store) *AggregatedTripsRepo {
+	return &AggregatedTripsRepo{store, "aggregated_trip"}
 }
