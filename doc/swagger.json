@@ -1,0 +1,258 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "Bollobas is a microservice for handling and serving analytics data",
+    "version": "0.0.1",
+    "title": "Bollobas μService"
+  },
+  "paths": {
+    "/semovi/1.0.0/hecho_transito": {
+      "get": {
+        "summary": "Get all traffic incidents",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "from",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by date from"
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "to",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by date to"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrafficIncidentsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/semovi/1.0.0/viajes_agregados": {
+      "get": {
+        "summary": "Get aggregated rides",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "from",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by date from"
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "to",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by date to"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AggregatedRidesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/semovi/1.0.0/stats_operador": {
+      "get": {
+        "summary": "Get operator stats",
+        "parameters": [
+          {
+            "in": "query",
+            "required": false,
+            "name": "from",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by date from"
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "to",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by date to"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperatorStatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Bollobas readme",
+    "url": "https://github.com/taxibeat/bollobas"
+  },
+  "components": {
+    "schemas": {
+      "TrafficIncidentsResponse": {
+        "properties": {
+          "tiempo_hecho": {
+            "type": "integer"
+          },
+          "hecho_trans": {
+            "type": "integer"
+          },
+          "placa": {
+            "type": "string"
+          },
+          "licencia": {
+            "type": "string"
+          },
+          "distancia_viaje": {
+            "type": "string"
+          },
+          "tiempo_viaje": {
+            "type": "string"
+          },
+          "ubicación": {
+            "type": "string"
+          }
+        }
+      },
+      "AggregatedRidesResponse": {
+        "properties": {
+          "fecha_produccion": {
+            "type": "integer"
+          },
+          "fetcha": {
+            "type": "integer"
+          },
+          "id_proveedor": {
+            "type": "string"
+          },
+          "tot_viajes": {
+            "type": "integer"
+          },
+          "tot_veh_viaje": {
+            "type": "integer"
+          },
+          "tot_veh_disp": {
+            "type": "integer"
+          },
+          "dist_pasajero": {
+            "type": "number"
+          },
+          "tiempo_pasajero": {
+            "type": "integer"
+          },
+          "tiempo_solicitud": {
+            "type": "integer"
+          },
+          "dist_solicitud": {
+            "type": "number"
+          },
+          "tiempo_vacio": {
+            "type": "integer"
+          },
+          "multiplicador_eod": {
+            "type": "integer"
+          },
+          "accesibilidad": {
+            "type": "integer"
+          },
+          "operador_mujer": {
+            "type": "integer"
+          },
+          "inicio_eod": {
+            "type": "integer"
+          },
+          "fin_eod": {
+            "type": "integer"
+          },
+          "dist_pasajero_eod": {
+            "type": "integer"
+          },
+          "tiempo_pasajero_eod": {
+            "type": "integer"
+          },
+          "dist_vacio": {
+            "type": "integer"
+          },
+          "dist_solicitud_eod": {
+            "type": "integer"
+          },
+          "tiempo_solicitud_eod": {
+            "type": "integer"
+          },
+          "dist_vacio_eod": {
+            "type": "integer"
+          },
+          "tiempo_vacio_eod": {
+            "type": "integer"
+          }
+        }
+      },
+      "OperatorStatsResponse": {
+        "properties": {
+          "fecha_produccion": {
+            "type": "integer"
+          },
+          "id_operador": {
+            "type": "string"
+          },
+          "genero": {
+            "type": "integer"
+          },
+          "cant_viajes": {
+            "type": "integer"
+          },
+          "tiempo_registro": {
+            "type": "integer"
+          },
+          "edad": {
+            "type": "string"
+          },
+          "horas_conectado": {
+            "type": "string"
+          },
+          "horas_viaje": {
+            "type": "string"
+          },
+          "ingreso_totales": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
