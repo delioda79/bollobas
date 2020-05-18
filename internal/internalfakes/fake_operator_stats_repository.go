@@ -21,10 +21,11 @@ type FakeOperatorStatsRepository struct {
 	addReturnsOnCall map[int]struct {
 		result1 error
 	}
-	GetAllStub        func(context.Context) ([]internal.OperatorStats, error)
+	GetAllStub        func(context.Context, internal.DateFilter) ([]internal.OperatorStats, error)
 	getAllMutex       sync.RWMutex
 	getAllArgsForCall []struct {
 		arg1 context.Context
+		arg2 internal.DateFilter
 	}
 	getAllReturns struct {
 		result1 []internal.OperatorStats
@@ -99,16 +100,17 @@ func (fake *FakeOperatorStatsRepository) AddReturnsOnCall(i int, result1 error) 
 	}{result1}
 }
 
-func (fake *FakeOperatorStatsRepository) GetAll(arg1 context.Context) ([]internal.OperatorStats, error) {
+func (fake *FakeOperatorStatsRepository) GetAll(arg1 context.Context, arg2 internal.DateFilter) ([]internal.OperatorStats, error) {
 	fake.getAllMutex.Lock()
 	ret, specificReturn := fake.getAllReturnsOnCall[len(fake.getAllArgsForCall)]
 	fake.getAllArgsForCall = append(fake.getAllArgsForCall, struct {
 		arg1 context.Context
-	}{arg1})
-	fake.recordInvocation("GetAll", []interface{}{arg1})
+		arg2 internal.DateFilter
+	}{arg1, arg2})
+	fake.recordInvocation("GetAll", []interface{}{arg1, arg2})
 	fake.getAllMutex.Unlock()
 	if fake.GetAllStub != nil {
-		return fake.GetAllStub(arg1)
+		return fake.GetAllStub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
@@ -123,17 +125,17 @@ func (fake *FakeOperatorStatsRepository) GetAllCallCount() int {
 	return len(fake.getAllArgsForCall)
 }
 
-func (fake *FakeOperatorStatsRepository) GetAllCalls(stub func(context.Context) ([]internal.OperatorStats, error)) {
+func (fake *FakeOperatorStatsRepository) GetAllCalls(stub func(context.Context, internal.DateFilter) ([]internal.OperatorStats, error)) {
 	fake.getAllMutex.Lock()
 	defer fake.getAllMutex.Unlock()
 	fake.GetAllStub = stub
 }
 
-func (fake *FakeOperatorStatsRepository) GetAllArgsForCall(i int) context.Context {
+func (fake *FakeOperatorStatsRepository) GetAllArgsForCall(i int) (context.Context, internal.DateFilter) {
 	fake.getAllMutex.RLock()
 	defer fake.getAllMutex.RUnlock()
 	argsForCall := fake.getAllArgsForCall[i]
-	return argsForCall.arg1
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeOperatorStatsRepository) GetAllReturns(result1 []internal.OperatorStats, result2 error) {

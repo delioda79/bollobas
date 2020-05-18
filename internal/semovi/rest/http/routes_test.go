@@ -32,7 +32,7 @@ func TestGetAggregatedRides(t *testing.T) {
 
 	for i, d := range dd {
 		rp.GetAllReturnsOnCall(i, d.trips, d.err)
-		rsp, err := (&AggregatedRidesHandler{Rp: rp}).Handle(ctx, req)
+		rsp, err := (&RouteHandler{Handler: &AggregatedRidesHandler{Rp: rp}}).Handle(ctx, req)
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)
@@ -61,7 +61,7 @@ func TestGetOperatorStats(t *testing.T) {
 
 	for i, d := range dd {
 		rp.GetAllReturnsOnCall(i, d.trips, d.err)
-		rsp, err := (&OperatorStatsHandler{Rp: rp}).Handle(ctx, req)
+		rsp, err := (&RouteHandler{Handler: &OperatorStatsHandler{Rp: rp}}).Handle(ctx, req)
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)
@@ -89,7 +89,7 @@ func TestGetTransitsMade(t *testing.T) {
 
 	for i, d := range dd {
 		rp.GetAllReturnsOnCall(i, d.trips, d.err)
-		rsp, err := (&TrafficIncidentsHandler{Rp: rp}).Handle(ctx, req)
+		rsp, err := (&RouteHandler{Handler: &TrafficIncidentsHandler{Rp: rp}}).Handle(ctx, req)
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)

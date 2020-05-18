@@ -13,8 +13,14 @@ type OperatorStatsRepo struct {
 }
 
 // GetAll returns the city with the respective id or an error if it does not exist
-func (va *OperatorStatsRepo) GetAll(ctx context.Context) (data []internal.OperatorStats, err error) {
-	rr, err := va.db.Query(ctx, "SELECT * from operator_stats  WHERE date <= ? ORDER BY date DESC", "NOW()")
+func (va *OperatorStatsRepo) GetAll(ctx context.Context, df internal.DateFilter) (data []internal.OperatorStats, err error) {
+	f := DateFilter{&df}
+
+	query := "SELECT * from operator_stats  WHERE 1=1 %s ORDER BY date DESC"
+
+	query, args := f.Filter(query)
+
+	rr, err := va.db.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}

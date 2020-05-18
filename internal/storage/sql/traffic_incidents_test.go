@@ -22,18 +22,32 @@ func TestGetAllTrafficIncidents(t *testing.T) {
 	err = populateTrafficIncidentsTable(at)
 	assert.Nil(t, err)
 
-	rr, err := at.GetAll(context.Background())
+	rr, err := at.GetAll(context.Background(), internal.DateFilter{})
 	assert.Nil(t, err)
 
 	assert.Len(t, rr, 2)
 
-	assert.Equal(t, int64(1), rr[0].ID)
-	assert.Equal(t, "111-AAA", rr[0].Plates)
-	assert.Equal(t, "C12312312", rr[0].Licence)
+	assert.Equal(t, int64(2), rr[0].ID)
+	assert.Equal(t, "222-BBB", rr[0].Plates)
+	assert.Equal(t, "C456456456", rr[0].Licence)
 
-	assert.Equal(t, int64(2), rr[1].ID)
-	assert.Equal(t, "222-BBB", rr[1].Plates)
-	assert.Equal(t, "C456456456", rr[1].Licence)
+	assert.Equal(t, int64(1), rr[1].ID)
+	assert.Equal(t, "111-AAA", rr[1].Plates)
+	assert.Equal(t, "C12312312", rr[1].Licence)
+}
+
+func TestFilteredIncidentsQuery(t *testing.T) {
+	st, err := storagetest.SetConfig()
+	assert.Nil(t, err)
+	at := sql.NewTrafficIncidentsRepository(st)
+	err = populateTrafficIncidentsTable(at)
+	assert.Nil(t, err)
+
+	f := func(ctx context.Context, filter internal.DateFilter) (interface{}, error) {
+		return at.GetAll(ctx, filter)
+	}
+
+	storagetest.TestFilteredQuery(t, f)
 }
 
 func populateTrafficIncidentsTable(r *sql.TrafficIncidentsRepo) error {
@@ -53,7 +67,7 @@ func populateTrafficIncidentsTable(r *sql.TrafficIncidentsRepo) error {
 		return err
 	}
 	a = &internal.TrafficIncident{
-		Date:           time.Now(),
+		Date:           time.Now().Add(time.Hour),
 		Type:           3,
 		Plates:         "222-BBB",
 		Licence:        "C456456456",

@@ -13,8 +13,14 @@ type AggregatedTripsRepo struct {
 }
 
 // GetAll returns the city with the respective id or an error if it does not exist
-func (va *AggregatedTripsRepo) GetAll(ctx context.Context) (data []internal.AggregatedTrips, err error) {
-	rr, err := va.db.Query(ctx, "SELECT * from aggregated_trips  WHERE date <= ? ORDER BY date DESC", "NOW()")
+func (va *AggregatedTripsRepo) GetAll(ctx context.Context, df internal.DateFilter) (data []internal.AggregatedTrips, err error) {
+	f := DateFilter{&df}
+
+	query := "SELECT * from aggregated_trips  WHERE 1=1 %s ORDER BY date DESC"
+
+	query, args := f.Filter(query)
+
+	rr, err := va.db.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}

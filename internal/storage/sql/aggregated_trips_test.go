@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"fmt"
 	"github.com/taxibeat/bollobas/internal/storagetest"
 )
 
@@ -22,14 +23,29 @@ func TestGetAllAggregatedTrips(t *testing.T) {
 	err = populateAggregatedTripsTable(at)
 	assert.Nil(t, err)
 
-	rr, err := at.GetAll(context.Background())
+	rr, err := at.GetAll(context.Background(), internal.DateFilter{})
 	assert.Nil(t, err)
 
 	assert.Len(t, rr, 2)
-	assert.Equal(t, 2, rr[0].ID)
+	assert.Equal(t, int64(2), rr[0].ID)
 	assert.Equal(t, "Test2", rr[0].SupplierID)
-	assert.Equal(t, 1, rr[1].ID)
+	assert.Equal(t, int64(1), rr[1].ID)
 	assert.Equal(t, "Test1", rr[1].SupplierID)
+}
+
+func TestFilteredTripsQuery(t *testing.T) {
+	st, err := storagetest.SetConfig()
+	assert.Nil(t, err)
+	at := sql.NewAggregatedTripsRepository(st)
+	err = populateAggregatedTripsTable(at)
+	assert.Nil(t, err)
+
+	f := func(ctx context.Context, filter internal.DateFilter) (interface{}, error) {
+
+		return at.GetAll(ctx, filter)
+	}
+
+	storagetest.TestFilteredQuery(t, f)
 }
 
 func populateAggregatedTripsTable(r *sql.AggregatedTripsRepo) error {
@@ -45,9 +61,11 @@ func populateAggregatedTripsTable(r *sql.AggregatedTripsRepo) error {
 		return err
 	}
 	a = &internal.AggregatedTrips{
-		Date:              time.Now(),
+		Date:              time.Now().Add(time.Hour),
 		SupplierID:        "Test2",
 		TotalDistTraveled: 10.46,
 	}
+
+	fmt.Println(time.Now())
 	return r.Add(context.Background(), a)
 }
