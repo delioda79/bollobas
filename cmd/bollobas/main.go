@@ -273,14 +273,12 @@ func setupSemoviComponents(cfg *config.Configuration, store *sql.Store, rrb *pht
 		rrb.Append(r)
 	}
 
-	osRepo := sql.NewOperatorStatsRepository(store)
-
 	// Kafka components
-	osp := semovi.NewOperatorStatsProcessor(osRepo)
-	osp.Activate(true)
-
 	rt := uint(10)
 	rtw := time.Duration(5 * time.Second)
+
+	osp := semovi.NewOperatorStatsProcessor(sql.NewOperatorStatsRepository(store))
+	osp.Activate(true)
 	ospKafka, err := ingestion.NewKafkaComponent(
 		"stats_operador",
 		"semovi-kafka-cmp",
@@ -295,7 +293,23 @@ func setupSemoviComponents(cfg *config.Configuration, store *sql.Store, rrb *pht
 		return err
 	}
 
-	*ccmp = append(*ccmp, ospKafka)
+	tip := semovi.NewTrafficIncidentsProcessor(sql.NewTrafficIncidentsRepository(store))
+	tip.Activate(true)
+	tipKafka, err := ingestion.NewKafkaComponent(
+		"hecho_transito",
+		"semovi-kafka-cmp",
+		cfg.KafkaGroup.Get(),
+		[]string{cfg.KkHTTopic.Get()},
+		[]string{cfg.KafkaBroker.Get()},
+		osp,
+		rt,
+		rtw,
+	)
+	if err != nil {
+		return err
+	}
+
+	*ccmp = append(*ccmp, ospKafka, tipKafka)
 
 	return nil
 }

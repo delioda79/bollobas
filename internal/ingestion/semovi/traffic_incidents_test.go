@@ -8,17 +8,17 @@ import (
 	"github.com/taxibeat/bollobas/internal/internalfakes"
 )
 
-func TestNewOperatorStatsProcessor(t *testing.T) {
-	repo := &internalfakes.FakeOperatorStatsRepository{}
-	proc := NewOperatorStatsProcessor(repo)
+func TestNewTrafficIncidentsProcessor(t *testing.T) {
+	repo := &internalfakes.FakeTrafficIncidentsRepository{}
+	proc := NewTrafficIncidentsProcessor(repo)
 
 	assert.NotNil(t, proc)
 }
 
-func TestAddOperatorStats(t *testing.T) {
-	repo := &internalfakes.FakeOperatorStatsRepository{}
+func TestAddTrafficIncidents(t *testing.T) {
+	repo := &internalfakes.FakeTrafficIncidentsRepository{}
 	repo.AddReturnsOnCall(0, nil)
-	proc := NewOperatorStatsProcessor(repo)
+	proc := NewTrafficIncidentsProcessor(repo)
 	proc.Activate(true)
 
 	msg := &injestionfakes.FakeMessage{}
