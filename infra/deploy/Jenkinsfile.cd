@@ -190,7 +190,7 @@ node('slave') {
                                     --set env.MYSQL_READ=${rds_reader_dns}"
 
                     if (!prod) {
-                        setList +=  " --set ingress.host=${stack}-bollobas
+                        setList +=  " --set ingress.host=${stack}-bollobas \
                                     --set env.MYSQL_DB=bollobas_${stack}"
                     }
 
