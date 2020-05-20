@@ -1,0 +1,57 @@
+@Library("jenkins-devops-scripts") _
+node('slave') {
+    def gitUtils = new com.beat.utilities.github()
+    def stackUtils = new com.beat.utilities.stack()
+    def project = gitUtils.determineRepoName(env.JOB_NAME)
+    def img = null
+    def branch = ""
+
+    // Clone Repo
+    stage('Clone repository') {
+      /* Let's make sure we have the repository cloned to our workspace */
+      checkout scm
+
+      /* Build only if branches with 'feature-' prefix are pushed */
+    if (gitUtils.isSandboxBranch(env.BRANCH_NAME)) {
+        echo "This is the ${env.BRANCH_NAME} branch"
+        branch = env.BRANCH_NAME
+    } else if (env.BRANCH_NAME == "develop") {
+        branch = "latest"
+        echo "This is the ${env.BRANCH_NAME} branch. Push to sandbox"
+    } else {
+        echo "No feature or develop branch was pushed"
+        sh "exit 0"
+      }
+    }
+
+    // Build image
+    stage('Build docker image') {
+      /* If a valid push is made, build image */
+      if (branch != "") {
+        /* This builds the actual image; synonymous to docker build on the command line */
+        img = docker.build("beat/bollobas:${branch}", "--build-arg version=${branch} --no-cache -f infra/deploy/local/Dockerfile .")
+      }
+    }
+
+    // Push image
+    stage('Push image to registry') {
+      // If image is built, push it to registry
+      if (img != null) {
+        // Get Management stack variables
+        envVarMapManagement = stackUtils.managementstackVariables()
+        /* Finally, we'll push the images:
+         * Pushing multiple tags is cheap, as all the layers are reused. */
+        docker.withRegistry("https://${envVarMapManagement.REGISTRY_SERVER}") {
+          img.push()
+        }
+      }
+    }
+
+    // Deploy to sfeature
+    stage('Deploy') {
+      /* If a new feature image was built, deploy it */
+      if (img != null) {
+        build job: 'sandbox-on-the-fly-deploy-app', parameters: [string(name: 'FEATURE_NAME', value: BRANCH_NAME), string(name: 'APP_NAME', value: project)], wait: false
+      }
+    }
+}

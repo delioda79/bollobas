@@ -4,22 +4,37 @@ github.com/DataDog/zstd
 github.com/Microsoft/go-winio
 # github.com/Shopify/sarama v1.21.0
 github.com/Shopify/sarama
-# github.com/beatlabs/patron v0.25.0
+# github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da
+github.com/armon/go-metrics
+# github.com/beatlabs/harvester v0.6.0
+github.com/beatlabs/harvester
+github.com/beatlabs/harvester/change
+github.com/beatlabs/harvester/config
+github.com/beatlabs/harvester/log
+github.com/beatlabs/harvester/monitor
+github.com/beatlabs/harvester/monitor/consul
+github.com/beatlabs/harvester/seed
+github.com/beatlabs/harvester/seed/consul
+github.com/beatlabs/harvester/sync
+# github.com/beatlabs/patron v0.40.1
 github.com/beatlabs/patron
-github.com/beatlabs/patron/async
-github.com/beatlabs/patron/async/kafka
+github.com/beatlabs/patron/client/http
+github.com/beatlabs/patron/client/sql
+github.com/beatlabs/patron/component/async
+github.com/beatlabs/patron/component/async/kafka
+github.com/beatlabs/patron/component/async/kafka/group
+github.com/beatlabs/patron/component/http
+github.com/beatlabs/patron/component/http/auth
+github.com/beatlabs/patron/correlation
 github.com/beatlabs/patron/encoding
 github.com/beatlabs/patron/encoding/json
 github.com/beatlabs/patron/encoding/protobuf
 github.com/beatlabs/patron/errors
+github.com/beatlabs/patron/internal/validation
 github.com/beatlabs/patron/log
 github.com/beatlabs/patron/log/zerolog
 github.com/beatlabs/patron/reliability/circuitbreaker
-github.com/beatlabs/patron/sync
-github.com/beatlabs/patron/sync/http
-github.com/beatlabs/patron/sync/http/auth
 github.com/beatlabs/patron/trace
-github.com/beatlabs/patron/trace/http
 # github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973
 github.com/beorn7/perks/quantile
 # github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd
@@ -34,20 +49,39 @@ github.com/eapache/go-resiliency/breaker
 github.com/eapache/go-xerial-snappy
 # github.com/eapache/queue v1.1.0
 github.com/eapache/queue
-# github.com/golang/protobuf v1.3.1
+# github.com/go-sql-driver/mysql v1.5.0
+github.com/go-sql-driver/mysql
+# github.com/golang/protobuf v1.3.2
 github.com/golang/protobuf/proto
 # github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db
 github.com/golang/snappy
 # github.com/google/uuid v1.1.0
 github.com/google/uuid
-# github.com/gorilla/websocket v1.4.0
+# github.com/gorilla/websocket v1.4.1
 github.com/gorilla/websocket
+# github.com/hashicorp/consul/api v1.2.0
+github.com/hashicorp/consul/api
+github.com/hashicorp/consul/api/watch
+# github.com/hashicorp/go-cleanhttp v0.5.1
+github.com/hashicorp/go-cleanhttp
+# github.com/hashicorp/go-immutable-radix v1.0.0
+github.com/hashicorp/go-immutable-radix
+# github.com/hashicorp/go-rootcerts v1.0.0
+github.com/hashicorp/go-rootcerts
+# github.com/hashicorp/golang-lru v0.5.3
+github.com/hashicorp/golang-lru/simplelru
+# github.com/hashicorp/serf v0.8.2
+github.com/hashicorp/serf/coordinate
 # github.com/joho/godotenv v1.3.0
 github.com/joho/godotenv
 # github.com/julienschmidt/httprouter v1.2.0
 github.com/julienschmidt/httprouter
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
 github.com/matttproud/golang_protobuf_extensions/pbutil
+# github.com/mitchellh/go-homedir v1.0.0
+github.com/mitchellh/go-homedir
+# github.com/mitchellh/mapstructure v1.1.2
+github.com/mitchellh/mapstructure
 # github.com/opentracing-contrib/go-stdlib v0.0.0-20180313041242-367231351874
 github.com/opentracing-contrib/go-stdlib/nethttp
 # github.com/opentracing/opentracing-go v0.0.0-20180606204148-bd9c31933947
@@ -57,7 +91,7 @@ github.com/opentracing/opentracing-go/log
 # github.com/pierrec/lz4 v2.0.5+incompatible
 github.com/pierrec/lz4
 github.com/pierrec/lz4/internal/xxh32
-# github.com/pkg/errors v0.8.0
+# github.com/pkg/errors v0.8.1
 github.com/pkg/errors
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
@@ -65,7 +99,7 @@ github.com/pmezard/go-difflib/difflib
 github.com/prometheus/client_golang/prometheus
 github.com/prometheus/client_golang/prometheus/internal
 github.com/prometheus/client_golang/prometheus/promhttp
-# github.com/prometheus/client_model v0.0.0-20190129233127-fd36f4220a90
+# github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4
 github.com/prometheus/client_model/go
 # github.com/prometheus/common v0.2.0
 github.com/prometheus/common/expfmt
@@ -81,7 +115,7 @@ github.com/rcrowley/go-metrics
 # github.com/rs/zerolog v1.5.0
 github.com/rs/zerolog
 github.com/rs/zerolog/internal/json
-# github.com/stretchr/testify v1.2.2
+# github.com/stretchr/testify v1.4.0
 github.com/stretchr/testify/assert
 # github.com/uber/jaeger-client-go v2.14.0+incompatible
 github.com/uber/jaeger-client-go
@@ -103,9 +137,11 @@ github.com/uber/jaeger-client-go/utils
 # github.com/uber/jaeger-lib v1.5.0
 github.com/uber/jaeger-lib/metrics
 github.com/uber/jaeger-lib/metrics/prometheus
-# golang.org/x/sys v0.0.0-20190606165138-5da285871e9c
+# golang.org/x/sys v0.0.0-20191010194322-b09406accb47
 golang.org/x/sys/windows
-# nanomsg.org/go/mangos/v2 v2.0.2
+# gopkg.in/yaml.v2 v2.2.4
+gopkg.in/yaml.v2
+# nanomsg.org/go/mangos/v2 v2.0.8
 nanomsg.org/go/mangos/v2
 nanomsg.org/go/mangos/v2/errors
 nanomsg.org/go/mangos/v2/internal/core

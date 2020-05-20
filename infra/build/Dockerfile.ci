@@ -1,0 +1,8 @@
+FROM golang:1.13
+WORKDIR /go/src/github.com/taxibeat/bollobas_ci
+COPY . ./
+ADD https://github.com/golang-migrate/migrate/releases/download/v4.1.0/migrate.linux-amd64.tar.gz .
+RUN tar -xvf migrate.linux-amd64.tar.gz && mv migrate.linux-amd64 migrate && rm migrate.linux-amd64.tar.gz
+RUN chmod +x ./script/ci.sh
+RUN chmod +x ./script/sql/exec_migrations.sh
+RUN go get -u golang.org/x/lint/golint

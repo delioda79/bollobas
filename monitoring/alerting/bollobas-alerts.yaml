@@ -1,9 +1,0 @@
-groups:
-  - name: bollobas.mixpanel.rules
-    rules:
-      - alert: BollobasTooManyMIxpanelErrors
-        expr: (100 * sum(rate(bollobas_mixpanel_messages_total{processed="true", success!="true"}[5m])) / sum(rate(bollobas_mixpanel_messages_total{processed="true"}[5m]))) > 1
-        for: 10m
-        labels:
-          severity: warning
-          domain: ride

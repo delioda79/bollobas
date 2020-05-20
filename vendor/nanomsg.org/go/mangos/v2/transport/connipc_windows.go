@@ -1,6 +1,6 @@
 // +build windows
 
-// Copyright 2018 The Mangos Authors
+// Copyright 2019 The Mangos Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use file except in compliance with the License.
@@ -25,25 +25,20 @@ import (
 )
 
 // NewConnPipeIPC allocates a new Pipe using the IPC exchange protocol.
-func NewConnPipeIPC(c net.Conn, proto ProtocolInfo, options map[string]interface{}) (Pipe, error) {
+func NewConnPipeIPC(c net.Conn, proto ProtocolInfo) ConnPipe {
 	p := &connipc{
 		conn: conn{
 			c:       c,
 			proto:   proto,
 			options: make(map[string]interface{}),
+			maxrx:   0,
 		},
 	}
-	p.options[mangos.OptionMaxRecvSize] = int64(0)
-	for n, v := range options {
-		p.options[n] = v
-	}
-	p.maxrx = p.options[mangos.OptionMaxRecvSize].(int)
+	p.options[mangos.OptionMaxRecvSize] = 0
+	p.options[mangos.OptionLocalAddr] = c.LocalAddr()
+	p.options[mangos.OptionRemoteAddr] = c.RemoteAddr()
 
-	if err := p.handshake(); err != nil {
-		return nil, err
-	}
-
-	return p, nil
+	return p
 }
 
 func (p *connipc) Send(msg *Message) error {
@@ -64,7 +59,7 @@ func (p *connipc) Send(msg *Message) error {
 	buf = append(buf, msg.Header...)
 	buf = append(buf, msg.Body...)
 
-	if _, err = p.c.Write(buf[:]); err != nil {
+	if _, err = p.c.Write(buf); err != nil {
 		return err
 	}
 	msg.Free()
@@ -86,7 +81,7 @@ func (p *connipc) Recv() (*Message, error) {
 	}
 
 	// Limit messages to the maximum receive value, if not
-	// unlimited.  This avoids a potential denaial of service.
+	// unlimited.  This avoids a potential denial of service.
 	if sz < 0 || (p.maxrx > 0 && sz > int64(p.maxrx)) {
 		return nil, mangos.ErrTooLong
 	}

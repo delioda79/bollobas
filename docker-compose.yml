@@ -1,9 +1,0 @@
-version: '3.2'
-services:
-  bollobas-dev:
-    container_name: bollobas-dev
-    build:
-      context: ./
-      dockerfile: ./.dockerfiles/ci/Dockerfile
-    # ports:
-    #   - "50000:50000"
