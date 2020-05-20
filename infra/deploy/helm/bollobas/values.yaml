@@ -26,6 +26,7 @@ env:
   BOLLOBAS_INIT_VECTOR: ""
   BOLLOBAS_LOCATION: "sandbox"
   BOLLOBAS_MIXPANEL_TOKEN: ""
+  MYSQL_DB: "bollobas"
 
 ingress:
   enabled: false
