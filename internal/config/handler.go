@@ -53,7 +53,7 @@ type Configuration struct {
 	KafkaDriverIdentityTopic    sync.String `seed:"driver_analytics" env:"BOLLOBAS_KAFKA_DRIVER_TOPIC"`
 	KafkaPassengerIdentityTopic sync.String `seed:"passenger_analytics" env:"BOLLOBAS_KAFKA_PASSENGER_TOPIC"`
 	KafkaTimeout                Duration    `seed:"2s" env:"BOLLOBAS_KAFKA_TIMEOUT"`
-	RestURL                     sync.String `seed:"" env:"PIGEON_REST_URL"`
+	RestURL                     sync.String `seed:"" env:"REST_CONNECTION_STRING"`
 	RestKey                     sync.String `seed:"" env:"REST_KEY"`
 	MpToken                     sync.String `env:"BOLLOBAS_MIXPANEL_TOKEN"`
 	KkPRRTopic                  sync.String `seed:"request" env:"BOLLOBAS_KAFKA_REQUEST_TOPIC"`

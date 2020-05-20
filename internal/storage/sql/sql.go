@@ -10,7 +10,7 @@ import (
 	"github.com/beatlabs/patron/log"
 	"github.com/taxibeat/bollobas/internal/config"
 
-	// this is the mysqld driver, thsi comment is needed by the smart linter...
+	// this is the mysqld driver, this comment is needed by the smart linter...
 	_ "github.com/go-sql-driver/mysql"
 )
 
