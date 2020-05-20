@@ -184,14 +184,14 @@ node('slave') {
                                     --set env.REST_MIXPANEL_PATH=/taxidmin/bollobas/mixpanel-passenger-settings \
                                     --set env.BOLLOBAS_SETTINGS_DURATION=10s \
                                     --set env.BOLLOBAS_LOCATION=${bollobas_location_env} \
-                                    --set env.REST_CONNECTION_STRING=${bollobas_rest_endpoint_env}   \
-                                    --set env.REST_KEY=${bollobas_rest_key}
+                                    --set env.REST_CONNECTION_STRING=${bollobas_rest_endpoint_env} \
+                                    --set env.REST_KEY=${bollobas_rest_key} \
                                     --set env.MYSQL_WRITE=${rds_writer_dns} \
-                                    --set env.MYSQL_READ=${rds_reader_dns} \""
+                                    --set env.MYSQL_READ=${rds_reader_dns}"
 
                     if (!prod) {
                         setList +=  " --set ingress.host=${stack}-bollobas
-                                    --set env.MYSQL_DB=bollobas_${stack} \""
+                                    --set env.MYSQL_DB=bollobas_${stack}"
                     }
 
                     helm_utils.helmDeploy("${kubeconfig_id}", "${helmTag}", "${namespace}", "${setList}", "${helmName}", "beat/bollobas", dockerFlags)
