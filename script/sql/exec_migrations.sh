@@ -20,7 +20,7 @@ migrate_db() {
     echo "Running migrations on ${MYSQL_DB}"
     i=0
     migrate_cmd ./
-    while [ $? -ne 0 -a $i -lt 10 ]; do
+    while [ $? -ne 0 -a $i -lt 30 ]; do
         echo "Database not ready (attempt #$i), retrying.."
         sleep 2
         i=`expr $i + 1`

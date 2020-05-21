@@ -151,9 +151,9 @@ node('slave') {
             kubeconfig_id = "KUBECONFIG_${envVarMapping.KUBERNETES_CLUSTER}"
 
             try {
-                dbCreds = BOLLOBAS_DB_PASSWORD_DEV
+                dbCreds = "BOLLOBAS_DB_PASSWORD_DEV"
                 if (prod) {
-                    dbCreds = BOLLOBAS_DB_PASSWORD_PROD
+                    dbCreds = "BOLLOBAS_DB_PASSWORD_PROD"
                 }
                 withCredentials([
                     string(credentialsId: "${bollobas_cipher_key_env}", variable: 'bollobas_cipher_key'),
