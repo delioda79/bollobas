@@ -57,7 +57,7 @@ node('slave') {
 
     stage('Build docker image') {
         /* This builds the actual image; synonymous to docker build on the command line */
-        img = docker.build("beat/bollobas:${branch_or_tag}", "--no-cache .")
+        img = docker.build("beat/bollobas:${branch_or_tag}", "-f infra/deploy/local/Dockerfile --no-cache .")
     }
 
     stage('Push image to registry') {
