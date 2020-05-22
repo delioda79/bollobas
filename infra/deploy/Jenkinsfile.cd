@@ -102,6 +102,7 @@ node('slave') {
 
         rds_writer_dns = "mysql-damson-writer.beat"
         rds_reader_dns = "mysql-damson-reader.beat"
+        db_port        = 3306
 
         stage("Deploy helm chart at ${stack}") {
 
@@ -194,7 +195,8 @@ node('slave') {
                                     --set env.REST_KEY=${bollobas_rest_key} \
 
                                     --set env.MYSQL_WRITE=${rds_writer_dns} \
-                                    --set env.MYSQL_READ=${rds_reader_dns}"
+                                    --set env.MYSQL_READ=${rds_reader_dns} \
+                                    --set env.MYSQL_PORT=${db_port}"
 
                     if (!prod) {
                         setList +=  " --set ingress.host=${stack}-bollobas \
