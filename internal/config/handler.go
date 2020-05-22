@@ -72,6 +72,7 @@ type Configuration struct {
 	DBPort                      sync.String `env:"MYSQL_PORT"`
 	DBName                      sync.String `env:"MYSQL_DB"`
 	SettingsPeriod              Duration    `seed:"60s" env:"BOLLOBAS_SETTINGS_DURATION"`
+	DataRemovalEnabled          sync.Bool   `seed:"false" env:"BOLLOBAS_DATA_REMOVAL_ENABLED"`
 }
 
 // NewConfig instantiates a new configuration object

@@ -1,0 +1,15 @@
+apiVersion: apps/vibeta2
+kind: CronJob
+metadata:
+  name: {{ .Values.dataRemovalJob.name}}
+spec:
+  schedule: {{ .Values.dataRemovalJob.schedule }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: {{ .Chart.Name }}
+              image: "{{ .Values.image.registry }}{{ .Values.image.name }}:{{ .Values.image.tag }}"
+            args: {{ .Values.dataRemovalJob.args }}
+          restartPolicy: OnFailure

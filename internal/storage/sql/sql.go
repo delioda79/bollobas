@@ -50,6 +50,28 @@ func (s *Store) Close() {
 	}
 }
 
+// RemoveDataInTable deletes everything in the table
+func (s *Store) RemoveDataInTable(ctx context.Context, tables ...string) error {
+	q := "TRUNCATE TABLE %s"
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return errors.New("cannot begin transaction")
+	}
+	for _, t := range tables {
+		if _, err := tx.Exec(ctx, fmt.Sprintf(q, t)); err != nil {
+			tx.Rollback(ctx)
+			return fmt.Errorf("unable to clear table %s: %v", t, err)
+		}
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("unable to commit transaction: %v", err)
+	}
+
+	return nil
+}
+
 // DB returns the db connection pool
 func (s *Store) DB() *sql.DB {
 	return s.db

@@ -132,6 +132,8 @@ node('slave') {
                 bollobas_location_env = "${stack}"
                 bollobas_log_level_env = "info"
 
+                bollobas_data_removal_enabled = false
+
                 helmName = "bollobas"
 
             } else {
@@ -143,6 +145,8 @@ node('slave') {
                 bollobas_rest_endpoint_env = "https://${stack}.rest.sandbox.taxibeat.com"
                 bollobas_location_env = "sandbox"
                 bollobas_log_level_env = "debug"
+
+                bollobas_data_removal_enabled = true
 
                 helmName = "bollobas-${stack}"
             }
@@ -184,8 +188,11 @@ node('slave') {
                                     --set env.REST_MIXPANEL_PATH=/taxidmin/bollobas/mixpanel-passenger-settings \
                                     --set env.BOLLOBAS_SETTINGS_DURATION=10s \
                                     --set env.BOLLOBAS_LOCATION=${bollobas_location_env} \
+
+                                    --set env.BOLLOBAS_DATA_REMOVAL_ENABLED=${bollobas_data_removal_enabled} \
                                     --set env.REST_CONNECTION_STRING=${bollobas_rest_endpoint_env} \
                                     --set env.REST_KEY=${bollobas_rest_key} \
+
                                     --set env.MYSQL_WRITE=${rds_writer_dns} \
                                     --set env.MYSQL_READ=${rds_reader_dns}"
 

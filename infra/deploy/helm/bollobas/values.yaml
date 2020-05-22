@@ -14,6 +14,12 @@ service:
   targetPort: 8700
   port: 80
 
+dataRemovalJob:
+  name: DataRemoval
+  schedule: "0 0 20 * *"
+  args:
+    - "./data_removal"
+
 env:
   PATRON_LOG_LEVEL: info
   PATRON_HTTP_DEFAULT_PORT: 8700
