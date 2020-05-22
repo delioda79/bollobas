@@ -175,7 +175,7 @@ node('slave') {
                                     --set env.BOLLOBAS_INIT_VECTOR=${bollobas_init_vector} \
                                     --set env.BOLLOBAS_MIXPANEL_TOKEN=${bollobas_mixpanel_token} \
                                     --set env.PATRON_LOG_LEVEL=${bollobas_log_level_env} \
-                                    --set env.PATRON_HTTP_DEFAULT_PORT=8100 \
+                                    --set env.PATRON_HTTP_DEFAULT_PORT=8700 \
                                     --set env.BOLLOBAS_KAFKA_DRIVER_TOPIC=driver_analytics \
                                     --set env.BOLLOBAS_KAFKA_PASSENGER_TOPIC=passenger_analytics \
                                     --set env.BOLLOBAS_KAFKA_REQUEST_TOPIC=request \
