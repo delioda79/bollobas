@@ -24,6 +24,7 @@ spec:
         prometheus.io/path: "{{ .Values.monitoring.path }}"
         prometheus.io/port: "{{ .Values.monitoring.port }}"
         {{- end }}
+        kubernetes.io/change-cause: {{ .Values.changeCause }}
     spec:
       containers:
         - name: {{ .Chart.Name }}

@@ -8,6 +8,7 @@ image:
 
 nameOverride: ""
 fullnameOverride: ""
+changeCause: default
 
 service:
   type: ClusterIP
