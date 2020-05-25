@@ -36,11 +36,11 @@ env:
   MYSQL_DB: "bollobas"
 
 ingress:
-  enabled: false
+  enabled: true
   # type can be either public or private
   type: private
   annotations: {}
-    # kubernetes.io/tls-acme: "true"
+  # kubernetes.io/tls-acme: "true"
   path: /
   host: bollobas
   clusterSuffix: private.k8s.sandbox.thebeat.co
