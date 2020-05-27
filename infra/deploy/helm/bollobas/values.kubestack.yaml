@@ -1,25 +1,19 @@
+changeCause: ""
+
 replicaCount: 1
 
 image:
   registry: registry.private.k8s.management.thebeat.co/beat/
   name: bollobas
-  tag: v1.0.0
+  tag: helm
   pullPolicy: Always
 
 nameOverride: ""
 fullnameOverride: ""
-changeCause: default
 
 service:
   type: ClusterIP
-  targetPort: 8700
   port: 80
-
-dataRemovalJob:
-  name: data.removal
-  schedule: "0 0 20 * *"
-  args:
-    - "./data_removal"
 
 env:
   PATRON_LOG_LEVEL: info
@@ -42,8 +36,8 @@ ingress:
   annotations: {}
   # kubernetes.io/tls-acme: "true"
   path: /
-  host: bollobas
-  clusterSuffix: private.k8s.sandbox.thebeat.co
+  host: SANDBOX_PLACEHOLDER-bollobas
+  clusterSuffix: PRIVATE_CLUSTER_PLACEHOLDER
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -51,50 +45,48 @@ resources:
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
-   cpu: 200m
-   memory: 256Mi
+    cpu: 150m
+    memory: 256Mi
   requests:
-   cpu: 50m
-   memory: 50Mi
+    cpu: 50m
+    memory: 64Mi
 
 monitoring:
   enabled: true
   path: /metrics
   port: 8700
 
-# This will enable blackbox exporter probes in the designated path.
-# If the probe get non 2xx responses for greates than "for:" period it will sent an alert to alertmanager
-# Alertmanager will route the notification according to severity to a slack channel or pagerduty
 blackboxProbe:
   enabled: true
   path: /health
-  for: 5m
-  severity: warning
-  port: 8700
+  severity: critical
+
+tracing:
+  enabled: true
 
 livenessProbe:
   httpGet:
-    path: /alive
+    path: /health
     port: 8700
 
 readinessProbe:
   httpGet:
-    path: /ready
+    path: /health
     port: 8700
 
 autoscaling:
   enabled: false
-  # minReplicas: 3
-  # maxReplicas: 10
-  # metrics:
-  # - type: Resource
-  #   resource:
-  #     name: cpu
-  #     targetAverageUtilization: 80
-  # - type: Resource
-  #   resource:
-  #     name: memory
-  #     targetAverageUtilization: 80
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: 80
 
 nodeSelector: {}
 

@@ -11,8 +11,8 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/bollobas/bollobas .
 COPY --from=builder /go/bollobas/data_removal .
 COPY --from=builder /go/bollobas/migrate .
-COPY --from=builder /go/bollobas/script ./script
+COPY --from=builder /go/bollobas/script/sql/migrations ./migrations
+COPY --from=builder /go/bollobas/script/run.sh .
+RUN chmod +x run.sh
 
-RUN ./script/sql/exec_migrations.sh
-
-CMD ["./bollobas"]
+CMD ["./run.sh"]

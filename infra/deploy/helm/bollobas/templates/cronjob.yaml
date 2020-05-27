@@ -1,4 +1,4 @@
-apiVersion: apps/vibeta2
+apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: {{ .Values.dataRemovalJob.name}}

@@ -14,7 +14,7 @@ node('slave') {
     def chartmuseumAPI = "https://chartmuseum.private.k8s.management.thebeat.co/api/charts"
     def monitoring_utils = new com.beat.utilities.monitoring()
     def notification_utils = new com.beat.utilities.notifications('PXuE13AjQdnb2hB5kXt5Hj2X', project, env.BUILD_URL, env.BUILD_NUMBER)
-    notification_utils.defaultServerDeploymentsChannel = "#monitoring-mixpanel"
+    notification_utils.defaultServerDeploymentsChannel = "#monitoring-squad9"
 
     // Define the stacks you want to deploy to
     def stacks = []
@@ -216,18 +216,24 @@ node('slave') {
 
             stage('Apply Prometheus rules if available') {
                 try {
-                    monitoring_utils.prometheusConfig("${kubeconfig_id}", "${namespace}")
+                    monitoring_utils.prometheusConfig("${kubeconfig_id}", "${namespace}", "infra/observe/alerting")
                 } catch (e) {
-                    notification_utils.slackNotifyDeploymentFailure(stack, STAGE_NAME)
+                    println("Exception on applying prometheus rules")
+                    println(e.toString())
+                    def message = "deployment failed on `${STAGE_NAME}` at ${stacks} for ${project} <${env.BUILD_URL}console|${env.BUILD_NUMBER}>"
+                    notification_utils.slackNotify('FAILURE', slackChannel, slackToken, message)
                     throw e
                 }
             }
 
             stage('Apply Grafana rules if available') {
                 try {
-                    monitoring_utils.grafanaConfig("${kubeconfig_id}", "${namespace}")
+                    monitoring_utils.grafanaConfig("${kubeconfig_id}", "${namespace}", "infra/observe/dashboard")
                 } catch (e) {
-                    notification_utils.slackNotifyDeploymentFailure(stack, STAGE_NAME)
+                    println("Exception on applying graphana rules")
+                    println(e.toString())
+                    def message = "deployment failed on `${STAGE_NAME}` at ${stacks} for ${project} <${env.BUILD_URL}console|${env.BUILD_NUMBER}>"
+                    notification_utils.slackNotify('FAILURE', slackChannel, slackToken, message)
                     throw e
                 }
             }

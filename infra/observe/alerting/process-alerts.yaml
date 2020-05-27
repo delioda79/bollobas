@@ -1,0 +1,12 @@
+groups:
+- name: bollobas.go_process.rules
+  rules:
+  - alert: HighMemoryUsage
+    expr: avg(process_resident_memory_bytes) > 200000000
+    for: 5m
+    labels:
+      severity: critical
+      domain: ride
+    annotations:
+      summary: "High memory usage"
+      description: "Service consumes high memory (average > 200MiB) for the last minute."

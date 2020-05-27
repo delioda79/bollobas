@@ -1,0 +1,56 @@
+#!/usr/bin/env groovy
+
+@Library("jenkins-devops-scripts") _
+
+// Import needed libraries
+def stackUtils = new com.beat.utilities.stack()
+def kubestackUtils = new com.beat.utilities.kubestack()
+
+
+// Project Configuration
+def setList = []
+def stackEnv
+def grafanaDashboardsPath = "infra/observe/dashboard"
+
+
+// Project Service Configuration
+def project = "bollobas"
+def helmChartPath = "infra/deploy/helm/bollobas"
+
+
+node('slave') {
+        properties(
+      [
+        buildDiscarder(
+          logRotator(
+            daysToKeepStr: '7',
+            numToKeepStr: '5'
+          )
+        )
+      ]
+    )
+
+    def kubestack_init_map = kubestack_init {
+        i_helmChartPath=helmChartPath
+        i_project=project
+    }
+//// START : Docker Images & Docker Build Arguments
+    def dockerMap = [
+        "bollobas"  : "-f infra/deploy/local/Dockerfile ."
+    ]
+    // Pass Variables to Central Pipeline
+    kubestack_deploy {
+        i_setList=setList
+        i_dockerMap=dockerMap
+        i_helmChartPath=helmChartPath
+        i_stack=kubestack_init_map.stack
+        i_project=project
+        i_stackEnv=kubestack_init_map.stackEnv
+        i_branch=kubestack_init_map.branch
+        i_uniqueCode=kubestack_init_map.uniqueCode
+        i_market=kubestack_init_map.market
+        i_kubestack=kubestack_init_map.kubestack
+        i_sandbox=kubestack_init_map.sandbox
+        i_grafanaDashboardsPath=grafanaDashboardsPath
+    }
+}
