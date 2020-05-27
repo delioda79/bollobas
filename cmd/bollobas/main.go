@@ -301,7 +301,7 @@ func setupSemoviComponents(cfg *config.Configuration, store *sql.Store, rrb *pht
 		cfg.KafkaGroup.Get(),
 		[]string{cfg.KkHTTopic.Get()},
 		[]string{cfg.KafkaBroker.Get()},
-		osp,
+		tip,
 		rt,
 		rtw,
 	)

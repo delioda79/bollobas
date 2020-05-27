@@ -41,8 +41,8 @@ func NewTrafficIncidentsProcessor(store internal.TrafficIncidentsRepository) *Tr
 }
 
 // Process handles a given message
-func (osp *TrafficIncidentsProcessor) Process(msg async.Message) error {
-	if !osp.active {
+func (tip *TrafficIncidentsProcessor) Process(msg async.Message) error {
+	if !tip.active {
 		msg.Nack()
 		return nil
 	}
@@ -54,7 +54,7 @@ func (osp *TrafficIncidentsProcessor) Process(msg async.Message) error {
 		return err
 	}
 
-	if err := osp.store.Add(msg.Context(), payload.toDomainModel()); err != nil {
+	if err := tip.store.Add(msg.Context(), payload.toDomainModel()); err != nil {
 		msg.Nack()
 		return err
 	}
@@ -64,6 +64,6 @@ func (osp *TrafficIncidentsProcessor) Process(msg async.Message) error {
 }
 
 // Activate turns the processing on or off depending on the switch given
-func (osp *TrafficIncidentsProcessor) Activate(v bool) {
-	osp.active = v
+func (tip *TrafficIncidentsProcessor) Activate(v bool) {
+	tip.active = v
 }
