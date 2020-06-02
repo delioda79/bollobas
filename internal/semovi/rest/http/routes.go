@@ -2,12 +2,13 @@ package http
 
 import (
 	"context"
-	"github.com/taxibeat/bollobas/internal"
-	"github.com/taxibeat/bollobas/internal/semovi/rest/http/view"
-	"github.com/taxibeat/bollobas/internal/storage/sql"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/taxibeat/bollobas/internal"
+	"github.com/taxibeat/bollobas/internal/semovi/rest/http/view"
+	"github.com/taxibeat/bollobas/internal/storage/sql"
 
 	phttp "github.com/beatlabs/patron/component/http"
 )
@@ -142,7 +143,29 @@ type OperatorStatsHandler struct {
 
 // GetAll returns all the items
 func (o *OperatorStatsHandler) GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error) {
-	return o.Rp.GetAll(ctx, f)
+	ops, err := o.Rp.GetAll(ctx, f)
+	if err != nil {
+		return nil, err
+	}
+
+	var opsIntf []interface{}
+	for _, op := range ops {
+		v := view.OperatorStats{
+			ID:             op.ID,
+			Date:           op.Date.Format("2006-01-02T15:04:05"),
+			OperatorID:     op.OperatorID,
+			Gender:         op.Gender,
+			CompletedTrips: op.CompletedTrips,
+			DaysSince:      op.DaysSince,
+			AgeRange:       op.AgeRange,
+			HoursConnected: op.HoursConnected,
+			TripHours:      op.TripHours,
+			TotRevenue:     op.TotRevenue,
+		}
+		opsIntf = append(opsIntf, v)
+	}
+
+	return opsIntf, nil
 }
 
 // TrafficIncidentsHandler is the controller for the related route
@@ -152,7 +175,27 @@ type TrafficIncidentsHandler struct {
 
 // GetAll returns all the items
 func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error) {
-	return t.Rp.GetAll(ctx, f)
+	tis, err := t.Rp.GetAll(ctx, f)
+	if err != nil {
+		return nil, err
+	}
+
+	var tisIntf []interface{}
+	for _, ti := range tis {
+		v := view.TrafficIncident{
+			ID:             ti.ID,
+			Date:           ti.Date.Format("2006-01-02T15:04:05"),
+			Type:           ti.Type,
+			Plates:         ti.Plates,
+			Licence:        ti.Licence,
+			TravelDistance: ti.TravelDistance,
+			TravelTime:     ti.TravelTime,
+			Coordinates:    ti.Coordinates,
+		}
+		tisIntf = append(tisIntf, v)
+	}
+
+	return tisIntf, nil
 }
 
 // DataHandler is a generic data handler which returns interfaces

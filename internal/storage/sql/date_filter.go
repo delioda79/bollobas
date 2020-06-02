@@ -13,7 +13,7 @@ type DateFilter struct {
 
 // Filter performs filtering
 func (df DateFilter) Filter(query string) (string, []interface{}) {
-	params := []interface{}{}
+	var params []interface{}
 	f := ""
 
 	fq, ft := df.from()

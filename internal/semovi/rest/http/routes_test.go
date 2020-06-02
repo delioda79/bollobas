@@ -75,7 +75,15 @@ func TestGetOperatorStats(t *testing.T) {
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)
-			assert.Equal(t, &phttp.Response{Payload: d.trips}, rsp)
+			var vv []interface{}
+			if len(d.trips) > 0 {
+				v := view.OperatorStats{
+					ID:   d.trips[0].ID,
+					Date: d.trips[0].Date.Format("2006-01-02T15:04:05"),
+				}
+				vv = append(vv, v)
+			}
+			assert.Equal(t, &phttp.Response{Payload: vv}, rsp)
 		} else {
 			assert.Equal(t, phttp.NewErrorWithCodeAndPayload(500, d.err), err)
 			var r *phttp.Response
@@ -103,7 +111,15 @@ func TestGetTransitsMade(t *testing.T) {
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)
-			assert.Equal(t, &phttp.Response{Payload: []internal.TrafficIncident(d.trips)}, rsp)
+			var vv []interface{}
+			if len(d.trips) > 0 {
+				v := view.TrafficIncident{
+					ID:   d.trips[0].ID,
+					Date: d.trips[0].Date.Format("2006-01-02T15:04:05"),
+				}
+				vv = append(vv, v)
+			}
+			assert.Equal(t, &phttp.Response{Payload: vv}, rsp)
 		} else {
 			assert.Equal(t, phttp.NewErrorWithCodeAndPayload(500, d.err), err)
 			var r *phttp.Response

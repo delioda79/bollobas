@@ -8,20 +8,20 @@ import (
 )
 
 type operatorStatsPayload struct {
-	Date           int64  `json:"fecha_produccion"`
-	OperatorID     string `json:"id_operador"`
-	Gender         int    `json:"genero"`
-	CompletedTrips int    `json:"cant_viajes"`
-	DaysSince      int    `json:"tiempo_registro"`
-	AgeRange       string `json:"edad"`
-	HoursConnected string `json:"horas_conectado"`
-	TripHours      string `json:"horas_viaje"`
-	TotRevenue     string `json:"ingreso_totales"`
+	Date           int64   `json:"fecha_produccion"`
+	OperatorID     *string `json:"id_operador"`
+	Gender         *int    `json:"genero"`
+	CompletedTrips *int    `json:"cant_viajes"`
+	DaysSince      *int    `json:"tiempo_registro"`
+	AgeRange       *string `json:"edad"`
+	HoursConnected *string `json:"horas_conectado"`
+	TripHours      *string `json:"horas_viaje"`
+	TotRevenue     *string `json:"ingreso_totales"`
 }
 
 func (p operatorStatsPayload) toDomainModel() *internal.OperatorStats {
 	return &internal.OperatorStats{
-		Date:           time.Unix(int64(p.Date/1000), 0),
+		Date:           time.Unix(p.Date/1000, 0),
 		OperatorID:     p.OperatorID,
 		Gender:         p.Gender,
 		CompletedTrips: p.CompletedTrips,

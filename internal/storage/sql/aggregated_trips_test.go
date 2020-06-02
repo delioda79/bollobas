@@ -4,13 +4,12 @@ package sql_test
 
 import (
 	"context"
+	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/taxibeat/bollobas/internal"
 	"github.com/taxibeat/bollobas/internal/storage/sql"
-
-	"testing"
-	"time"
 
 	"fmt"
 	"github.com/taxibeat/bollobas/internal/storagetest"

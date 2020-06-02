@@ -4,13 +4,12 @@ package sql_test
 
 import (
 	"context"
+	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/taxibeat/bollobas/internal"
 	"github.com/taxibeat/bollobas/internal/storage/sql"
-
-	"testing"
-	"time"
 
 	"github.com/taxibeat/bollobas/internal/storagetest"
 )
@@ -28,12 +27,12 @@ func TestGetAllTrafficIncidents(t *testing.T) {
 	assert.Len(t, rr, 2)
 
 	assert.Equal(t, int64(2), rr[0].ID)
-	assert.Equal(t, "222-BBB", rr[0].Plates)
-	assert.Equal(t, "C456456456", rr[0].Licence)
+	assert.Equal(t, "222-BBB", *rr[0].Plates)
+	assert.Equal(t, "C456456456", *rr[0].Licence)
 
 	assert.Equal(t, int64(1), rr[1].ID)
-	assert.Equal(t, "111-AAA", rr[1].Plates)
-	assert.Equal(t, "C12312312", rr[1].Licence)
+	assert.Equal(t, "111-AAA", *rr[1].Plates)
+	assert.Equal(t, "C12312312", *rr[1].Licence)
 }
 
 func TestFilteredIncidentsQuery(t *testing.T) {
@@ -53,14 +52,26 @@ func TestFilteredIncidentsQuery(t *testing.T) {
 func populateTrafficIncidentsTable(r *sql.TrafficIncidentsRepo) error {
 	ctx := context.Background()
 	r.DB().Exec(ctx, "TRUNCATE traffic_incidents")
+	tp := 3
+	p1 := "111-AAA"
+	p2 := "222-BBB"
+	l1 := "C12312312"
+	l2 := "C456456456"
+	tt1 := "15-19"
+	tt2 := "12-15"
+	td1 := "6000-8999"
+	td2 := "3000-5999"
+	c1 := "-99.829343, 19.716384"
+	c2 := "-99.43255, 19.6473825"
+
 	a := &internal.TrafficIncident{
 		Date:           time.Now().AddDate(0, -1, 0),
-		Type:           3,
-		Plates:         "111-AAA",
-		Licence:        "C12312312",
-		TravelTime:     "15-19",
-		TravelDistance: "6000-8999",
-		Coordinates:    "-99.829343, 19.716384",
+		Type:           &tp,
+		Plates:         &p1,
+		Licence:        &l1,
+		TravelTime:     &tt1,
+		TravelDistance: &td1,
+		Coordinates:    &c1,
 	}
 
 	if err := r.Add(ctx, a); err != nil {
@@ -68,12 +79,12 @@ func populateTrafficIncidentsTable(r *sql.TrafficIncidentsRepo) error {
 	}
 	a = &internal.TrafficIncident{
 		Date:           time.Now().AddDate(0, -1, 0).Add(time.Hour),
-		Type:           3,
-		Plates:         "222-BBB",
-		Licence:        "C456456456",
-		TravelTime:     "12-15",
-		TravelDistance: "3000-5999",
-		Coordinates:    "-99.43255, 19.6473825",
+		Type:           &tp,
+		Plates:         &p2,
+		Licence:        &l2,
+		TravelTime:     &tt2,
+		TravelDistance: &td2,
+		Coordinates:    &c2,
 	}
 	return r.Add(context.Background(), a)
 }

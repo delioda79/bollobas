@@ -8,18 +8,18 @@ import (
 )
 
 type trafficIncidentsPayload struct {
-	Date           int64  `json:"tiempo_hecho"`
-	Type           int    `json:"hecho_trans"`
-	Plates         string `json:"placa"`
-	Licence        string `json:"licencia"`
-	TravelDistance string `json:"distancia_viaje"`
-	TravelTime     string `json:"tiempo_viaje"`
-	Coordinates    string `json:"ubicación"`
+	Date           int64   `json:"tiempo_hecho"`
+	Type           *int    `json:"hecho_trans"`
+	Plates         *string `json:"placa"`
+	Licence        *string `json:"licencia"`
+	TravelDistance *string `json:"distancia_viaje"`
+	TravelTime     *string `json:"tiempo_viaje"`
+	Coordinates    *string `json:"ubicación"`
 }
 
 func (p trafficIncidentsPayload) toDomainModel() *internal.TrafficIncident {
 	return &internal.TrafficIncident{
-		Date:           time.Unix(int64(p.Date/1000), 0),
+		Date:           time.Unix(p.Date/1000, 0),
 		Type:           p.Type,
 		Plates:         p.Plates,
 		Licence:        p.Licence,

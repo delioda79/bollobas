@@ -7,11 +7,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/beatlabs/harvester"
-	"github.com/stretchr/testify/assert"
 	"github.com/taxibeat/bollobas/internal"
 	"github.com/taxibeat/bollobas/internal/config"
 	"github.com/taxibeat/bollobas/internal/storage/sql"
+
+	"github.com/beatlabs/harvester"
+	"github.com/stretchr/testify/assert"
 )
 
 // SetConfig returns a store

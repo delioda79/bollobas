@@ -42,8 +42,7 @@ func (va *OperatorStatsRepo) GetAll(ctx context.Context, df internal.DateFilter)
 	}
 	defer rr.Close()
 
-	res := []internal.OperatorStats{}
-
+	var res []internal.OperatorStats
 	for rr.Next() {
 		r := &internal.OperatorStats{}
 		err := rr.Scan(

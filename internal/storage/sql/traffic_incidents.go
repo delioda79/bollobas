@@ -41,7 +41,6 @@ func (ti *TrafficIncidentsRepo) GetAll(ctx context.Context, df internal.DateFilt
 	defer ii.Close()
 
 	var res []internal.TrafficIncident
-
 	for ii.Next() {
 		i := &internal.TrafficIncident{}
 		err := ii.Scan(

@@ -26,3 +26,29 @@ type AggregatedTrips struct {
 	EodEmptyDist           *float64 `transl:"eod_empty_dist" json:"dist_vacio_eod"`
 	EodEmptyTime           *float64 `transl:"eod_empty_time" json:"tiempo_vacio_eod"`
 }
+
+// OperatorStats is the view model of the Operator Stats.
+type OperatorStats struct {
+	ID             int64
+	Date           string
+	OperatorID     *string
+	Gender         *int
+	CompletedTrips *int
+	DaysSince      *int
+	AgeRange       *string
+	HoursConnected *string
+	TripHours      *string
+	TotRevenue     *string
+}
+
+// TrafficIncident is the view model of the Traffic Incident.
+type TrafficIncident struct {
+	ID             int64
+	Date           string
+	Type           *int
+	Plates         *string
+	Licence        *string
+	TravelDistance *string
+	TravelTime     *string
+	Coordinates    *string
+}
