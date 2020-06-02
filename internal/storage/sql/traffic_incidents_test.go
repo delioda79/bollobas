@@ -54,7 +54,7 @@ func populateTrafficIncidentsTable(r *sql.TrafficIncidentsRepo) error {
 	ctx := context.Background()
 	r.DB().Exec(ctx, "TRUNCATE traffic_incidents")
 	a := &internal.TrafficIncident{
-		Date:           time.Now(),
+		Date:           time.Now().AddDate(0, -1, 0),
 		Type:           3,
 		Plates:         "111-AAA",
 		Licence:        "C12312312",
@@ -67,7 +67,7 @@ func populateTrafficIncidentsTable(r *sql.TrafficIncidentsRepo) error {
 		return err
 	}
 	a = &internal.TrafficIncident{
-		Date:           time.Now().Add(time.Hour),
+		Date:           time.Now().AddDate(0, -1, 0).Add(time.Hour),
 		Type:           3,
 		Plates:         "222-BBB",
 		Licence:        "C456456456",

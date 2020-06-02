@@ -39,10 +39,12 @@ func (va *AggregatedTripsRepo) GetAll(ctx context.Context, df internal.DateFilte
 			eod_request_time,
 			eod_empty_dist,
 			eod_empty_time
-		FROM aggregated_trips`
-	query += " WHERE 1=1 %s " +
-		"AND deleted_at is null " +
-		"ORDER BY date DESC"
+		FROM aggregated_trips
+		WHERE 1=1 %s
+			AND YEAR(date) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
+			AND MONTH(date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
+			AND deleted_at is null
+		ORDER BY date DESC`
 
 	query, args := f.Filter(query)
 

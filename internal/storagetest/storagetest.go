@@ -2,23 +2,16 @@ package storagetest
 
 import (
 	"context"
-	gsql "database/sql"
 	"fmt"
+	"log"
+	"testing"
+	"time"
+
 	"github.com/beatlabs/harvester"
 	"github.com/stretchr/testify/assert"
 	"github.com/taxibeat/bollobas/internal"
 	"github.com/taxibeat/bollobas/internal/config"
 	"github.com/taxibeat/bollobas/internal/storage/sql"
-	"log"
-	"testing"
-	"time"
-)
-
-var (
-	// Used to initialize repos
-	store *sql.Store
-	// Used to handle db in the background
-	db *gsql.DB
 )
 
 // SetConfig returns a store
@@ -39,6 +32,7 @@ func SetConfig() (*sql.Store, error) {
 
 // TestFilteredQuery is a general test to check if filtering works
 func TestFilteredQuery(t *testing.T, f func(ctx context.Context, filter internal.DateFilter) (interface{}, error)) {
+	now := time.Now().AddDate(0, -1, 0)
 
 	nn := []struct {
 		from  time.Time
@@ -46,29 +40,29 @@ func TestFilteredQuery(t *testing.T, f func(ctx context.Context, filter internal
 		count int
 	}{
 		{
-			from:  time.Now().Add(time.Hour * (-2)),
-			to:    time.Now().Add(time.Hour * (-1)),
+			from:  now.Add(time.Hour * (-2)),
+			to:    now.Add(time.Hour * (-1)),
 			count: 0,
 		},
 		{
-			from:  time.Now().Add(time.Hour * (-2)),
-			to:    time.Now().Add(time.Minute),
+			from:  now.Add(time.Hour * (-2)),
+			to:    now.Add(time.Minute),
 			count: 1,
 		},
 		{
-			from:  time.Now().Add(time.Minute * 2),
-			to:    time.Now().Add(time.Minute * 4),
+			from:  now.Add(time.Minute * 2),
+			to:    now.Add(time.Minute * 4),
 			count: 0,
 		},
 
 		{
-			from:  time.Now().Add(time.Minute * 20),
-			to:    time.Now().Add(time.Hour + (time.Minute * 20)),
+			from:  now.Add(time.Minute * 20),
+			to:    now.Add(time.Hour + (time.Minute * 20)),
 			count: 1,
 		},
 		{
-			from:  time.Now().Add(time.Minute * (-4)),
-			to:    time.Now().Add(time.Hour * 2),
+			from:  now.Add(time.Minute * (-4)),
+			to:    now.Add(time.Hour * 2),
 			count: 2,
 		},
 	}
@@ -92,8 +86,8 @@ func TestFilteredQuery(t *testing.T, f func(ctx context.Context, filter internal
 		}
 	}
 
-	to := time.Now().Add(time.Minute * 30)
-	from := time.Now().Add(time.Hour * (-2))
+	to := now.Add(time.Minute * 30)
+	from := now.Add(time.Hour * (-2))
 
 	dd[len(nn)] = struct {
 		from  *time.Time

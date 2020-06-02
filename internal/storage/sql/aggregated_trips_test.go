@@ -28,9 +28,9 @@ func TestGetAllAggregatedTrips(t *testing.T) {
 
 	assert.Len(t, rr, 2)
 	assert.Equal(t, int64(2), rr[0].ID)
-	assert.Equal(t, "Test2", rr[0].SupplierID)
+	assert.Equal(t, "Test2", *rr[0].SupplierID)
 	assert.Equal(t, int64(1), rr[1].ID)
-	assert.Equal(t, "Test1", rr[1].SupplierID)
+	assert.Equal(t, "Test1", *rr[1].SupplierID)
 }
 
 func TestFilteredTripsQuery(t *testing.T) {
@@ -57,7 +57,7 @@ func populateAggregatedTripsTable(r *sql.AggregatedTripsRepo) error {
 	dist1 := 10.45
 	dist2 := 10.46
 	a := &internal.AggregatedTrips{
-		Date:              time.Now(),
+		Date:              time.Now().AddDate(0, -1, 0),
 		SupplierID:        &id1,
 		TotalDistTraveled: &dist1,
 	}
@@ -66,7 +66,7 @@ func populateAggregatedTripsTable(r *sql.AggregatedTripsRepo) error {
 		return err
 	}
 	a = &internal.AggregatedTrips{
-		Date:              time.Now().Add(time.Hour),
+		Date:              time.Now().AddDate(0, -1, 0).Add(time.Hour),
 		SupplierID:        &id2,
 		TotalDistTraveled: &dist2,
 	}

@@ -17,18 +17,20 @@ func (ti *TrafficIncidentsRepo) GetAll(ctx context.Context, df internal.DateFilt
 	f := DateFilter{&df}
 
 	query := `SELECT
-				id,
-				date,
-				type,
-				plates,
-				licence,
-				travel_distance,
-				travel_time,
-				coordinates
-			FROM traffic_incidents`
-	query += " WHERE 1=1 %s " +
-		"AND deleted_at is null " +
-		"ORDER BY date DESC"
+			id,
+			date,
+			type,
+			plates,
+			licence,
+			travel_distance,
+			travel_time,
+			coordinates
+		FROM traffic_incidents
+		WHERE 1=1 %s
+			AND YEAR(date) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
+			AND MONTH(date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
+			AND deleted_at is null
+		ORDER BY date DESC`
 
 	query, args := f.Filter(query)
 
