@@ -37,16 +37,25 @@ func TestGetAggregatedRides(t *testing.T) {
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)
-			var v []view.AggregatedTrips
+			var vv []interface{}
 			if len(d.trips) > 0 {
-				v = []view.AggregatedTrips{
-					{
-						ID:   d.trips[0].ID,
+				for _, d := range d.trips {
+					v := view.AggregatedTrips{
+						ID:   d.ID,
 						Date: time.Time{}.Format("2006-01-02T15:04:05"),
-					},
+					}
+					vv = append(vv, v)
 				}
 			}
-			assert.Equal(t, &phttp.Response{Payload: v}, rsp)
+			assert.Equal(t, &phttp.Response{
+				Payload: PaginatedResponse{
+					Meta: Metadata{
+						First: 0,
+						Next:  nil,
+					},
+					Data: vv,
+				},
+			}, rsp)
 		} else {
 			assert.Equal(t, phttp.NewErrorWithCodeAndPayload(500, d.err), err)
 			var r *phttp.Response
@@ -61,8 +70,8 @@ func TestGetOperatorStats(t *testing.T) {
 	rp := &internalfakes.FakeOperatorStatsRepository{}
 
 	dd := []struct {
-		trips []internal.OperatorStats
-		err   error
+		opStats []internal.OperatorStats
+		err     error
 	}{
 		{nil, nil},
 		{[]internal.OperatorStats{{ID: 1}}, nil},
@@ -70,20 +79,30 @@ func TestGetOperatorStats(t *testing.T) {
 	}
 
 	for i, d := range dd {
-		rp.GetAllReturnsOnCall(i, d.trips, d.err)
+		rp.GetAllReturnsOnCall(i, d.opStats, d.err)
 		rsp, err := (&RouteHandler{Handler: &OperatorStatsHandler{Rp: rp}}).Handle(ctx, req)
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)
 			var vv []interface{}
-			if len(d.trips) > 0 {
-				v := view.OperatorStats{
-					ID:   d.trips[0].ID,
-					Date: d.trips[0].Date.Format("2006-01-02T15:04:05"),
+			if len(d.opStats) > 0 {
+				for _, d := range d.opStats {
+					v := view.OperatorStats{
+						ID:   d.ID,
+						Date: d.Date.Format("2006-01-02T15:04:05"),
+					}
+					vv = append(vv, v)
 				}
-				vv = append(vv, v)
 			}
-			assert.Equal(t, &phttp.Response{Payload: vv}, rsp)
+			assert.Equal(t, &phttp.Response{
+				Payload: PaginatedResponse{
+					Meta: Metadata{
+						First: 0,
+						Next:  nil,
+					},
+					Data: vv,
+				},
+			}, rsp)
 		} else {
 			assert.Equal(t, phttp.NewErrorWithCodeAndPayload(500, d.err), err)
 			var r *phttp.Response
@@ -97,8 +116,8 @@ func TestGetTransitsMade(t *testing.T) {
 	rp := &internalfakes.FakeTrafficIncidentsRepository{}
 
 	dd := []struct {
-		trips []internal.TrafficIncident
-		err   error
+		ti  []internal.TrafficIncident
+		err error
 	}{
 		{nil, nil},
 		{[]internal.TrafficIncident{{ID: 1}}, nil},
@@ -106,20 +125,30 @@ func TestGetTransitsMade(t *testing.T) {
 	}
 
 	for i, d := range dd {
-		rp.GetAllReturnsOnCall(i, d.trips, d.err)
+		rp.GetAllReturnsOnCall(i, d.ti, d.err)
 		rsp, err := (&RouteHandler{Handler: &TrafficIncidentsHandler{Rp: rp}}).Handle(ctx, req)
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)
 			var vv []interface{}
-			if len(d.trips) > 0 {
-				v := view.TrafficIncident{
-					ID:   d.trips[0].ID,
-					Date: d.trips[0].Date.Format("2006-01-02T15:04:05"),
+			if len(d.ti) > 0 {
+				for _, d := range d.ti {
+					v := view.TrafficIncident{
+						ID:   d.ID,
+						Date: d.Date.Format("2006-01-02T15:04:05"),
+					}
+					vv = append(vv, v)
 				}
-				vv = append(vv, v)
 			}
-			assert.Equal(t, &phttp.Response{Payload: vv}, rsp)
+			assert.Equal(t, &phttp.Response{
+				Payload: PaginatedResponse{
+					Meta: Metadata{
+						First: 0,
+						Next:  nil,
+					},
+					Data: vv,
+				},
+			}, rsp)
 		} else {
 			assert.Equal(t, phttp.NewErrorWithCodeAndPayload(500, d.err), err)
 			var r *phttp.Response

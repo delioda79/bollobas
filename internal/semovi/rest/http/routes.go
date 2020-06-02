@@ -124,7 +124,7 @@ func (a *AggregatedRidesHandler) GetAll(ctx context.Context, f internal.DateFilt
 		return nil, err
 	}
 
-	var vats []view.AggregatedTrips
+	var vats []interface{}
 	for _, at := range ats {
 		v := view.AggregatedTrips{
 			ID:                     at.ID,
