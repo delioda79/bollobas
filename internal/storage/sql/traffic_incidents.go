@@ -9,12 +9,15 @@ import (
 // TrafficIncidentsRepo implements the interface for MySQL
 type TrafficIncidentsRepo struct {
 	*Store
-	table string
 }
 
 // GetAll returns all the traffic incidents
-func (ti *TrafficIncidentsRepo) GetAll(ctx context.Context, df internal.DateFilter) (data []internal.TrafficIncident, err error) {
-	f := DateFilter{&df}
+func (ti *TrafficIncidentsRepo) GetAll(ctx context.Context, df internal.DateFilter, pg internal.Pagination) (data []internal.TrafficIncident, err error) {
+	f := AllFilter{
+		DateFilter: df,
+		Pagination: pg,
+	}
+	var args []interface{}
 
 	query := `SELECT
 			id,
@@ -30,9 +33,13 @@ func (ti *TrafficIncidentsRepo) GetAll(ctx context.Context, df internal.DateFilt
 			AND YEAR(date) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
 			AND MONTH(date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
 			AND deleted_at is null
-		ORDER BY date DESC`
+		ORDER BY date DESC
+		LIMIT ?,?`
 
-	query, args := f.Filter(query)
+	query, a := f.FilterDate(query)
+	args = append(args, a...)
+	a = f.Paginate()
+	args = append(args, a...)
 
 	ii, err := ti.db.Query(ctx, query, args...)
 	if err != nil {
@@ -98,5 +105,5 @@ func (ti *TrafficIncidentsRepo) Add(ctx context.Context, i *internal.TrafficInci
 
 // NewTrafficIncidentsRepository creates a new repo
 func NewTrafficIncidentsRepository(store *Store) *TrafficIncidentsRepo {
-	return &TrafficIncidentsRepo{store, "traffic_incidents"}
+	return &TrafficIncidentsRepo{store}
 }

@@ -8,12 +8,15 @@ import (
 // AggregatedTripsRepo implements the interface for MySQL
 type AggregatedTripsRepo struct {
 	*Store
-	table string
 }
 
 // GetAll returns the city with the respective id or an error if it does not exist
-func (va *AggregatedTripsRepo) GetAll(ctx context.Context, df internal.DateFilter) (data []internal.AggregatedTrips, err error) {
-	f := DateFilter{&df}
+func (va *AggregatedTripsRepo) GetAll(ctx context.Context, df internal.DateFilter, pg internal.Pagination) (data []internal.AggregatedTrips, err error) {
+	f := AllFilter{
+		DateFilter: df,
+		Pagination: pg,
+	}
+	var args []interface{}
 
 	query := `SELECT
 			id,
@@ -44,9 +47,13 @@ func (va *AggregatedTripsRepo) GetAll(ctx context.Context, df internal.DateFilte
 			AND YEAR(date) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
 			AND MONTH(date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
 			AND deleted_at is null
-		ORDER BY date DESC`
+		ORDER BY date DESC
+		LIMIT ?,?`
 
-	query, args := f.Filter(query)
+	query, a := f.FilterDate(query)
+	args = append(args, a...)
+	a = f.Paginate()
+	args = append(args, a...)
 
 	rr, err := va.db.Query(ctx, query, args...)
 	if err != nil {
@@ -157,5 +164,5 @@ func (va *AggregatedTripsRepo) Add(ctx context.Context, r *internal.AggregatedTr
 
 // NewAggregatedTripsRepository creates a new repo
 func NewAggregatedTripsRepository(store *Store) *AggregatedTripsRepo {
-	return &AggregatedTripsRepo{store, "aggregated_trip"}
+	return &AggregatedTripsRepo{store}
 }

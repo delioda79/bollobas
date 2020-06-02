@@ -9,12 +9,15 @@ import (
 // OperatorStatsRepo implements the interface for MySQL
 type OperatorStatsRepo struct {
 	*Store
-	table string
 }
 
 // GetAll returns the city with the respective id or an error if it does not exist
-func (va *OperatorStatsRepo) GetAll(ctx context.Context, df internal.DateFilter) (data []internal.OperatorStats, err error) {
-	f := DateFilter{&df}
+func (va *OperatorStatsRepo) GetAll(ctx context.Context, df internal.DateFilter, pg internal.Pagination) (data []internal.OperatorStats, err error) {
+	f := AllFilter{
+		DateFilter: df,
+		Pagination: pg,
+	}
+	var args []interface{}
 
 	query := `SELECT
 			id,
@@ -32,9 +35,13 @@ func (va *OperatorStatsRepo) GetAll(ctx context.Context, df internal.DateFilter)
 			AND YEAR(date) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
 			AND MONTH(date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
 			AND deleted_at is null
-		ORDER BY date DESC`
+		ORDER BY date DESC
+		LIMIT ?,?`
 
-	query, args := f.Filter(query)
+	query, a := f.FilterDate(query)
+	args = append(args, a...)
+	a = f.Paginate()
+	args = append(args, a...)
 
 	rr, err := va.db.Query(ctx, query, args...)
 	if err != nil {
@@ -102,5 +109,5 @@ func (va *OperatorStatsRepo) Add(ctx context.Context, r *internal.OperatorStats)
 
 // NewOperatorStatsRepository creates a new repo
 func NewOperatorStatsRepository(store *Store) *OperatorStatsRepo {
-	return &OperatorStatsRepo{store, "operator_stats"}
+	return &OperatorStatsRepo{store}
 }

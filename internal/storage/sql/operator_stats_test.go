@@ -21,7 +21,7 @@ func TestGetAllOperatorStats(t *testing.T) {
 	err = populateOperatorStatsTable(at)
 	assert.Nil(t, err)
 
-	rr, err := at.GetAll(context.Background(), internal.DateFilter{})
+	rr, err := at.GetAll(context.Background(), internal.DateFilter{}, internal.Pagination{})
 	assert.Nil(t, err)
 
 	assert.Len(t, rr, 2)
@@ -44,7 +44,7 @@ func TestFilteredStatsQuery(t *testing.T) {
 
 	f := func(ctx context.Context, filter internal.DateFilter) (interface{}, error) {
 
-		return at.GetAll(ctx, filter)
+		return at.GetAll(ctx, filter, internal.Pagination{})
 	}
 
 	storagetest.TestFilteredQuery(t, f)

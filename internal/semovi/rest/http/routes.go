@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -90,14 +91,35 @@ func getDateFilter(req *phttp.Request) (internal.DateFilter, error) {
 	return internal.DateFilter{From: fromP, To: toP}, nil
 }
 
+// Dates returns the date filter details
+func getPagination(req *phttp.Request) (internal.Pagination, error) {
+
+	f := internal.Pagination{}
+
+	first, err := getIntField(req, "first", 0)
+	if err != nil {
+		return f, err
+	}
+
+	count, err := getIntField(req, "count", 10)
+	if err != nil {
+		return f, err
+	}
+
+	f.First = int(first)
+	f.Count = int(count)
+
+	return f, nil
+}
+
 // AggregatedRidesHandler is the controller for the related route
 type AggregatedRidesHandler struct {
 	Rp internal.AggregatedTripsRepository
 }
 
 // GetAll returns all the items
-func (a *AggregatedRidesHandler) GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error) {
-	ats, err := a.Rp.GetAll(ctx, f)
+func (a *AggregatedRidesHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, error) {
+	ats, err := a.Rp.GetAll(ctx, f, pg)
 	if err != nil {
 		return nil, err
 	}
@@ -142,8 +164,8 @@ type OperatorStatsHandler struct {
 }
 
 // GetAll returns all the items
-func (o *OperatorStatsHandler) GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error) {
-	ops, err := o.Rp.GetAll(ctx, f)
+func (o *OperatorStatsHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, error) {
+	ops, err := o.Rp.GetAll(ctx, f, pg)
 	if err != nil {
 		return nil, err
 	}
@@ -174,8 +196,8 @@ type TrafficIncidentsHandler struct {
 }
 
 // GetAll returns all the items
-func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error) {
-	tis, err := t.Rp.GetAll(ctx, f)
+func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, error) {
+	tis, err := t.Rp.GetAll(ctx, f, pg)
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +222,7 @@ func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFil
 
 // DataHandler is a generic data handler which returns interfaces
 type DataHandler interface {
-	GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error)
+	GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, error)
 }
 
 // RouteHandler is the controller for the related route
@@ -215,10 +237,52 @@ func (t *RouteHandler) Handle(ctx context.Context, req *phttp.Request) (*phttp.R
 		return nil, phttp.NewErrorWithCodeAndPayload(500, e)
 	}
 
-	r, e := t.Handler.GetAll(ctx, df)
+	pn, e := getPagination(req)
+	if e != nil {
+		return nil, phttp.NewErrorWithCodeAndPayload(400, e.Error())
+	}
+
+	r, e := t.Handler.GetAll(ctx, df, pn)
 	if e != nil {
 		return nil, phttp.NewErrorWithCodeAndPayload(500, e)
 	}
-	rsp := phttp.NewResponse(r)
+	var nxt *int
+	if len(r.([]interface{})) == pn.Count {
+		nv := pn.First + pn.Count
+		nxt = &nv
+	}
+
+	mdr := Metadata{
+		First: pn.First,
+		Next:  nxt,
+	}
+	rsp := phttp.NewResponse(PaginatedResponse{
+		Meta: mdr,
+		Data: r,
+	})
 	return rsp, nil
+}
+
+// Metadata are the metadata for the response
+type Metadata struct {
+	First int
+	Next  *int
+}
+
+// PaginatedResponse is the response with paginated data
+type PaginatedResponse struct {
+	Meta Metadata
+	Data interface{}
+}
+
+func getIntField(req *phttp.Request, param string, dv int64) (int64, error) {
+	intText, ok := req.Fields[param]
+	if !ok {
+		return dv, nil
+	}
+	intVal, err := strconv.ParseInt(intText, 10, 64)
+	if err != nil {
+		return dv, fmt.Errorf("%s is not valid integer", param)
+	}
+	return intVal, nil
 }

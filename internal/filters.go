@@ -7,3 +7,9 @@ type DateFilter struct {
 	From *time.Time
 	To   *time.Time
 }
+
+// Pagination includes the pagination parameters
+type Pagination struct {
+	First int
+	Count int
+}
