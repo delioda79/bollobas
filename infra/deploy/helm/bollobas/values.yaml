@@ -15,11 +15,19 @@ service:
   targetPort: 8700
   port: 80
 
-dataRemovalJob:
+dataHardDeleteJob:
   name: data.removal
-  schedule: "0 0 20 * *"
+  # runs every 3 months at 3:30am on 28th of the month
+  schedule: "30 3 28 */3 *"
   args:
-    - "./data_removal"
+    - "./data_removal hard"
+
+dataSoftDeleteJob:
+  name: data.removal
+  # runs every month on 25th at 3:30am
+  schedule: "30 3 25 * *"
+  args:
+    - "./data_removal soft"
 
 env:
   PATRON_LOG_LEVEL: info
@@ -33,7 +41,13 @@ env:
   BOLLOBAS_INIT_VECTOR: ""
   BOLLOBAS_LOCATION: "sandbox"
   BOLLOBAS_MIXPANEL_TOKEN: ""
-  MYSQL_DB: "bollobas"
+  MYSQL_DB: bollobas
+  MYSQL_USERNAME: test
+  MYSQL_PASS: test
+  MYSQL_WRITE: localhost
+  MYSQL_READ: localhost
+  MYSQL_PORT: 3306
+  DATA_CLEANUP_ENABLED: true
 
 ingress:
   enabled: true

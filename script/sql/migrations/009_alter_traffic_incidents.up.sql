@@ -1,0 +1,1 @@
+ALTER TABLE `traffic_incidents` ADD COLUMN `deleted_at` datetime NULL DEFAULT NULL AFTER `coordinates`;

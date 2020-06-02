@@ -15,7 +15,34 @@ type AggregatedTripsRepo struct {
 func (va *AggregatedTripsRepo) GetAll(ctx context.Context, df internal.DateFilter) (data []internal.AggregatedTrips, err error) {
 	f := DateFilter{&df}
 
-	query := "SELECT * from aggregated_trips  WHERE 1=1 %s ORDER BY date DESC"
+	query := `SELECT
+			id,
+			date,
+			supplier_id,
+			total_rides,
+			total_vehicle_rides,
+			total_available_vehicles,
+			total_dist_traveled,
+			passing_time,
+			request_time,
+			empty_time,
+			eod_multiplier,
+			accessibility,
+			female_operator,
+			eod_start,
+			eod_end,
+			eod_pass_dist,
+			eod_pass_time,
+			request_dist,
+			empty_dist,
+			eod_request_dist,
+			eod_request_time,
+			eod_empty_dist,
+			eod_empty_time
+		FROM aggregated_trips`
+	query += " WHERE 1=1 %s " +
+		"AND deleted_at is null " +
+		"ORDER BY date DESC"
 
 	query, args := f.Filter(query)
 

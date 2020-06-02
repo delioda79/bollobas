@@ -1,0 +1,1 @@
+ALTER TABLE `aggregated_trips` ADD COLUMN `deleted_at` datetime NULL DEFAULT NULL AFTER `eod_empty_time`;

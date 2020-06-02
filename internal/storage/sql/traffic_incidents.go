@@ -16,7 +16,19 @@ type TrafficIncidentsRepo struct {
 func (ti *TrafficIncidentsRepo) GetAll(ctx context.Context, df internal.DateFilter) (data []internal.TrafficIncident, err error) {
 	f := DateFilter{&df}
 
-	query := "SELECT * from traffic_incidents  WHERE 1=1 %s ORDER BY date DESC"
+	query := `SELECT
+				id,
+				date,
+				type,
+				plates,
+				licence,
+				travel_distance,
+				travel_time,
+				coordinates
+			FROM traffic_incidents`
+	query += " WHERE 1=1 %s " +
+		"AND deleted_at is null " +
+		"ORDER BY date DESC"
 
 	query, args := f.Filter(query)
 

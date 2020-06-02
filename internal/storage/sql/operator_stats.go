@@ -16,7 +16,21 @@ type OperatorStatsRepo struct {
 func (va *OperatorStatsRepo) GetAll(ctx context.Context, df internal.DateFilter) (data []internal.OperatorStats, err error) {
 	f := DateFilter{&df}
 
-	query := "SELECT * from operator_stats  WHERE 1=1 %s ORDER BY date DESC"
+	query := `SELECT
+				id,
+				date,
+				operator_id,
+				gender,
+				completed_trips,
+				days_since,
+				age_range,
+				hours_connected,
+				trip_hours,
+				tot_revenue
+			FROM operator_stats`
+	query += " WHERE 1=1 %s " +
+		"AND deleted_at is null " +
+		"ORDER BY date DESC"
 
 	query, args := f.Filter(query)
 

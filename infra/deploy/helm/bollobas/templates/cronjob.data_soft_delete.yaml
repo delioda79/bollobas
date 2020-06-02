@@ -1,0 +1,30 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ .Values.dataSoftDeleteJob.name}}
+spec:
+  schedule: {{ .Values.dataSoftDeleteJob.schedule}}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: {{ .Chart.Name }}
+            image: "{{ .Values.image.registry }}{{ .Values.image.name }}:{{ .Values.image.tag }}"
+            env:
+              - name: MYSQL_USERNAME
+                value: {{ .Values.env.MYSQL_USERNAME | quote }}
+              - name: MYSQL_PASS
+                value: {{ .Values.env.MYSQL_PASS | quote }}
+              - name: MYSQL_WRITE
+                value: {{ .Values.env.MYSQL_WRITE | quote }}
+              - name: MYSQL_READ
+                value: {{ .Values.env.MYSQL_READ | quote }}
+              - name: MYSQL_PORT
+                value: {{ .Values.env.MYSQL_PORT | quote }}
+              - name: MYSQL_DB
+                value: {{ .Values.env.MYSQL_DB | quote }}
+              - name: DATA_CLEANUP_ENABLED
+                value: {{ .Values.env.DATA_CLEANUP_ENABLED | quote }}
+            args: {{ .Values.dataSoftDeleteJob.args }}
+          restartPolicy: OnFailure

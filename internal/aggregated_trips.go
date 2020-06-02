@@ -36,4 +36,5 @@ type AggregatedTrips struct {
 	EodRequestTime         *float64  `transl:"eod_request_time" json:"tiempo_solicitud_eod"`
 	EodEmptyDist           *float64  `transl:"eod_empty_dist" json:"dist_vacio_eod"`
 	EodEmptyTime           *float64  `transl:"eod_empty_time" json:"tiempo_vacio_eod"`
+	DeletedAt              time.Time `transl:"deleted_at"`
 }

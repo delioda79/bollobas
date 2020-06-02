@@ -1,0 +1,1 @@
+ALTER TABLE `aggregated_trips` DROP COLUMN `deleted_at`;

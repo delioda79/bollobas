@@ -23,4 +23,5 @@ type OperatorStats struct {
 	HoursConnected string    `transl:"hours_connected" json:"horas_conectado"`
 	TripHours      string    `transl:"trip_hours" json:"horas_viaje"`
 	TotRevenue     string    `transl:"tot_revenue" json:"ingreso_totales"`
+	DeletedAt      time.Time `transl:"deleted_at"`
 }
