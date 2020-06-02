@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ .Values.dataSoftDeleteJob.name}}
+  name: {{ include "base-chart.fullname" . }}-{{ .Values.dataSoftDeleteJob.name}}
 spec:
   schedule: {{ .Values.dataSoftDeleteJob.schedule}}
   jobTemplate:
