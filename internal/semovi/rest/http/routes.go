@@ -95,7 +95,13 @@ type AggregatedRidesHandler struct {
 	Rp internal.AggregatedTripsRepository
 }
 
-// GetAll returns all the items
+// GetAll godoc
+// @Summary Get All the aggregated rides
+// @Tags bollobas
+// @Accept json
+// @Produce json
+// @Success 200 {array} view.AggregatedTrips
+// @Router /viajes_agregados [get]
 func (a *AggregatedRidesHandler) GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error) {
 	ats, err := a.Rp.GetAll(ctx, f)
 	if err != nil {
@@ -141,7 +147,13 @@ type OperatorStatsHandler struct {
 	Rp internal.OperatorStatsRepository
 }
 
-// GetAll returns all the items
+// GetAll godoc
+// @Summary Get return all the operator stats
+// @Tags bollobas
+// @Accept json
+// @Produce json
+// @Success 200 {array} view.OperatorStats
+// @Router /stats_operador [get]
 func (o *OperatorStatsHandler) GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error) {
 	ops, err := o.Rp.GetAll(ctx, f)
 	if err != nil {
@@ -173,7 +185,13 @@ type TrafficIncidentsHandler struct {
 	Rp internal.TrafficIncidentsRepository
 }
 
-// GetAll returns all the items
+// GetAll godoc
+// @Summary Get return all the traffic incidents
+// @Tags bollobas
+// @Accept json
+// @Produce json
+// @Success 200 {array} view.TrafficIncident
+// @Router /hecho_transito [get]
 func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error) {
 	tis, err := t.Rp.GetAll(ctx, f)
 	if err != nil {

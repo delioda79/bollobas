@@ -42,6 +42,14 @@ const (
 	name    = "bollobas"
 )
 
+// @Title Bollobas
+// @Version 1.0.0
+// @Description Bollobas microservice is responsible for any analytics that go through Beat's backend platform.
+// @tag.name bollobas
+// @contact.name RDXP3
+// @contact.url https://confluence.taxibeat.com/display/TEAM404/RDXP3+-+TechnoMules
+// @schemes http
+// @license.name BEAT Mobility Services
 func main() {
 
 	err := godotenv.Load("../../config/.env")
