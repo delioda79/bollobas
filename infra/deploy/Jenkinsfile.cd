@@ -10,7 +10,7 @@ node('slave') {
     def project = git_utils.determineRepoName(env.JOB_NAME)
     def commiter = git_utils.determineGitCommiter()
     def staging_branch = "staging-develop"
-    def namespace = "mixpanel"
+    def namespace = "ride"
     def chartmuseumAPI = "https://chartmuseum.private.k8s.management.thebeat.co/api/charts"
     def monitoring_utils = new com.beat.utilities.monitoring()
     def notification_utils = new com.beat.utilities.notifications('PXuE13AjQdnb2hB5kXt5Hj2X', project, env.BUILD_URL, env.BUILD_NUMBER)
