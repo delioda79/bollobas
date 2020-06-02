@@ -3,11 +3,12 @@ package http
 import (
 	"context"
 	"errors"
+	"testing"
+	"time"
 
 	"github.com/taxibeat/bollobas/internal"
 	"github.com/taxibeat/bollobas/internal/internalfakes"
-
-	"testing"
+	"github.com/taxibeat/bollobas/internal/semovi/rest/http/view"
 
 	phttp "github.com/beatlabs/patron/component/http"
 	"github.com/stretchr/testify/assert"
@@ -36,7 +37,16 @@ func TestGetAggregatedRides(t *testing.T) {
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)
-			assert.Equal(t, &phttp.Response{Payload: []internal.AggregatedTrips(d.trips)}, rsp)
+			var v []view.AggregatedTrips
+			if len(d.trips) > 0 {
+				v = []view.AggregatedTrips{
+					{
+						ID:   d.trips[0].ID,
+						Date: time.Time{}.Format("2006-01-02T15:04:05"),
+					},
+				}
+			}
+			assert.Equal(t, &phttp.Response{Payload: v}, rsp)
 		} else {
 			assert.Equal(t, phttp.NewErrorWithCodeAndPayload(500, d.err), err)
 			var r *phttp.Response
@@ -65,7 +75,7 @@ func TestGetOperatorStats(t *testing.T) {
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)
-			assert.Equal(t, &phttp.Response{Payload: []internal.OperatorStats(d.trips)}, rsp)
+			assert.Equal(t, &phttp.Response{Payload: d.trips}, rsp)
 		} else {
 			assert.Equal(t, phttp.NewErrorWithCodeAndPayload(500, d.err), err)
 			var r *phttp.Response

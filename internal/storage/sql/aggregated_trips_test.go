@@ -51,10 +51,15 @@ func TestFilteredTripsQuery(t *testing.T) {
 func populateAggregatedTripsTable(r *sql.AggregatedTripsRepo) error {
 	ctx := context.Background()
 	r.DB().Exec(ctx, "TRUNCATE aggregated_trips")
+
+	id1 := "Test1"
+	id2 := "Test2"
+	dist1 := 10.45
+	dist2 := 10.46
 	a := &internal.AggregatedTrips{
 		Date:              time.Now(),
-		SupplierID:        "Test1",
-		TotalDistTraveled: 10.45,
+		SupplierID:        &id1,
+		TotalDistTraveled: &dist1,
 	}
 
 	if err := r.Add(ctx, a); err != nil {
@@ -62,8 +67,8 @@ func populateAggregatedTripsTable(r *sql.AggregatedTripsRepo) error {
 	}
 	a = &internal.AggregatedTrips{
 		Date:              time.Now().Add(time.Hour),
-		SupplierID:        "Test2",
-		TotalDistTraveled: 10.46,
+		SupplierID:        &id2,
+		TotalDistTraveled: &dist2,
 	}
 
 	fmt.Println(time.Now())

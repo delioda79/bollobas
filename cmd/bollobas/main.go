@@ -275,7 +275,7 @@ func setupSemoviComponents(cfg *config.Configuration, store *sql.Store, rrb *pht
 
 	// Kafka components
 	rt := uint(10)
-	rtw := time.Duration(5 * time.Second)
+	rtw := 5 * time.Second
 
 	osp := semovi.NewOperatorStatsProcessor(sql.NewOperatorStatsRepository(store))
 	osp.Activate(true)
@@ -309,7 +309,23 @@ func setupSemoviComponents(cfg *config.Configuration, store *sql.Store, rrb *pht
 		return err
 	}
 
-	*ccmp = append(*ccmp, ospKafka, tipKafka)
+	vap := semovi.NewAggregatedTripsProcessor(sql.NewAggregatedTripsRepository(store))
+	vap.Activate(true)
+	vapKafka, err := ingestion.NewKafkaComponent(
+		"viajes_agregados",
+		"semovi-kafka-cmp",
+		cfg.KafkaGroup.Get(),
+		[]string{cfg.KkVATopic.Get()},
+		[]string{cfg.KafkaBroker.Get()},
+		vap,
+		rt,
+		rtw,
+	)
+	if err != nil {
+		return err
+	}
+
+	*ccmp = append(*ccmp, ospKafka, tipKafka, vapKafka)
 
 	return nil
 }

@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"github.com/taxibeat/bollobas/internal"
+	"github.com/taxibeat/bollobas/internal/semovi/rest/http/view"
 	"github.com/taxibeat/bollobas/internal/storage/sql"
 	"net/http"
 	"strconv"
@@ -23,9 +24,9 @@ func Routes(st *sql.Store) []*phttp.RouteBuilder {
 	ar := sql.NewAggregatedTripsRepository(st)
 	tr := sql.NewTrafficIncidentsRepository(st)
 	routes := [...]route{
-		route{http.MethodGet, "/viajes_agregados", &RouteHandler{&AggregatedRidesHandler{Rp: ar}}},
-		route{http.MethodGet, "/stats_operador", &RouteHandler{Handler: &OperatorStatsHandler{Rp: or}}},
-		route{http.MethodGet, "/hecho_transito", &RouteHandler{Handler: &TrafficIncidentsHandler{Rp: tr}}},
+		{http.MethodGet, "/viajes_agregados", &RouteHandler{Handler: &AggregatedRidesHandler{Rp: ar}}},
+		{http.MethodGet, "/stats_operador", &RouteHandler{Handler: &OperatorStatsHandler{Rp: or}}},
+		{http.MethodGet, "/hecho_transito", &RouteHandler{Handler: &TrafficIncidentsHandler{Rp: tr}}},
 	}
 	rb := make([]*phttp.RouteBuilder, len(routes))
 	for i, r := range routes {
@@ -95,7 +96,43 @@ type AggregatedRidesHandler struct {
 
 // GetAll returns all the items
 func (a *AggregatedRidesHandler) GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error) {
-	return a.Rp.GetAll(ctx, f)
+	ats, err := a.Rp.GetAll(ctx, f)
+	if err != nil {
+		return nil, err
+	}
+
+	var vats []view.AggregatedTrips
+	for _, at := range ats {
+		v := view.AggregatedTrips{
+			ID:                     at.ID,
+			Date:                   at.Date.Format("2006-01-02T15:04:05"),
+			SupplierID:             at.SupplierID,
+			TotalRides:             at.TotalRides,
+			TotalVehicleRides:      at.TotalVehicleRides,
+			TotalAvailableVehicles: at.TotalAvailableVehicles,
+			TotalDistTraveled:      at.TotalDistTraveled,
+			PassingTime:            at.PassingTime,
+			RequestTime:            at.RequestTime,
+			EmptyTime:              at.EmptyTime,
+			EodMultiplier:          at.EodMultiplier,
+			Accessibility:          at.Accessibility,
+			FemaleOperator:         at.FemaleOperator,
+			EodStart:               at.EodStart,
+			EodEnd:                 at.EodEnd,
+			EodPassDist:            at.EodPassDist,
+			EodPassTime:            at.EodPassTime,
+			RequestDist:            at.RequestDist,
+			EmptyDist:              at.EmptyDist,
+			EodRequestDist:         at.EodRequestDist,
+			EodRequestTime:         at.EodRequestTime,
+			EodEmptyDist:           at.EodEmptyDist,
+			EodEmptyTime:           at.EodEmptyTime,
+		}
+
+		vats = append(vats, v)
+	}
+
+	return vats, nil
 }
 
 // OperatorStatsHandler is the controller for the related route

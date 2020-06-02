@@ -2,7 +2,6 @@ package sql
 
 import (
 	"context"
-
 	"github.com/taxibeat/bollobas/internal"
 )
 
@@ -26,8 +25,7 @@ func (va *AggregatedTripsRepo) GetAll(ctx context.Context, df internal.DateFilte
 	}
 	defer rr.Close()
 
-	res := []internal.AggregatedTrips{}
-
+	var res []internal.AggregatedTrips
 	for rr.Next() {
 		r := &internal.AggregatedTrips{}
 		err := rr.Scan(
