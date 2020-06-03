@@ -10,6 +10,6 @@ type DateFilter struct {
 
 // Pagination includes the pagination parameters
 type Pagination struct {
-	First int
-	Count int
+	Offset int
+	Limit  int
 }

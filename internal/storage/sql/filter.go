@@ -51,23 +51,23 @@ func (af *AllFilter) to() (string, *time.Time) {
 func (af *AllFilter) Paginate() []interface{} {
 	var params []interface{}
 
-	ft := af.first()
+	ft := af.offset()
 	params = append(params, ft)
 
-	tt := af.count()
+	tt := af.limit()
 	params = append(params, tt)
 
 	return params
 }
 
-func (af *AllFilter) first() int {
-	return af.Pagination.First
+func (af *AllFilter) offset() int {
+	return af.Pagination.Offset
 }
 
-func (af *AllFilter) count() int {
-	if af.Pagination.Count == 0 {
+func (af *AllFilter) limit() int {
+	if af.Pagination.Limit == 0 {
 		return math.MaxInt32
 	}
 
-	return af.Pagination.Count
+	return af.Pagination.Limit
 }

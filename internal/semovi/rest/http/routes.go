@@ -96,18 +96,18 @@ func getPagination(req *phttp.Request) (internal.Pagination, error) {
 
 	f := internal.Pagination{}
 
-	first, err := getIntField(req, "first", 0)
+	offset, err := getIntField(req, "offset", 0)
 	if err != nil {
 		return f, err
 	}
 
-	count, err := getIntField(req, "count", 10)
+	limit, err := getIntField(req, "limit", 10)
 	if err != nil {
 		return f, err
 	}
 
-	f.First = int(first)
-	f.Count = int(count)
+	f.Offset = int(offset)
+	f.Limit = int(limit)
 
 	return f, nil
 }
@@ -247,13 +247,13 @@ func (t *RouteHandler) Handle(ctx context.Context, req *phttp.Request) (*phttp.R
 		return nil, phttp.NewErrorWithCodeAndPayload(500, e)
 	}
 	var nxt *int
-	if len(r.([]interface{})) == pn.Count {
-		nv := pn.First + pn.Count
+	if len(r.([]interface{})) == pn.Limit {
+		nv := pn.Offset + pn.Limit
 		nxt = &nv
 	}
 
 	mdr := Metadata{
-		First: pn.First,
+		First: pn.Offset,
 		Next:  nxt,
 	}
 	rsp := phttp.NewResponse(PaginatedResponse{
