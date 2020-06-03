@@ -38,14 +38,16 @@ type store struct {
 
 // In order this job to work:
 // Locally:
+//  - you need to pass the type of the deletion (hard || soft)
 //  - you need to pass the PATH of the env file to load
 // Kubernetes / Docker:
+//  - you need to pass the type of the deletion (hard || soft)
 //  - you need to add the env vars to the running container
 func main() {
 	ctx := context.Background()
 
 	deleteType := os.Args[1]
-	if len(os.Args) == 2 {
+	if len(os.Args) == 3 {
 		if err := godotenv.Load(os.Args[2]); err != nil {
 			log.Printf("cannot open given .env file: %v", err)
 		}
@@ -142,7 +144,7 @@ func (s *store) hardDelete(ctx context.Context, tables ...string) error {
 // softDelete soft deletes each months data
 func (s *store) softDelete(ctx context.Context, tables ...string) error {
 	q := "UPDATE %s " +
-		"SET deleted_at = CURRENT_DATE() " +
+		"SET deleted_at = NOW() " +
 		"WHERE MONTH(date) = MONTH(CURRENT_DATE())"
 
 	tx, err := s.db.BeginTx(ctx, nil)
