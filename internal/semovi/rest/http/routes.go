@@ -241,7 +241,7 @@ type RouteHandler struct {
 func (t *RouteHandler) Handle(ctx context.Context, req *phttp.Request) (*phttp.Response, error) {
 	df, e := getDateFilter(req)
 	if e != nil {
-		return nil, phttp.NewErrorWithCodeAndPayload(400, e)
+		return nil, phttp.NewErrorWithCodeAndPayload(400, e.Error())
 	}
 
 	pn, e := getPagination(req)

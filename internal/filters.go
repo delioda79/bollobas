@@ -29,7 +29,9 @@ func (df *DateFilter) Validate() error {
 	today := time.Now()
 	lastMonth := today.AddDate(0, -1, 0).Month()
 
-	if df.From.Month() != lastMonth || df.To.Month() != lastMonth {
+
+	if df.From.Month() != lastMonth || df.To.Month() != lastMonth ||
+		df.From.Year() != today.Year() || df.To.Year() != today.Year() {
 		return fmt.Errorf("invalid date range requested")
 	}
 
