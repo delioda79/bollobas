@@ -22,13 +22,12 @@ type Pagination struct {
 // Validate ensures that the date range used is within the margins of
 // the previous month and that the min period retrieved is 1 hour.
 func (df *DateFilter) Validate() error {
-	if df.From == nil && df.To == nil {
+	if df.From == nil || df.To == nil {
 		return nil
 	}
 
 	today := time.Now()
 	lastMonth := today.AddDate(0, -1, 0).Month()
-
 
 	if df.From.Month() != lastMonth || df.To.Month() != lastMonth ||
 		df.From.Year() != today.Year() || df.To.Year() != today.Year() {
