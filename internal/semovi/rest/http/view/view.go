@@ -52,3 +52,8 @@ type TrafficIncident struct {
 	TravelTime     *string `json:"tiempo_viaje"`
 	Coordinates    *string `json:"ubicación"`
 }
+
+// ErrorSwagger view model
+type ErrorSwagger struct {
+	Error string `json:"error"`
+}

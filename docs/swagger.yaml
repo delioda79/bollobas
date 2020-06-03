@@ -48,6 +48,11 @@ definitions:
       tot_viajes:
         type: integer
     type: object
+  view.ErrorSwagger:
+    properties:
+      error:
+        type: string
+    type: object
   view.OperatorStats:
     properties:
       cant_viajes:
@@ -104,6 +109,15 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: start date (epoch time)
+        in: query
+        name: from
+        type: integer
+      - description: end date (epoch time)
+        in: query
+        name: to
+        type: integer
       produces:
       - application/json
       responses:
@@ -120,6 +134,15 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: start date (epoch time)
+        in: query
+        name: from
+        type: integer
+      - description: end date (epoch time)
+        in: query
+        name: to
+        type: integer
       produces:
       - application/json
       responses:
@@ -136,6 +159,15 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: start date (epoch time)
+        in: query
+        name: from
+        type: integer
+      - description: end date (epoch time)
+        in: query
+        name: to
+        type: integer
       produces:
       - application/json
       responses:
@@ -145,6 +177,14 @@ paths:
             items:
               $ref: '#/definitions/view.AggregatedTrips'
             type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/view.ErrorSwagger'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/view.ErrorSwagger'
       summary: Get All the aggregated rides
       tags:
       - bollobas

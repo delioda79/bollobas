@@ -42,6 +42,20 @@ var doc = `{
                     "bollobas"
                 ],
                 "summary": "Get return all the traffic incidents",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "start date (epoch time)",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "end date (epoch time)",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -67,6 +81,20 @@ var doc = `{
                     "bollobas"
                 ],
                 "summary": "Get return all the operator stats",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "start date (epoch time)",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "end date (epoch time)",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -92,6 +120,20 @@ var doc = `{
                     "bollobas"
                 ],
                 "summary": "Get All the aggregated rides",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "start date (epoch time)",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "end date (epoch time)",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -100,6 +142,18 @@ var doc = `{
                             "items": {
                                 "$ref": "#/definitions/view.AggregatedTrips"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorSwagger"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorSwagger"
                         }
                     }
                 }
@@ -178,6 +232,14 @@ var doc = `{
                 },
                 "tot_viajes": {
                     "type": "integer"
+                }
+            }
+        },
+        "view.ErrorSwagger": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
                 }
             }
         },

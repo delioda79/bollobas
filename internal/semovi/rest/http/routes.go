@@ -100,7 +100,11 @@ type AggregatedRidesHandler struct {
 // @Tags bollobas
 // @Accept json
 // @Produce json
+// @Param from query int false "start date (epoch time)"
+// @Param to query int false "end date (epoch time)"
 // @Success 200 {array} view.AggregatedTrips
+// @Failure 400 {object} view.ErrorSwagger
+// @Failure 500 {object} view.ErrorSwagger
 // @Router /viajes_agregados [get]
 func (a *AggregatedRidesHandler) GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error) {
 	ats, err := a.Rp.GetAll(ctx, f)
@@ -152,7 +156,11 @@ type OperatorStatsHandler struct {
 // @Tags bollobas
 // @Accept json
 // @Produce json
+// @Param from query int false "start date (epoch time)"
+// @Param to query int false "end date (epoch time)"
 // @Success 200 {array} view.OperatorStats
+// @Failure 400 {object} view.ErrorSwagger
+// @Failure 500 {object} view.ErrorSwagger
 // @Router /stats_operador [get]
 func (o *OperatorStatsHandler) GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error) {
 	ops, err := o.Rp.GetAll(ctx, f)
@@ -190,7 +198,11 @@ type TrafficIncidentsHandler struct {
 // @Tags bollobas
 // @Accept json
 // @Produce json
+// @Param from query int false "start date (epoch time)"
+// @Param to query int false "end date (epoch time)"
 // @Success 200 {array} view.TrafficIncident
+// @Failure 400 {object} view.ErrorSwagger
+// @Failure 500 {object} view.ErrorSwagger
 // @Router /hecho_transito [get]
 func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFilter) (interface{}, error) {
 	tis, err := t.Rp.GetAll(ctx, f)
