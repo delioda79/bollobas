@@ -50,8 +50,8 @@ func (af *AllFilter) to() (string, *time.Time) {
 func (af *AllFilter) Paginate() []interface{} {
 	var params []interface{}
 
-	params = append(params, af.Pagination.GetOffset())
-	params = append(params, af.Pagination.GetLimit())
+	params = append(params, af.Pagination.CalcOffset())
+	params = append(params, af.Pagination.CalcLimit())
 
 	return params
 }

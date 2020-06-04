@@ -42,13 +42,13 @@ func (df *DateFilter) Validate() error {
 	return nil
 }
 
-// GetOffset returns Offset
-func (pg *Pagination) GetOffset() int {
+// CalcOffset returns Offset
+func (pg *Pagination) CalcOffset() int {
 	return pg.Offset
 }
 
-// GetLimit returns Limit
-func (pg *Pagination) GetLimit() int {
+// CalcLimit returns Limit
+func (pg *Pagination) CalcLimit() int {
 	if pg.Limit == 0 {
 		return math.MaxInt32
 	}

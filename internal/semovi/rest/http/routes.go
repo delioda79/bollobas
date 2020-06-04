@@ -257,16 +257,16 @@ func (t *RouteHandler) Handle(ctx context.Context, req *phttp.Request) (*phttp.R
 		return nil, phttp.NewServiceUnavailableErrorWithPayload("failed to fetch data")
 	}
 
-	totalPages := int(math.Ceil(float64(td) / float64(pn.GetLimit())))
+	totalPages := int(math.Ceil(float64(td) / float64(pn.CalcLimit())))
 	mdr := Metadata{
 		TotalCount:  td,
 		TotalPages:  totalPages,
-		PageSize:    pn.GetLimit(),
-		CurrentPage: (pn.GetOffset() / pn.GetLimit()) + 1,
+		PageSize:    pn.CalcLimit(),
+		CurrentPage: (pn.CalcOffset() / pn.CalcLimit()) + 1,
 	}
 	rsp := phttp.NewResponse(PaginatedResponse{
-		Meta: mdr,
 		Data: r,
+		Meta: mdr,
 	})
 	return rsp, nil
 }
@@ -281,8 +281,8 @@ type Metadata struct {
 
 // PaginatedResponse is the response with paginated data
 type PaginatedResponse struct {
-	Meta Metadata
 	Data interface{}
+	Meta Metadata
 }
 
 func getIntField(req *phttp.Request, param string, dv int64) (int64, error) {
