@@ -7,7 +7,7 @@ import (
 
 // OperatorStatsRepository allows to manipulate the operator stats
 type OperatorStatsRepository interface {
-	GetAll(ctx context.Context, df DateFilter) ([]OperatorStats, error)
+	GetAll(ctx context.Context, df DateFilter, pg Pagination) ([]OperatorStats, int, error)
 	Add(ctx context.Context, trips *OperatorStats) error
 }
 

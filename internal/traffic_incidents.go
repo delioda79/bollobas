@@ -7,7 +7,7 @@ import (
 
 // TrafficIncidentsRepository allows to manipulate the traffic incidents
 type TrafficIncidentsRepository interface {
-	GetAll(ctx context.Context, df DateFilter) ([]TrafficIncident, error)
+	GetAll(ctx context.Context, df DateFilter, pg Pagination) ([]TrafficIncident, int, error)
 	Add(ctx context.Context, trips *TrafficIncident) error
 }
 
