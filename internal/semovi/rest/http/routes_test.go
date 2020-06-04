@@ -38,7 +38,7 @@ func TestGetAggregatedRides(t *testing.T) {
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)
-			var vv []interface{}
+			vv := make([]interface{}, 0)
 			if len(d.trips) > 0 {
 				for _, d := range d.trips {
 					v := view.AggregatedTrips{
@@ -88,7 +88,7 @@ func TestGetOperatorStats(t *testing.T) {
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)
-			var vv []interface{}
+			vv := make([]interface{}, 0)
 			if len(d.opStats) > 0 {
 				for _, d := range d.opStats {
 					v := view.OperatorStats{
@@ -137,7 +137,7 @@ func TestGetTransitsMade(t *testing.T) {
 
 		if d.err == nil {
 			assert.Equal(t, d.err, err)
-			var vv []interface{}
+			vv := make([]interface{}, 0)
 			if len(d.ti) > 0 {
 				for _, d := range d.ti {
 					v := view.TrafficIncident{

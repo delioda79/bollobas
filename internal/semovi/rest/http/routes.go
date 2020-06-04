@@ -127,13 +127,13 @@ type AggregatedRidesHandler struct {
 }
 
 // GetAll returns all the items
-func (a *AggregatedRidesHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, int, error) {
+func (a *AggregatedRidesHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) ([]interface{}, int, error) {
 	ats, pi, err := a.Rp.GetAll(ctx, f, pg)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	var vats []interface{}
+	vats := make([]interface{}, 0)
 	for _, at := range ats {
 		v := view.AggregatedTrips{
 			ID:                     at.ID,
@@ -173,13 +173,13 @@ type OperatorStatsHandler struct {
 }
 
 // GetAll returns all the items
-func (o *OperatorStatsHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, int, error) {
+func (o *OperatorStatsHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) ([]interface{}, int, error) {
 	ops, pi, err := o.Rp.GetAll(ctx, f, pg)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	var opsIntf []interface{}
+	opsIntf := make([]interface{}, 0)
 	for _, op := range ops {
 		v := view.OperatorStats{
 			ID:             op.ID,
@@ -205,13 +205,13 @@ type TrafficIncidentsHandler struct {
 }
 
 // GetAll returns all the items
-func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, int, error) {
+func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) ([]interface{}, int, error) {
 	tis, pi, err := t.Rp.GetAll(ctx, f, pg)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	var tisIntf []interface{}
+	tisIntf := make([]interface{}, 0)
 	for _, ti := range tis {
 		v := view.TrafficIncident{
 			ID:             ti.ID,
@@ -231,7 +231,7 @@ func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFil
 
 // DataHandler is a generic data handler which returns interfaces
 type DataHandler interface {
-	GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, int, error)
+	GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) ([]interface{}, int, error)
 }
 
 // RouteHandler is the controller for the related route
@@ -281,7 +281,7 @@ type Metadata struct {
 
 // PaginatedResponse is the response with paginated data
 type PaginatedResponse struct {
-	Data interface{}
+	Data []interface{}
 	Meta Metadata
 }
 
