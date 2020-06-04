@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"fmt"
+	"github.com/beatlabs/patron/log"
 	"net/http"
 	"strconv"
 	"time"
@@ -241,17 +242,18 @@ type RouteHandler struct {
 func (t *RouteHandler) Handle(ctx context.Context, req *phttp.Request) (*phttp.Response, error) {
 	df, e := getDateFilter(req)
 	if e != nil {
-		return nil, phttp.NewErrorWithCodeAndPayload(400, e.Error())
+		return nil, phttp.NewValidationErrorWithPayload(e.Error())
 	}
 
 	pn, e := getPagination(req)
 	if e != nil {
-		return nil, phttp.NewErrorWithCodeAndPayload(400, e.Error())
+		return nil, phttp.NewValidationErrorWithPayload(e.Error())
 	}
 
 	r, e := t.Handler.GetAll(ctx, df, pn)
 	if e != nil {
-		return nil, phttp.NewErrorWithCodeAndPayload(500, e)
+		log.Error(e.Error())
+		return nil, phttp.NewServiceUnavailableErrorWithPayload("failed to fetch data")
 	}
 	var nxt *int
 	if len(r.([]interface{})) == pn.Limit {
