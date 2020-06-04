@@ -36,7 +36,7 @@ const GetAggregatedTripsQuery = `SELECT
 			AND YEAR(date) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
 			AND MONTH(date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
 			AND deleted_at is null
-		ORDER BY date DESC
+		ORDER BY date DESC, id ASC
 		LIMIT ?,?`
 
 // AggregatedTripsRepo implements the interface for MySQL
