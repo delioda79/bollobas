@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/taxibeat/bollobas/internal/config"
 	"github.com/taxibeat/bollobas/internal/ingestion"
@@ -18,21 +21,12 @@ import (
 	"github.com/taxibeat/bollobas/internal/mixpanel/riderequest"
 	"github.com/taxibeat/bollobas/internal/mixpanel/riderequest/cancellation"
 	"github.com/taxibeat/bollobas/internal/mixpanel/riderequest/confirmation"
+	semhttp "github.com/taxibeat/bollobas/internal/semovi/rest/http"
 	"github.com/taxibeat/bollobas/internal/storage/sql"
 
-	"os"
-
-	"context"
-
 	"github.com/beatlabs/patron"
-	"github.com/beatlabs/patron/log"
-
 	phttp "github.com/beatlabs/patron/component/http"
-
-	"time"
-
-	semhttp "github.com/taxibeat/bollobas/internal/semovi/rest/http"
-
+	"github.com/beatlabs/patron/log"
 	mpsdk "github.com/dukex/mixpanel"
 	"github.com/joho/godotenv"
 )

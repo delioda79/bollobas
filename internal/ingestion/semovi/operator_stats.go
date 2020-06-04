@@ -1,6 +1,8 @@
 package semovi
 
 import (
+	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/beatlabs/patron/component/async"
@@ -51,9 +53,26 @@ func (osp *OperatorStatsProcessor) Process(msg async.Message) error {
 		return nil
 	}
 
-	payload := operatorStatsPayload{}
-	if err := msg.Decode(&payload); err != nil {
+	kfkPl := make(map[string]interface{})
+	if err := msg.Decode(&kfkPl); err != nil {
 		// If the message is faulty we don't want to consume it again
+		msg.Ack()
+		return err
+	}
+
+	// We need to decode the message again to reject if there are unknown fields.
+	// TODO: Refactor this to avoid decoding again
+	var payload operatorStatsPayload
+	vp, err := json.Marshal(kfkPl)
+	if err != nil {
+		msg.Ack()
+		return err
+	}
+	decoder := json.NewDecoder(strings.NewReader(string(vp)))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&payload)
+	if err != nil {
+		// If a key in the message is unknown we don't want to consume it again
 		msg.Ack()
 		return err
 	}
