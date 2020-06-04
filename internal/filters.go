@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"math"
 	"time"
 )
 
@@ -39,4 +40,18 @@ func (df *DateFilter) Validate() error {
 	}
 
 	return nil
+}
+
+// GetOffset returns Offset
+func (pg *Pagination) GetOffset() int {
+	return pg.Offset
+}
+
+// GetLimit returns Limit
+func (pg *Pagination) GetLimit() int {
+	if pg.Limit == 0 {
+		return math.MaxInt32
+	}
+
+	return pg.Limit
 }

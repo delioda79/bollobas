@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/beatlabs/patron/log"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -126,10 +127,10 @@ type AggregatedRidesHandler struct {
 }
 
 // GetAll returns all the items
-func (a *AggregatedRidesHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, error) {
-	ats, err := a.Rp.GetAll(ctx, f, pg)
+func (a *AggregatedRidesHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, int, error) {
+	ats, pi, err := a.Rp.GetAll(ctx, f, pg)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	var vats []interface{}
@@ -163,7 +164,7 @@ func (a *AggregatedRidesHandler) GetAll(ctx context.Context, f internal.DateFilt
 		vats = append(vats, v)
 	}
 
-	return vats, nil
+	return vats, pi, nil
 }
 
 // OperatorStatsHandler is the controller for the related route
@@ -172,10 +173,10 @@ type OperatorStatsHandler struct {
 }
 
 // GetAll returns all the items
-func (o *OperatorStatsHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, error) {
-	ops, err := o.Rp.GetAll(ctx, f, pg)
+func (o *OperatorStatsHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, int, error) {
+	ops, pi, err := o.Rp.GetAll(ctx, f, pg)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	var opsIntf []interface{}
@@ -195,7 +196,7 @@ func (o *OperatorStatsHandler) GetAll(ctx context.Context, f internal.DateFilter
 		opsIntf = append(opsIntf, v)
 	}
 
-	return opsIntf, nil
+	return opsIntf, pi, nil
 }
 
 // TrafficIncidentsHandler is the controller for the related route
@@ -204,10 +205,10 @@ type TrafficIncidentsHandler struct {
 }
 
 // GetAll returns all the items
-func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, error) {
-	tis, err := t.Rp.GetAll(ctx, f, pg)
+func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, int, error) {
+	tis, pi, err := t.Rp.GetAll(ctx, f, pg)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	var tisIntf []interface{}
@@ -225,12 +226,12 @@ func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFil
 		tisIntf = append(tisIntf, v)
 	}
 
-	return tisIntf, nil
+	return tisIntf, pi, nil
 }
 
 // DataHandler is a generic data handler which returns interfaces
 type DataHandler interface {
-	GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, error)
+	GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) (interface{}, int, error)
 }
 
 // RouteHandler is the controller for the related route
@@ -250,20 +251,18 @@ func (t *RouteHandler) Handle(ctx context.Context, req *phttp.Request) (*phttp.R
 		return nil, phttp.NewValidationErrorWithPayload(e.Error())
 	}
 
-	r, e := t.Handler.GetAll(ctx, df, pn)
+	r, td, e := t.Handler.GetAll(ctx, df, pn)
 	if e != nil {
 		log.Error(e.Error())
 		return nil, phttp.NewServiceUnavailableErrorWithPayload("failed to fetch data")
 	}
-	var nxt *int
-	if len(r.([]interface{})) == pn.Limit {
-		nv := pn.Offset + pn.Limit
-		nxt = &nv
-	}
 
+	totalPages := int(math.Ceil(float64(td) / float64(pn.GetLimit())))
 	mdr := Metadata{
-		First: pn.Offset,
-		Next:  nxt,
+		TotalCount:  td,
+		TotalPages:  totalPages,
+		PageSize:    pn.GetLimit(),
+		CurrentPage: (pn.GetOffset() / pn.GetLimit()) + 1,
 	}
 	rsp := phttp.NewResponse(PaginatedResponse{
 		Meta: mdr,
@@ -274,8 +273,10 @@ func (t *RouteHandler) Handle(ctx context.Context, req *phttp.Request) (*phttp.R
 
 // Metadata are the metadata for the response
 type Metadata struct {
-	First int
-	Next  *int
+	TotalCount  int
+	TotalPages  int
+	PageSize    int
+	CurrentPage int
 }
 
 // PaginatedResponse is the response with paginated data

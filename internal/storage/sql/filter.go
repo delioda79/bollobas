@@ -2,7 +2,6 @@ package sql
 
 import (
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/taxibeat/bollobas/internal"
@@ -51,23 +50,8 @@ func (af *AllFilter) to() (string, *time.Time) {
 func (af *AllFilter) Paginate() []interface{} {
 	var params []interface{}
 
-	ft := af.offset()
-	params = append(params, ft)
-
-	tt := af.limit()
-	params = append(params, tt)
+	params = append(params, af.Pagination.GetOffset())
+	params = append(params, af.Pagination.GetLimit())
 
 	return params
-}
-
-func (af *AllFilter) offset() int {
-	return af.Pagination.Offset
-}
-
-func (af *AllFilter) limit() int {
-	if af.Pagination.Limit == 0 {
-		return math.MaxInt32
-	}
-
-	return af.Pagination.Limit
 }

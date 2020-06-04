@@ -22,9 +22,10 @@ func TestGetAllAggregatedTrips(t *testing.T) {
 	err = populateAggregatedTripsTable(at)
 	assert.Nil(t, err)
 
-	rr, err := at.GetAll(context.Background(), internal.DateFilter{}, internal.Pagination{})
+	rr, pi, err := at.GetAll(context.Background(), internal.DateFilter{}, internal.Pagination{})
 	assert.Nil(t, err)
 
+	assert.NotNil(t, pi)
 	assert.Len(t, rr, 2)
 	assert.Equal(t, int64(2), rr[0].ID)
 	assert.Equal(t, "Test2", *rr[0].SupplierID)
@@ -39,7 +40,7 @@ func TestFilteredTripsQuery(t *testing.T) {
 	err = populateAggregatedTripsTable(at)
 	assert.Nil(t, err)
 
-	f := func(ctx context.Context, filter internal.DateFilter) (interface{}, error) {
+	f := func(ctx context.Context, filter internal.DateFilter) (interface{}, int, error) {
 
 		return at.GetAll(ctx, filter, internal.Pagination{})
 	}

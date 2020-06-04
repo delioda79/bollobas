@@ -24,15 +24,16 @@ func TestGetAggregatedRides(t *testing.T) {
 
 	dd := []struct {
 		trips []internal.AggregatedTrips
+		Meta  Metadata
 		err   error
 	}{
-		{nil, nil},
-		{[]internal.AggregatedTrips{{ID: 1}}, nil},
-		{nil, errors.New("an error")},
+		{nil, Metadata{TotalCount: 0, TotalPages: 0, CurrentPage: 1, PageSize: 10}, nil},
+		{[]internal.AggregatedTrips{{ID: 1}}, Metadata{TotalCount: 1, TotalPages: 1, CurrentPage: 1, PageSize: 10}, nil},
+		{nil, Metadata{TotalCount: 0, TotalPages: 0, CurrentPage: 0, PageSize: 10}, errors.New("failed to fetch data")},
 	}
 
 	for i, d := range dd {
-		rp.GetAllReturnsOnCall(i, d.trips, d.err)
+		rp.GetAllReturnsOnCall(i, d.trips, d.Meta.TotalCount, d.err)
 		rsp, err := (&RouteHandler{Handler: &AggregatedRidesHandler{Rp: rp}}).Handle(ctx, req)
 
 		if d.err == nil {
@@ -50,14 +51,16 @@ func TestGetAggregatedRides(t *testing.T) {
 			assert.Equal(t, &phttp.Response{
 				Payload: PaginatedResponse{
 					Meta: Metadata{
-						First: 0,
-						Next:  nil,
+						TotalCount:  d.Meta.TotalCount,
+						TotalPages:  d.Meta.TotalPages,
+						PageSize:    d.Meta.PageSize,
+						CurrentPage: d.Meta.CurrentPage,
 					},
 					Data: vv,
 				},
 			}, rsp)
 		} else {
-			assert.Equal(t, phttp.NewErrorWithCodeAndPayload(500, d.err), err)
+			assert.Equal(t, phttp.NewServiceUnavailableErrorWithPayload(d.err.Error()), err)
 			var r *phttp.Response
 			assert.EqualValues(t, r, rsp)
 		}
@@ -71,15 +74,16 @@ func TestGetOperatorStats(t *testing.T) {
 
 	dd := []struct {
 		opStats []internal.OperatorStats
+		Meta    Metadata
 		err     error
 	}{
-		{nil, nil},
-		{[]internal.OperatorStats{{ID: 1}}, nil},
-		{nil, errors.New("an error")},
+		{nil, Metadata{TotalCount: 0, TotalPages: 0, CurrentPage: 1, PageSize: 10}, nil},
+		{[]internal.OperatorStats{{ID: 1}}, Metadata{TotalCount: 1, TotalPages: 1, CurrentPage: 1, PageSize: 10}, nil},
+		{nil, Metadata{TotalCount: 0, TotalPages: 0, CurrentPage: 1, PageSize: 10}, errors.New("failed to fetch data")},
 	}
 
 	for i, d := range dd {
-		rp.GetAllReturnsOnCall(i, d.opStats, d.err)
+		rp.GetAllReturnsOnCall(i, d.opStats, d.Meta.TotalCount, d.err)
 		rsp, err := (&RouteHandler{Handler: &OperatorStatsHandler{Rp: rp}}).Handle(ctx, req)
 
 		if d.err == nil {
@@ -97,14 +101,16 @@ func TestGetOperatorStats(t *testing.T) {
 			assert.Equal(t, &phttp.Response{
 				Payload: PaginatedResponse{
 					Meta: Metadata{
-						First: 0,
-						Next:  nil,
+						TotalCount:  d.Meta.TotalCount,
+						TotalPages:  d.Meta.TotalPages,
+						PageSize:    d.Meta.PageSize,
+						CurrentPage: d.Meta.CurrentPage,
 					},
 					Data: vv,
 				},
 			}, rsp)
 		} else {
-			assert.Equal(t, phttp.NewErrorWithCodeAndPayload(500, d.err), err)
+			assert.Equal(t, phttp.NewServiceUnavailableErrorWithPayload(d.err.Error()), err)
 			var r *phttp.Response
 			assert.EqualValues(t, r, rsp)
 		}
@@ -116,16 +122,17 @@ func TestGetTransitsMade(t *testing.T) {
 	rp := &internalfakes.FakeTrafficIncidentsRepository{}
 
 	dd := []struct {
-		ti  []internal.TrafficIncident
-		err error
+		ti   []internal.TrafficIncident
+		Meta Metadata
+		err  error
 	}{
-		{nil, nil},
-		{[]internal.TrafficIncident{{ID: 1}}, nil},
-		{nil, errors.New("an error")},
+		{nil, Metadata{TotalCount: 0, TotalPages: 0, CurrentPage: 1, PageSize: 10}, nil},
+		{[]internal.TrafficIncident{{ID: 1}}, Metadata{TotalCount: 1, TotalPages: 1, CurrentPage: 1, PageSize: 10}, nil},
+		{nil, Metadata{TotalCount: 0, TotalPages: 0, CurrentPage: 1, PageSize: 10}, errors.New("failed to fetch data")},
 	}
 
 	for i, d := range dd {
-		rp.GetAllReturnsOnCall(i, d.ti, d.err)
+		rp.GetAllReturnsOnCall(i, d.ti, d.Meta.TotalCount, d.err)
 		rsp, err := (&RouteHandler{Handler: &TrafficIncidentsHandler{Rp: rp}}).Handle(ctx, req)
 
 		if d.err == nil {
@@ -143,14 +150,16 @@ func TestGetTransitsMade(t *testing.T) {
 			assert.Equal(t, &phttp.Response{
 				Payload: PaginatedResponse{
 					Meta: Metadata{
-						First: 0,
-						Next:  nil,
+						TotalCount:  d.Meta.TotalCount,
+						TotalPages:  d.Meta.TotalPages,
+						PageSize:    d.Meta.PageSize,
+						CurrentPage: d.Meta.CurrentPage,
 					},
 					Data: vv,
 				},
 			}, rsp)
 		} else {
-			assert.Equal(t, phttp.NewErrorWithCodeAndPayload(500, d.err), err)
+			assert.Equal(t, phttp.NewServiceUnavailableErrorWithPayload(d.err.Error()), err)
 			var r *phttp.Response
 			assert.EqualValues(t, r, rsp)
 		}
