@@ -59,9 +59,9 @@ type Configuration struct {
 	KkPRRTopic                  sync.String `seed:"request" env:"BOLLOBAS_KAFKA_REQUEST_TOPIC"`
 	KkPRCTopic                  sync.String `seed:"request_cancel" env:"BOLLOBAS_KAFKA_REQUEST_CANCEL_TOPIC"`
 	KkRTopic                    sync.String `seed:"ride" env:"BOLLOBAS_KAFKA_RIDE_TOPIC"`
-	KkSOTopic                   sync.String `seed:"stats_operador" env:"BOLLOBAS_KAFKA_STATS_OPERADOR_TOPIC"`
-	KkHTTopic                   sync.String `seed:"hecho_transito" env:"BOLLOBAS_KAFKA_HECHO_TRANSITO_TOPIC"`
-	KkVATopic                   sync.String `seed:"viajes_agregados" env:"BOLLOBAS_KAFKA_VIAJES_AGREGADOS_TOPIC"`
+	KkSOTopic                   sync.String `seed:"semovi_drivers_with_at_least_one_ride" env:"BOLLOBAS_KAFKA_STATS_OPERADOR_TOPIC"`
+	KkHTTopic                   sync.String `seed:"semovi_beat_incidents" env:"BOLLOBAS_KAFKA_HECHO_TRANSITO_TOPIC"`
+	KkVATopic                   sync.String `seed:"semovi_beat_operation" env:"BOLLOBAS_KAFKA_VIAJES_AGREGADOS_TOPIC"`
 	BConf                       sync.String `seed:"{}" env:"BOLLOBAS_BASE_CONF"`
 	RestMixpanelPath            sync.String `seed:"/taxidmin/bollobas/mixpanel-passenger-settings" env:"REST_MIXPANEL_PATH"`
 	CipherKey                   sync.String `seed:"" env:"BOLLOBAS_CIPHER_KEY"`
