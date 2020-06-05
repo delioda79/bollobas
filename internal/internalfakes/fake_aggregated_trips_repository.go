@@ -21,19 +21,22 @@ type FakeAggregatedTripsRepository struct {
 	addReturnsOnCall map[int]struct {
 		result1 error
 	}
-	GetAllStub        func(context.Context, internal.DateFilter) ([]internal.AggregatedTrips, error)
+	GetAllStub        func(context.Context, internal.DateFilter, internal.Pagination) ([]internal.AggregatedTrips, int, error)
 	getAllMutex       sync.RWMutex
 	getAllArgsForCall []struct {
 		arg1 context.Context
 		arg2 internal.DateFilter
+		arg3 internal.Pagination
 	}
 	getAllReturns struct {
 		result1 []internal.AggregatedTrips
-		result2 error
+		result2 int
+		result3 error
 	}
 	getAllReturnsOnCall map[int]struct {
 		result1 []internal.AggregatedTrips
-		result2 error
+		result2 int
+		result3 error
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -100,23 +103,24 @@ func (fake *FakeAggregatedTripsRepository) AddReturnsOnCall(i int, result1 error
 	}{result1}
 }
 
-func (fake *FakeAggregatedTripsRepository) GetAll(arg1 context.Context, arg2 internal.DateFilter) ([]internal.AggregatedTrips, error) {
+func (fake *FakeAggregatedTripsRepository) GetAll(arg1 context.Context, arg2 internal.DateFilter, arg3 internal.Pagination) ([]internal.AggregatedTrips, int, error) {
 	fake.getAllMutex.Lock()
 	ret, specificReturn := fake.getAllReturnsOnCall[len(fake.getAllArgsForCall)]
 	fake.getAllArgsForCall = append(fake.getAllArgsForCall, struct {
 		arg1 context.Context
 		arg2 internal.DateFilter
-	}{arg1, arg2})
-	fake.recordInvocation("GetAll", []interface{}{arg1, arg2})
+		arg3 internal.Pagination
+	}{arg1, arg2, arg3})
+	fake.recordInvocation("GetAll", []interface{}{arg1, arg2, arg3})
 	fake.getAllMutex.Unlock()
 	if fake.GetAllStub != nil {
-		return fake.GetAllStub(arg1, arg2)
+		return fake.GetAllStub(arg1, arg2, arg3)
 	}
 	if specificReturn {
-		return ret.result1, ret.result2
+		return ret.result1, ret.result2, ret.result3
 	}
 	fakeReturns := fake.getAllReturns
-	return fakeReturns.result1, fakeReturns.result2
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
 func (fake *FakeAggregatedTripsRepository) GetAllCallCount() int {
@@ -125,43 +129,46 @@ func (fake *FakeAggregatedTripsRepository) GetAllCallCount() int {
 	return len(fake.getAllArgsForCall)
 }
 
-func (fake *FakeAggregatedTripsRepository) GetAllCalls(stub func(context.Context, internal.DateFilter) ([]internal.AggregatedTrips, error)) {
+func (fake *FakeAggregatedTripsRepository) GetAllCalls(stub func(context.Context, internal.DateFilter, internal.Pagination) ([]internal.AggregatedTrips, int, error)) {
 	fake.getAllMutex.Lock()
 	defer fake.getAllMutex.Unlock()
 	fake.GetAllStub = stub
 }
 
-func (fake *FakeAggregatedTripsRepository) GetAllArgsForCall(i int) (context.Context, internal.DateFilter) {
+func (fake *FakeAggregatedTripsRepository) GetAllArgsForCall(i int) (context.Context, internal.DateFilter, internal.Pagination) {
 	fake.getAllMutex.RLock()
 	defer fake.getAllMutex.RUnlock()
 	argsForCall := fake.getAllArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeAggregatedTripsRepository) GetAllReturns(result1 []internal.AggregatedTrips, result2 error) {
+func (fake *FakeAggregatedTripsRepository) GetAllReturns(result1 []internal.AggregatedTrips, result2 int, result3 error) {
 	fake.getAllMutex.Lock()
 	defer fake.getAllMutex.Unlock()
 	fake.GetAllStub = nil
 	fake.getAllReturns = struct {
 		result1 []internal.AggregatedTrips
-		result2 error
-	}{result1, result2}
+		result2 int
+		result3 error
+	}{result1, result2, result3}
 }
 
-func (fake *FakeAggregatedTripsRepository) GetAllReturnsOnCall(i int, result1 []internal.AggregatedTrips, result2 error) {
+func (fake *FakeAggregatedTripsRepository) GetAllReturnsOnCall(i int, result1 []internal.AggregatedTrips, result2 int, result3 error) {
 	fake.getAllMutex.Lock()
 	defer fake.getAllMutex.Unlock()
 	fake.GetAllStub = nil
 	if fake.getAllReturnsOnCall == nil {
 		fake.getAllReturnsOnCall = make(map[int]struct {
 			result1 []internal.AggregatedTrips
-			result2 error
+			result2 int
+			result3 error
 		})
 	}
 	fake.getAllReturnsOnCall[i] = struct {
 		result1 []internal.AggregatedTrips
-		result2 error
-	}{result1, result2}
+		result2 int
+		result3 error
+	}{result1, result2, result3}
 }
 
 func (fake *FakeAggregatedTripsRepository) Invocations() map[string][][]interface{} {

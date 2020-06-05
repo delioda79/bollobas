@@ -21,9 +21,10 @@ func TestGetAllTrafficIncidents(t *testing.T) {
 	err = populateTrafficIncidentsTable(at)
 	assert.Nil(t, err)
 
-	rr, err := at.GetAll(context.Background(), internal.DateFilter{})
+	rr, pi, err := at.GetAll(context.Background(), internal.DateFilter{}, internal.Pagination{})
 	assert.Nil(t, err)
 
+	assert.NotNil(t, pi)
 	assert.Len(t, rr, 2)
 
 	assert.Equal(t, int64(2), rr[0].ID)
@@ -42,8 +43,8 @@ func TestFilteredIncidentsQuery(t *testing.T) {
 	err = populateTrafficIncidentsTable(at)
 	assert.Nil(t, err)
 
-	f := func(ctx context.Context, filter internal.DateFilter) (interface{}, error) {
-		return at.GetAll(ctx, filter)
+	f := func(ctx context.Context, filter internal.DateFilter) (interface{}, int, error) {
+		return at.GetAll(ctx, filter, internal.Pagination{})
 	}
 
 	storagetest.TestFilteredQuery(t, f)

@@ -32,7 +32,7 @@ func SetConfig() (*sql.Store, error) {
 }
 
 // TestFilteredQuery is a general test to check if filtering works
-func TestFilteredQuery(t *testing.T, f func(ctx context.Context, filter internal.DateFilter) (interface{}, error)) {
+func TestFilteredQuery(t *testing.T, f func(ctx context.Context, filter internal.DateFilter) (interface{}, int, error)) {
 	now := time.Now().AddDate(0, -1, 0)
 
 	nn := []struct {
@@ -110,9 +110,10 @@ func TestFilteredQuery(t *testing.T, f func(ctx context.Context, filter internal
 
 	for i, d := range dd {
 		t.Run(fmt.Sprintf("Data %d", i), func(t *testing.T) {
-			rr, err := f(context.Background(), internal.DateFilter{From: d.from, To: d.to})
+			rr, pi, err := f(context.Background(), internal.DateFilter{From: d.from, To: d.to})
 			assert.Nil(t, err)
 
+			assert.NotNil(t, pi)
 			assert.Len(t, rr, d.count)
 		})
 

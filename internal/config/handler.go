@@ -48,14 +48,14 @@ func (d *Duration) SetString(val string) error {
 
 // Configuration holds all the configuration for harvester
 type Configuration struct {
-	KafkaBroker                 sync.String `env:"BOLLOBAS_KAFKA_CONNECTION_STRING"`
-	KafkaGroup                  sync.String `env:"BOLLOBAS_KAFKA_GROUP"`
+	KafkaBroker                 sync.String `seed:"127.0.0.1:29092" env:"BOLLOBAS_KAFKA_CONNECTION_STRING"`
+	KafkaGroup                  sync.String `seed:"xxx" env:"BOLLOBAS_KAFKA_GROUP"`
 	KafkaDriverIdentityTopic    sync.String `seed:"driver_analytics" env:"BOLLOBAS_KAFKA_DRIVER_TOPIC"`
 	KafkaPassengerIdentityTopic sync.String `seed:"passenger_analytics" env:"BOLLOBAS_KAFKA_PASSENGER_TOPIC"`
 	KafkaTimeout                Duration    `seed:"2s" env:"BOLLOBAS_KAFKA_TIMEOUT"`
 	RestURL                     sync.String `seed:"" env:"REST_CONNECTION_STRING"`
 	RestKey                     sync.String `seed:"" env:"REST_KEY"`
-	MpToken                     sync.String `env:"BOLLOBAS_MIXPANEL_TOKEN"`
+	MpToken                     sync.String `seed:"" env:"BOLLOBAS_MIXPANEL_TOKEN"`
 	KkPRRTopic                  sync.String `seed:"request" env:"BOLLOBAS_KAFKA_REQUEST_TOPIC"`
 	KkPRCTopic                  sync.String `seed:"request_cancel" env:"BOLLOBAS_KAFKA_REQUEST_CANCEL_TOPIC"`
 	KkRTopic                    sync.String `seed:"ride" env:"BOLLOBAS_KAFKA_RIDE_TOPIC"`
@@ -67,12 +67,12 @@ type Configuration struct {
 	CipherKey                   sync.String `seed:"" env:"BOLLOBAS_CIPHER_KEY"`
 	CipherInitVec               sync.String `seed:"" env:"BOLLOBAS_INIT_VECTOR"`
 	Location                    sync.String `seed:"" env:"BOLLOBAS_LOCATION"`
-	DBUsername                  sync.String `env:"MYSQL_USERNAME"`
-	DBPassword                  sync.String `env:"MYSQL_PASS"`
-	DBWriteHost                 sync.String `env:"MYSQL_WRITE"`
-	DBReadHost                  sync.String `env:"MYSQL_READ"`
-	DBPort                      sync.String `env:"MYSQL_PORT"`
-	DBName                      sync.String `env:"MYSQL_DB"`
+	DBUsername                  sync.String `seed:"root" env:"MYSQL_USERNAME"`
+	DBPassword                  sync.String `seed:"a123456" env:"MYSQL_PASS"`
+	DBWriteHost                 sync.String `seed:"localhost" env:"MYSQL_WRITE"`
+	DBReadHost                  sync.String `seed:"localhost" env:"MYSQL_READ"`
+	DBPort                      sync.String `seed:"3346" env:"MYSQL_PORT"`
+	DBName                      sync.String `seed:"bollobas_test" env:"MYSQL_DB"`
 	SettingsPeriod              Duration    `seed:"60s" env:"BOLLOBAS_SETTINGS_DURATION"`
 }
 

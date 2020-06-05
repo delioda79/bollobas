@@ -7,7 +7,7 @@ import (
 
 // AggregatedTripsRepository is the repository to manage the aggregated trips
 type AggregatedTripsRepository interface {
-	GetAll(ctx context.Context, df DateFilter) ([]AggregatedTrips, error)
+	GetAll(ctx context.Context, df DateFilter, pg Pagination) ([]AggregatedTrips, int, error)
 	Add(ctx context.Context, trips *AggregatedTrips) error
 }
 

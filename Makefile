@@ -9,10 +9,10 @@ help:
 	@echo "  ci-cleanup      to kill & remove all ci containers."
 
 serve:
-	docker-compose -f infra/deploy/local/docker-compose.yml up -d
+	docker-compose -p bollobas -f infra/deploy/local/docker-compose.yml up -d
 
 stop:
-	docker-compose -f infra/deploy/local/docker-compose.yml down
+	docker-compose -p bollobas -f infra/deploy/local/docker-compose.yml down
 
 lint:
 	go fmt ./...
@@ -25,12 +25,11 @@ coverage:
 	go test -coverprofile=coverage.out ./... && go tool cover -html=coverage.out
 
 ci:
-	docker-compose -f infra/deploy/local/docker-compose.yml down
-	sleep 3
-	docker-compose -f infra/deploy/local/docker-compose.yml build bollobas_ci
-	docker-compose -f infra/deploy/local/docker-compose.yml run bollobas_ci ./script/sql/exec_migrations.sh
-	docker-compose -f infra/deploy/local/docker-compose.yml run bollobas_ci ./script/ci.sh
-	docker-compose -f infra/deploy/local/docker-compose.yml down
+	docker-compose -p bollobas -f infra/deploy/local/docker-compose.yml down
+	docker-compose -p bollobas -f infra/deploy/local/docker-compose.yml build bollobas_ci
+	docker-compose -p bollobas -f infra/deploy/local/docker-compose.yml run bollobas_ci ./script/sql/exec_migrations.sh
+	docker-compose -p bollobas -f infra/deploy/local/docker-compose.yml run bollobas_ci ./script/ci.sh
+	docker-compose -p bollobas -f infra/deploy/local/docker-compose.yml down
 
 ci-cleanup:
-	docker-compose -f infra/deploy/local/docker-compose.yml down
+	docker-compose -p bollobas -f infra/deploy/local/docker-compose.yml down
