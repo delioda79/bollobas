@@ -54,6 +54,18 @@ var doc = `{
                         "description": "end date (epoch time)",
                         "name": "to",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit Value",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset Value",
+                        "name": "offset",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -64,6 +76,18 @@ var doc = `{
                             "items": {
                                 "$ref": "#/definitions/view.TrafficIncident"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorSwagger"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorSwagger"
                         }
                     }
                 }
@@ -93,6 +117,18 @@ var doc = `{
                         "description": "end date (epoch time)",
                         "name": "to",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit Value",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset Value",
+                        "name": "offset",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -103,6 +139,18 @@ var doc = `{
                             "items": {
                                 "$ref": "#/definitions/view.OperatorStats"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorSwagger"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/view.ErrorSwagger"
                         }
                     }
                 }
@@ -131,6 +179,18 @@ var doc = `{
                         "type": "integer",
                         "description": "end date (epoch time)",
                         "name": "to",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit Value",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset Value",
+                        "name": "offset",
                         "in": "query"
                     }
                 ],

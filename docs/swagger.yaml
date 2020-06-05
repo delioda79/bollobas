@@ -118,6 +118,14 @@ paths:
         in: query
         name: to
         type: integer
+      - description: Limit Value
+        in: query
+        name: limit
+        type: integer
+      - description: Offset Value
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
@@ -127,6 +135,14 @@ paths:
             items:
               $ref: '#/definitions/view.TrafficIncident'
             type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/view.ErrorSwagger'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/view.ErrorSwagger'
       summary: Get return all the traffic incidents
       tags:
       - bollobas
@@ -143,6 +159,14 @@ paths:
         in: query
         name: to
         type: integer
+      - description: Limit Value
+        in: query
+        name: limit
+        type: integer
+      - description: Offset Value
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
@@ -152,6 +176,14 @@ paths:
             items:
               $ref: '#/definitions/view.OperatorStats'
             type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/view.ErrorSwagger'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/view.ErrorSwagger'
       summary: Get return all the operator stats
       tags:
       - bollobas
@@ -167,6 +199,14 @@ paths:
       - description: end date (epoch time)
         in: query
         name: to
+        type: integer
+      - description: Limit Value
+        in: query
+        name: limit
+        type: integer
+      - description: Offset Value
+        in: query
+        name: offset
         type: integer
       produces:
       - application/json

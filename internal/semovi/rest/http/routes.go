@@ -133,6 +133,8 @@ type AggregatedRidesHandler struct {
 // @Produce json
 // @Param from query int false "start date (epoch time)"
 // @Param to query int false "end date (epoch time)"
+// @Param limit query int false "Limit Value"
+// @Param offset query int false "Offset Value"
 // @Success 200 {array} view.AggregatedTrips
 // @Failure 400 {object} view.ErrorSwagger
 // @Failure 500 {object} view.ErrorSwagger
@@ -189,6 +191,8 @@ type OperatorStatsHandler struct {
 // @Produce json
 // @Param from query int false "start date (epoch time)"
 // @Param to query int false "end date (epoch time)"
+// @Param limit query int false "Limit Value"
+// @Param offset query int false "Offset Value"
 // @Success 200 {array} view.OperatorStats
 // @Failure 400 {object} view.ErrorSwagger
 // @Failure 500 {object} view.ErrorSwagger
@@ -231,6 +235,8 @@ type TrafficIncidentsHandler struct {
 // @Produce json
 // @Param from query int false "start date (epoch time)"
 // @Param to query int false "end date (epoch time)"
+// @Param limit query int false "Limit Value"
+// @Param offset query int false "Offset Value"
 // @Success 200 {array} view.TrafficIncident
 // @Failure 400 {object} view.ErrorSwagger
 // @Failure 500 {object} view.ErrorSwagger
