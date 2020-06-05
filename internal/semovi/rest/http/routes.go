@@ -126,7 +126,19 @@ type AggregatedRidesHandler struct {
 	Rp internal.AggregatedTripsRepository
 }
 
-// GetAll returns all the items
+// GetAll godoc
+// @Summary Get All the aggregated rides
+// @Tags bollobas
+// @Accept json
+// @Produce json
+// @Param from query int false "start date (epoch time)"
+// @Param to query int false "end date (epoch time)"
+// @Param limit query int false "Limit Value"
+// @Param offset query int false "Offset Value"
+// @Success 200 {array} view.AggregatedTrips
+// @Failure 400 {object} view.ErrorSwagger
+// @Failure 500 {object} view.ErrorSwagger
+// @Router /viajes_agregados [get]
 func (a *AggregatedRidesHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) ([]interface{}, int, error) {
 	ats, pi, err := a.Rp.GetAll(ctx, f, pg)
 	if err != nil {
@@ -172,7 +184,19 @@ type OperatorStatsHandler struct {
 	Rp internal.OperatorStatsRepository
 }
 
-// GetAll returns all the items
+// GetAll godoc
+// @Summary Get return all the operator stats
+// @Tags bollobas
+// @Accept json
+// @Produce json
+// @Param from query int false "start date (epoch time)"
+// @Param to query int false "end date (epoch time)"
+// @Param limit query int false "Limit Value"
+// @Param offset query int false "Offset Value"
+// @Success 200 {array} view.OperatorStats
+// @Failure 400 {object} view.ErrorSwagger
+// @Failure 500 {object} view.ErrorSwagger
+// @Router /stats_operador [get]
 func (o *OperatorStatsHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) ([]interface{}, int, error) {
 	ops, pi, err := o.Rp.GetAll(ctx, f, pg)
 	if err != nil {
@@ -204,7 +228,19 @@ type TrafficIncidentsHandler struct {
 	Rp internal.TrafficIncidentsRepository
 }
 
-// GetAll returns all the items
+// GetAll godoc
+// @Summary Get return all the traffic incidents
+// @Tags bollobas
+// @Accept json
+// @Produce json
+// @Param from query int false "start date (epoch time)"
+// @Param to query int false "end date (epoch time)"
+// @Param limit query int false "Limit Value"
+// @Param offset query int false "Offset Value"
+// @Success 200 {array} view.TrafficIncident
+// @Failure 400 {object} view.ErrorSwagger
+// @Failure 500 {object} view.ErrorSwagger
+// @Router /hecho_transito [get]
 func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFilter, pg internal.Pagination) ([]interface{}, int, error) {
 	tis, pi, err := t.Rp.GetAll(ctx, f, pg)
 	if err != nil {
