@@ -50,6 +50,16 @@ type FakeMessage struct {
 	nackReturnsOnCall map[int]struct {
 		result1 error
 	}
+	PayloadStub        func() []byte
+	payloadMutex       sync.RWMutex
+	payloadArgsForCall []struct {
+	}
+	payloadReturns struct {
+		result1 []byte
+	}
+	payloadReturnsOnCall map[int]struct {
+		result1 []byte
+	}
 	SourceStub        func() string
 	sourceMutex       sync.RWMutex
 	sourceArgsForCall []struct {
@@ -280,6 +290,58 @@ func (fake *FakeMessage) NackReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+func (fake *FakeMessage) Payload() []byte {
+	fake.payloadMutex.Lock()
+	ret, specificReturn := fake.payloadReturnsOnCall[len(fake.payloadArgsForCall)]
+	fake.payloadArgsForCall = append(fake.payloadArgsForCall, struct {
+	}{})
+	fake.recordInvocation("Payload", []interface{}{})
+	fake.payloadMutex.Unlock()
+	if fake.PayloadStub != nil {
+		return fake.PayloadStub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.payloadReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeMessage) PayloadCallCount() int {
+	fake.payloadMutex.RLock()
+	defer fake.payloadMutex.RUnlock()
+	return len(fake.payloadArgsForCall)
+}
+
+func (fake *FakeMessage) PayloadCalls(stub func() []byte) {
+	fake.payloadMutex.Lock()
+	defer fake.payloadMutex.Unlock()
+	fake.PayloadStub = stub
+}
+
+func (fake *FakeMessage) PayloadReturns(result1 []byte) {
+	fake.payloadMutex.Lock()
+	defer fake.payloadMutex.Unlock()
+	fake.PayloadStub = nil
+	fake.payloadReturns = struct {
+		result1 []byte
+	}{result1}
+}
+
+func (fake *FakeMessage) PayloadReturnsOnCall(i int, result1 []byte) {
+	fake.payloadMutex.Lock()
+	defer fake.payloadMutex.Unlock()
+	fake.PayloadStub = nil
+	if fake.payloadReturnsOnCall == nil {
+		fake.payloadReturnsOnCall = make(map[int]struct {
+			result1 []byte
+		})
+	}
+	fake.payloadReturnsOnCall[i] = struct {
+		result1 []byte
+	}{result1}
+}
+
 func (fake *FakeMessage) Source() string {
 	fake.sourceMutex.Lock()
 	ret, specificReturn := fake.sourceReturnsOnCall[len(fake.sourceArgsForCall)]
@@ -343,6 +405,8 @@ func (fake *FakeMessage) Invocations() map[string][][]interface{} {
 	defer fake.decodeMutex.RUnlock()
 	fake.nackMutex.RLock()
 	defer fake.nackMutex.RUnlock()
+	fake.payloadMutex.RLock()
+	defer fake.payloadMutex.RUnlock()
 	fake.sourceMutex.RLock()
 	defer fake.sourceMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

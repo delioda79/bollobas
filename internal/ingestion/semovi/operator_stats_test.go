@@ -22,6 +22,7 @@ func TestAddOperatorStats(t *testing.T) {
 	proc.Activate(true)
 
 	msg := &injestionfakes.FakeMessage{}
+	msg.PayloadReturns([]byte(`{"fecha_produccion":1589279257759,"id_operador":"2d2ec778-b89e-4db5-9628-123fd99f0b91","genero":1,"cant_viajes":29,"tiempo_registro":44,"edad":"28-32","horas_conectado":"9-17","horas_viaje":"0-24","ingreso_totales":"$0-999"}`))
 	msg.AckReturnsOnCall(0, nil)
 
 	err := proc.Process(msg)

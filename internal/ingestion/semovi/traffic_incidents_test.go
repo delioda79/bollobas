@@ -22,6 +22,7 @@ func TestAddTrafficIncidents(t *testing.T) {
 	proc.Activate(true)
 
 	msg := &injestionfakes.FakeMessage{}
+	msg.PayloadReturns([]byte(`{"tiempo_hecho":1589279257759, "hecho_trans": 2, "placa": "ABC-123", "licencia": "C12345678", "distancia_viaje": "15-20", "tiempo_viaje": "100-200", "ubicación": "38.0088261,23.10"}`))
 	msg.AckReturnsOnCall(0, nil)
 
 	err := proc.Process(msg)

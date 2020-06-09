@@ -1,8 +1,8 @@
 package semovi
 
 import (
+	"bytes"
 	"encoding/json"
-	"strings"
 	"time"
 
 	"github.com/taxibeat/bollobas/internal"
@@ -50,25 +50,12 @@ func (tip *TrafficIncidentsProcessor) Process(msg async.Message) error {
 		return nil
 	}
 
-	kfkPl := make(map[string]interface{})
-	if err := msg.Decode(&kfkPl); err != nil {
-		// If the message is faulty we don't want to consume it again
-		msg.Ack()
-		return err
-	}
-
 	// We need to decode the message again to reject if there are unknown fields.
-	// TODO: Refactor this to avoid decoding again
 	var payload trafficIncidentsPayload
-	vp, err := json.Marshal(kfkPl)
-	if err != nil {
-		msg.Ack()
-		return err
-	}
-	decoder := json.NewDecoder(strings.NewReader(string(vp)))
+	decoder := json.NewDecoder(bytes.NewReader(msg.Payload()))
 	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&payload)
-	if err != nil {
+	err := decoder.Decode(&payload)
+	if err != nil || (payload == trafficIncidentsPayload{}) {
 		// If a key in the message is unknown we don't want to consume it again
 		msg.Ack()
 		return err
