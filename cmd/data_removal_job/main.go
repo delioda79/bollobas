@@ -84,6 +84,7 @@ func main() {
 	}
 
 	log.Println("all data are successfully removed, exiting...")
+	os.Exit(0)
 }
 
 func setupConfig() *config {
@@ -145,7 +146,7 @@ func (s *store) hardDelete(ctx context.Context, tables ...string) error {
 func (s *store) softDelete(ctx context.Context, tables ...string) error {
 	q := "UPDATE %s " +
 		"SET deleted_at = NOW() " +
-		"WHERE MONTH(date) = MONTH(CURRENT_DATE())"
+		"WHERE MONTH(date) = MONTH(NOW() - INTERVAL 1 MONTH)"
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {

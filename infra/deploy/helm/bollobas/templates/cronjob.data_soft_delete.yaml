@@ -7,6 +7,9 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          annotations:
+            sidecar.istio.io/inject: "false"
         spec:
           containers:
           - name: {{ .Chart.Name }}
@@ -26,5 +29,7 @@ spec:
                 value: {{ .Values.env.MYSQL_DB | quote }}
               - name: DATA_CLEANUP_ENABLED
                 value: {{ .Values.env.DATA_CLEANUP_ENABLED | quote }}
-            args: {{ .Values.dataSoftDeleteJob.args }}
+            args:
+              - ./data_removal
+              - soft
           restartPolicy: OnFailure

@@ -19,15 +19,11 @@ dataHardDeleteJob:
   name: data.removal.hard
   # runs every 3 months at 3:30am on 28th of the month
   schedule: "30 3 28 */3 *"
-  args:
-    - "./data_removal hard"
 
 dataSoftDeleteJob:
   name: data.removal.soft
-  # runs every month on 25th at 3:30am
-  schedule: "30 3 25 * *"
-  args:
-    - "./data_removal soft"
+  # runs every month on 11th at 3:30am
+  schedule: "30 3 11 * *"
 
 env:
   PATRON_LOG_LEVEL: info
