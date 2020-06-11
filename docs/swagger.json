@@ -213,10 +213,10 @@
                 "dist_solicitud_eod": {
                     "type": "number"
                 },
-                "dist_vacio_eod": {
+                "dist_vacio": {
                     "type": "number"
                 },
-                "dist_vacío": {
+                "dist_vacio_eod": {
                     "type": "number"
                 },
                 "fecha": {
@@ -286,9 +286,6 @@
                 "edad": {
                     "type": "string"
                 },
-                "fecha_produccion": {
-                    "type": "string"
-                },
                 "genero": {
                     "type": "integer"
                 },
@@ -336,7 +333,7 @@
                 "tiempo_viaje": {
                     "type": "string"
                 },
-                "ubicación": {
+                "ubicacion": {
                     "type": "string"
                 }
             }

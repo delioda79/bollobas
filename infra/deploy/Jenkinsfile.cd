@@ -199,9 +199,9 @@ node('slave') {
                     if (!prod) {
                         setList +=  " --set ingress.host=${stack}-bollobas \
                                     --set env.MYSQL_DB=bollobas_${stack} \
-                                    --set env.BOLLOBAS_KAFKA_STATS_OPERADOR_TOPIC=stats_operador_${stack} \
-                                    --set env.BOLLOBAS_KAFKA_HECHO_TRANSITO_TOPIC=hecho_transito_${stack} \
-                                    --set env.BOLLOBAS_KAFKA_VIAJES_AGREGADOS_TOPIC=viajes_agregados_${stack}"
+                                    --set env.BOLLOBAS_KAFKA_STATS_OPERADOR_TOPIC=semovi_drivers_with_at_least_one_ride_${stack} \
+                                    --set env.BOLLOBAS_KAFKA_HECHO_TRANSITO_TOPIC=semovi_beat_incidents_${stack} \
+                                    --set env.BOLLOBAS_KAFKA_VIAJES_AGREGADOS_TOPIC=semovi_beat_operation_${stack}"
                     }
 
                     helm_utils.helmDeploy("${kubeconfig_id}", "${helmTag}", "${namespace}", "${setList}", "${helmName}", "beat/bollobas", dockerFlags)

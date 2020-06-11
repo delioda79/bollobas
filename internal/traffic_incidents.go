@@ -19,7 +19,7 @@ type TrafficIncident struct {
 	Licence        *string   `transl:"licence" json:"licencia"`
 	TravelDistance *string   `transl:"travel_distance" json:"distancia_viaje"`
 	TravelTime     *string   `transl:"travel_time" json:"tiempo_viaje"`
-	Coordinates    *string   `transl:"coordinates" json:"ubicación"`
+	Coordinates    *string   `transl:"coordinates" json:"ubicacion"`
 	Date           time.Time `transl:"date" json:"tiempo_hecho"`
 	ProducedAt     time.Time `json:"fecha_produccion"`
 	DeletedAt      time.Time `transl:"deleted_at"`

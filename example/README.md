@@ -7,7 +7,7 @@ Topics:
 - hecho_transito
 ```bash
 $ kafka-console-producer --broker-list PLAINTEXT://localhost:9092 --topic semovi_beat_incidents\
-> {"fecha_produccion": 1589473694068,"hecho_trans": null,"placa": null,"licencia": null,"distancia_viaje": null,"tiempo_viaje": null,"ubicación": null,"tiempo_hecho": null}
+> {"fecha_produccion": 1589473694068,"hecho_trans": null,"placa": null,"licencia": null,"distancia_viaje": null,"tiempo_viaje": null,"ubicacion": null,"tiempo_hecho": null}
 ```
 - stats_operador
 ```bash
@@ -17,5 +17,5 @@ $ kafka-console-producer --broker-list PLAINTEXT://localhost:9092 --topic semovi
 - viajes_agregados
 ```bash
 $ kafka-console-producer --broker-list PLAINTEXT://localhost:9092 --topic semovi_beat_operation\
-> {"fecha_produccion": 1589469747622,  "fecha": 1587106800000,  "id_proveedor": "BEAT",  "tot_viajes": 1,  "tot_veh_viaje": 1,  "tot_veh_disp": null,  "dist_pasajero": 6.87,  "tiempo_pasajero": 13,  "tiempo_solicitud": 13,  "dist_solicitud": 2.92,  "tiempo_vacio": null,  "multiplicador_eod": null,  "accesibilidad": null,  "operador_mujer": 0,  "inicio_eod": null,  "fin_eod": null,  "dist_pasajero_eod": null,  "tiempo_pasajero_eod": null,  "dist_vacío": null,  "dist_solicitud_eod": null,  "tiempo_solicitud_eod": null,  "dist_vacio_eod": null,  "tiempo_vacio_eod": null}
+> {"fecha_produccion": 1589469747622,  "fecha": 1587106800000,  "id_proveedor": "BEAT",  "tot_viajes": 1,  "tot_veh_viaje": 1,  "tot_veh_disp": null,  "dist_pasajero": 6.87,  "tiempo_pasajero": 13,  "tiempo_solicitud": 13,  "dist_solicitud": 2.92,  "tiempo_vacio": null,  "multiplicador_eod": null,  "accesibilidad": null,  "operador_mujer": 0,  "inicio_eod": null,  "fin_eod": null,  "dist_pasajero_eod": null,  "tiempo_pasajero_eod": null,  "dist_vacio": null,  "dist_solicitud_eod": null,  "tiempo_solicitud_eod": null,  "dist_vacio_eod": null,  "tiempo_vacio_eod": null}
 ```

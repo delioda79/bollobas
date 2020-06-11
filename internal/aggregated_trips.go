@@ -31,7 +31,7 @@ type AggregatedTrips struct {
 	EodPassDist            *float64  `transl:"eod_pass_dist" json:"dist_pasajero_eod"`
 	EodPassTime            *int      `transl:"eod_pass_time" json:"tiempo_pasajero_eod"`
 	RequestDist            *float64  `transl:"request_dist" json:"dist_solicitud"`
-	EmptyDist              *float64  `transl:"empty_dist" json:"dist_vacío"`
+	EmptyDist              *float64  `transl:"empty_dist" json:"dist_vacio"`
 	EodRequestDist         *float64  `transl:"eod_request_dist" json:"dist_solicitud_eod"`
 	EodRequestTime         *float64  `transl:"eod_request_time" json:"tiempo_solicitud_eod"`
 	EodEmptyDist           *float64  `transl:"eod_empty_dist" json:"dist_vacio_eod"`

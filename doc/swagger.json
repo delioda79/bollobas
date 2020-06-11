@@ -144,7 +144,7 @@
           "tiempo_viaje": {
             "type": "string"
           },
-          "ubicación": {
+          "ubicacion": {
             "type": "string"
           }
         }

@@ -23,7 +23,7 @@ func TestAggregatedTrips(t *testing.T) {
 	proc.Activate(true)
 
 	msg := &injestionfakes.FakeMessage{}
-	msg.PayloadReturns([]byte(`{"fecha": 1589279257759,"id_proveedor": "test","tot_viajes": 12,"tot_veh_viaje": 11,"tot_veh_disp": 1,"dist_pasajero": 1,"tiempo_pasajero": 1,"tiempo_solicitud": 1,"tiempo_vacio": 1,"multiplicador_eod": 1,"accesibilidad": 1,"operador_mujer": 1,"inicio_eod": 1,"fin_eod": 1,"dist_pasajero_eod": 1,"tiempo_pasajero_eod": 1,"dist_solicitud": 1,"dist_vacío": 1,"dist_solicitud_eod": 1,"tiempo_solicitud_eod": 1,"dist_vacio_eod": 1,"tiempo_vacio_eod": 1}`))
+	msg.PayloadReturns([]byte(`{"fecha": 1589279257759,"id_proveedor": "test","tot_viajes": 12,"tot_veh_viaje": 11,"tot_veh_disp": 1,"dist_pasajero": 1,"tiempo_pasajero": 1,"tiempo_solicitud": 1,"tiempo_vacio": 1,"multiplicador_eod": 1,"accesibilidad": 1,"operador_mujer": 1,"inicio_eod": 1,"fin_eod": 1,"dist_pasajero_eod": 1,"tiempo_pasajero_eod": 1,"dist_solicitud": 1,"dist_vacio": 1,"dist_solicitud_eod": 1,"tiempo_solicitud_eod": 1,"dist_vacio_eod": 1,"tiempo_vacio_eod": 1}`))
 	msg.AckReturnsOnCall(0, nil)
 
 	err := proc.Process(msg)

@@ -20,7 +20,7 @@ type AggregatedTrips struct {
 	EodPassDist            *float64 `json:"dist_pasajero_eod"`
 	EodPassTime            *int     `json:"tiempo_pasajero_eod"`
 	RequestDist            *float64 `json:"dist_solicitud"`
-	EmptyDist              *float64 `json:"dist_vacío"`
+	EmptyDist              *float64 `json:"dist_vacio"`
 	EodRequestDist         *float64 `json:"dist_solicitud_eod"`
 	EodRequestTime         *float64 `json:"tiempo_solicitud_eod"`
 	EodEmptyDist           *float64 `json:"dist_vacio_eod"`
@@ -48,7 +48,7 @@ type TrafficIncident struct {
 	Licence        *string `json:"licencia"`
 	TravelDistance *string `json:"distancia_viaje"`
 	TravelTime     *string `json:"tiempo_viaje"`
-	Coordinates    *string `json:"ubicación"`
+	Coordinates    *string `json:"ubicacion"`
 	Date           string  `json:"tiempo_hecho"`
 }
 

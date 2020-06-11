@@ -18,7 +18,7 @@ type trafficIncidentsPayload struct {
 	Licence        *string `json:"licencia"`
 	TravelDistance *string `json:"distancia_viaje"`
 	TravelTime     *string `json:"tiempo_viaje"`
-	Coordinates    *string `json:"ubicación"`
+	Coordinates    *string `json:"ubicacion"`
 	Date           int64   `json:"tiempo_hecho"`
 }
 
