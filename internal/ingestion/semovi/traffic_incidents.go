@@ -8,27 +8,30 @@ import (
 	"github.com/taxibeat/bollobas/internal"
 
 	"github.com/beatlabs/patron/component/async"
+	"github.com/beatlabs/patron/log"
 )
 
 type trafficIncidentsPayload struct {
-	Date           int64   `json:"tiempo_hecho"`
+	ProductionDate int64   `json:"fecha_produccion"`
 	Type           *int    `json:"hecho_trans"`
 	Plates         *string `json:"placa"`
 	Licence        *string `json:"licencia"`
 	TravelDistance *string `json:"distancia_viaje"`
 	TravelTime     *string `json:"tiempo_viaje"`
 	Coordinates    *string `json:"ubicación"`
+	Date           int64   `json:"tiempo_hecho"`
 }
 
 func (p trafficIncidentsPayload) toDomainModel() *internal.TrafficIncident {
 	return &internal.TrafficIncident{
-		Date:           time.Unix(p.Date/1000, 0),
 		Type:           p.Type,
 		Plates:         p.Plates,
 		Licence:        p.Licence,
 		TravelDistance: p.TravelDistance,
 		TravelTime:     p.TravelTime,
 		Coordinates:    p.Coordinates,
+		Date:           time.Unix(p.Date/1000, 0),
+		ProducedAt:     time.Unix(p.ProductionDate/1000, 0),
 	}
 }
 
@@ -58,7 +61,9 @@ func (tip *TrafficIncidentsProcessor) Process(msg async.Message) error {
 	if err != nil || (payload == trafficIncidentsPayload{}) {
 		// If a key in the message is unknown we don't want to consume it again
 		msg.Ack()
-		return err
+		log.Error(err)
+		// We return nil because we have already ack the msg and logged the error.
+		return nil
 	}
 
 	if err := tip.store.Add(msg.Context(), payload.toDomainModel()); err != nil {

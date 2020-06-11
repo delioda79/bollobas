@@ -136,32 +136,32 @@ func (va *AggregatedTripsRepo) getTotalCount(ctx context.Context, df internal.Da
 
 // Add inserts a new record
 func (va *AggregatedTripsRepo) Add(ctx context.Context, r *internal.AggregatedTrips) error {
-	q := "INSERT INTO aggregated_trips  " +
-		"(" +
-		"date, " +
-		"supplier_id, " +
-		"total_rides, " +
-		"total_vehicle_rides, " +
-		"total_available_vehicles, " +
-		"total_dist_traveled, " +
-		"passing_time, " +
-		"request_time, " +
-		"empty_time, " +
-		"eod_multiplier, " +
-		"accessibility, " +
-		"female_operator, " +
-		"eod_start, " +
-		"eod_end, " +
-		"eod_pass_dist, " +
-		"eod_pass_time, " +
-		"request_dist, " +
-		"empty_dist, " +
-		"eod_request_dist, " +
-		"eod_request_time, " +
-		"eod_empty_dist, " +
-		"eod_empty_time " +
-		") " +
-		"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	q := `INSERT INTO aggregated_trips (
+			date,
+			supplier_id,
+			total_rides,
+			total_vehicle_rides,
+			total_available_vehicles,
+			total_dist_traveled,
+			passing_time,
+			request_time,
+			empty_time,
+			eod_multiplier,
+			accessibility,
+			female_operator,
+			eod_start,
+			eod_end,
+			eod_pass_dist,
+			eod_pass_time,
+			request_dist,
+			empty_dist,
+			eod_request_dist,
+			eod_request_time,
+			eod_empty_dist,
+			eod_empty_time,
+			produced_at
+		)
+		VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 
 	rr, err := va.db.Exec(ctx, q,
 		r.Date,
@@ -186,6 +186,7 @@ func (va *AggregatedTripsRepo) Add(ctx context.Context, r *internal.AggregatedTr
 		r.EodRequestTime,
 		r.EodEmptyDist,
 		r.EodEmptyTime,
+		r.ProducedAt,
 	)
 	if err != nil {
 		return err

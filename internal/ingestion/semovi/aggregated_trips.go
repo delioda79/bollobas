@@ -8,10 +8,11 @@ import (
 	"github.com/taxibeat/bollobas/internal"
 
 	"github.com/beatlabs/patron/component/async"
+	"github.com/beatlabs/patron/log"
 )
 
 type aggregatedTripsPayload struct {
-	ID                     int64    `json:"id"`
+	ProductionDate         int64    `json:"fecha_produccion"`
 	Date                   int64    `json:"fecha"`
 	SupplierID             *string  `json:"id_proveedor"`
 	TotalRides             *int     `json:"tot_viajes"`
@@ -38,7 +39,6 @@ type aggregatedTripsPayload struct {
 
 func (p aggregatedTripsPayload) toDomainModel() *internal.AggregatedTrips {
 	return &internal.AggregatedTrips{
-		ID:                     p.ID,
 		Date:                   time.Unix(p.Date/1000, 0),
 		SupplierID:             p.SupplierID,
 		TotalRides:             p.TotalRides,
@@ -61,6 +61,7 @@ func (p aggregatedTripsPayload) toDomainModel() *internal.AggregatedTrips {
 		EodRequestTime:         p.EodRequestTime,
 		EodEmptyDist:           p.EodEmptyDist,
 		EodEmptyTime:           p.EodEmptyTime,
+		ProducedAt:             time.Unix(p.ProductionDate/1000, 0),
 	}
 }
 
@@ -90,7 +91,9 @@ func (atp *AggregatedTripsProcessor) Process(msg async.Message) error {
 	if err != nil || (payload == aggregatedTripsPayload{}) {
 		// If a key in the message is unknown we don't want to consume it again
 		msg.Ack()
-		return err
+		log.Error(err)
+		// We return nil because we have already ack the msg and logged the error.
+		return nil
 	}
 
 	if err := atp.store.Add(msg.Context(), payload.toDomainModel()); err != nil {

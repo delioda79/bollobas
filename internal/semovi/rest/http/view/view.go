@@ -30,7 +30,6 @@ type AggregatedTrips struct {
 // OperatorStats is the view model of the Operator Stats.
 type OperatorStats struct {
 	ID             int64   `json:"id"`
-	Date           string  `json:"fecha_produccion"`
 	OperatorID     *string `json:"id_operador"`
 	Gender         *int    `json:"genero"`
 	CompletedTrips *int    `json:"cant_viajes"`
@@ -44,13 +43,13 @@ type OperatorStats struct {
 // TrafficIncident is the view model of the Traffic Incident.
 type TrafficIncident struct {
 	ID             int64   `json:"id"`
-	Date           string  `json:"tiempo_hecho"`
 	Type           *int    `json:"hecho_trans"`
 	Plates         *string `json:"placa"`
 	Licence        *string `json:"licencia"`
 	TravelDistance *string `json:"distancia_viaje"`
 	TravelTime     *string `json:"tiempo_viaje"`
 	Coordinates    *string `json:"ubicación"`
+	Date           string  `json:"tiempo_hecho"`
 }
 
 // ErrorSwagger view model

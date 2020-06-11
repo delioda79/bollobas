@@ -4,15 +4,15 @@ package sql_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/taxibeat/bollobas/internal"
 	"github.com/taxibeat/bollobas/internal/storage/sql"
-
-	"fmt"
 	"github.com/taxibeat/bollobas/internal/storagetest"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetAllAggregatedTrips(t *testing.T) {
@@ -60,6 +60,7 @@ func populateAggregatedTripsTable(r *sql.AggregatedTripsRepo) error {
 		Date:              time.Now().AddDate(0, -1, 0),
 		SupplierID:        &id1,
 		TotalDistTraveled: &dist1,
+		ProducedAt:        time.Now(),
 	}
 
 	if err := r.Add(ctx, a); err != nil {
@@ -69,6 +70,7 @@ func populateAggregatedTripsTable(r *sql.AggregatedTripsRepo) error {
 		Date:              time.Now().AddDate(0, -1, 0).Add(time.Hour),
 		SupplierID:        &id2,
 		TotalDistTraveled: &dist2,
+		ProducedAt:        time.Now(),
 	}
 
 	fmt.Println(time.Now())

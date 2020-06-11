@@ -73,6 +73,7 @@ func populateTrafficIncidentsTable(r *sql.TrafficIncidentsRepo) error {
 		TravelTime:     &tt1,
 		TravelDistance: &td1,
 		Coordinates:    &c1,
+		ProducedAt:     time.Now(),
 	}
 
 	if err := r.Add(ctx, a); err != nil {
@@ -86,6 +87,7 @@ func populateTrafficIncidentsTable(r *sql.TrafficIncidentsRepo) error {
 		TravelTime:     &tt2,
 		TravelDistance: &td2,
 		Coordinates:    &c2,
+		ProducedAt:     time.Now(),
 	}
 	return r.Add(context.Background(), a)
 }

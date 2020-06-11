@@ -94,18 +94,6 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "start date (epoch time)",
-                        "name": "from",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "end date (epoch time)",
-                        "name": "to",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "description": "Limit Value",
                         "name": "limit",
                         "in": "query"

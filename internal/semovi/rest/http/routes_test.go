@@ -92,8 +92,7 @@ func TestGetOperatorStats(t *testing.T) {
 			if len(d.opStats) > 0 {
 				for _, d := range d.opStats {
 					v := view.OperatorStats{
-						ID:   d.ID,
-						Date: d.Date.Format("2006-01-02T15:04:05"),
+						ID: d.ID,
 					}
 					vv = append(vv, v)
 				}

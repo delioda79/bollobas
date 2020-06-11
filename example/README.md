@@ -6,16 +6,16 @@
 Topics:
 - hecho_transito
 ```bash
-$ kafka-console-producer --broker-list PLAINTEXT://localhost:9092 --topic hecho_transito
-> {"tiempo_hecho":1589279257759, "hecho_trans": 2, "placa": "ABC-123", "licencia": "C12345678", "distancia_viaje": "15-20", "tiempo_viaje": "100-200", "ubicación": "38.0088261,23.8042912"}
+$ kafka-console-producer --broker-list PLAINTEXT://localhost:9092 --topic semovi_beat_incidents\
+> {"fecha_produccion": 1589473694068,"hecho_trans": null,"placa": null,"licencia": null,"distancia_viaje": null,"tiempo_viaje": null,"ubicación": null,"tiempo_hecho": null}
 ```
 - stats_operador
 ```bash
-$ kafka-console-producer --broker-list PLAINTEXT://localhost:9092 --topic stats_operador
-> {"fecha_produccion":1589279257759,"id_operador":"2d2ec778-b89e-4db5-9628-123fd99f0b91","genero":1,"cant_viajes":29,"tiempo_registro":44,"edad":"28-32","horas_conectado":"9-17","horas_viaje":"0-24","ingreso_totales":"$0-999"}
+$ kafka-console-producer --broker-list PLAINTEXT://localhost:9092 --topic semovi_drivers_with_at_least_one_ride\
+> {"fecha_produccion": 1589287539281,  "id_operador": "67151121-1022-4df0-abd3-09009eaa505f",  "genero": 1,  "cant_viajes": 1,  "tiempo_registro": 95,  "edad": "28-32",  "horas_conectado": "0-24",  "horas_viaje": "0-24",  "ingreso_totales": "$0-999"}
 ```
 - viajes_agregados
 ```bash
-$ kafka-console-producer --broker-list PLAINTEXT://localhost:9092 --topic viajes_agregados
-> {"fecha": 1589279257759,"id_proveedor": "test","tot_viajes": 12,"tot_veh_viaje": 11,"tot_veh_disp": 1,"dist_pasajero": 1,"tiempo_pasajero": 1,"tiempo_solicitud": 1,"tiempo_vacio": 1,"multiplicador_eod": 1,"accesibilidad": 1,"operador_mujer": 1,"inicio_eod": 1,"fin_eod": 1,"dist_pasajero_eod": 1,"tiempo_pasajero_eod": 1,"dist_solicitud": 1,"dist_vacío": 1,"dist_solicitud_eod": 1,"tiempo_solicitud_eod": 1,"dist_vacio_eod": 1,"tiempo_vacio_eod": 1}
+$ kafka-console-producer --broker-list PLAINTEXT://localhost:9092 --topic semovi_beat_operation\
+> {"fecha_produccion": 1589469747622,  "fecha": 1587106800000,  "id_proveedor": "BEAT",  "tot_viajes": 1,  "tot_veh_viaje": 1,  "tot_veh_disp": null,  "dist_pasajero": 6.87,  "tiempo_pasajero": 13,  "tiempo_solicitud": 13,  "dist_solicitud": 2.92,  "tiempo_vacio": null,  "multiplicador_eod": null,  "accesibilidad": null,  "operador_mujer": 0,  "inicio_eod": null,  "fin_eod": null,  "dist_pasajero_eod": null,  "tiempo_pasajero_eod": null,  "dist_vacío": null,  "dist_solicitud_eod": null,  "tiempo_solicitud_eod": null,  "dist_vacio_eod": null,  "tiempo_vacio_eod": null}
 ```

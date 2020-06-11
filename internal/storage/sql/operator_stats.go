@@ -9,7 +9,6 @@ import (
 // GetOperatorStatsQuery query
 const GetOperatorStatsQuery = `SELECT
 			id,
-			date,
 			operator_id,
 			gender,
 			completed_trips,
@@ -20,10 +19,8 @@ const GetOperatorStatsQuery = `SELECT
 			tot_revenue
 		FROM operator_stats
 		WHERE 1=1 %s
-			AND YEAR(date) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
-			AND MONTH(date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)
 			AND deleted_at is null
-		ORDER BY date DESC, id ASC
+		ORDER BY id ASC
 		LIMIT ?,?`
 
 // OperatorStatsRepo implements the interface for MySQL
@@ -57,7 +54,6 @@ func (va *OperatorStatsRepo) GetAll(ctx context.Context, df internal.DateFilter,
 		r := &internal.OperatorStats{}
 		err := rr.Scan(
 			&r.ID,
-			&r.Date,
 			&r.OperatorID,
 			&r.Gender,
 			&r.CompletedTrips,
@@ -110,22 +106,20 @@ func (va *OperatorStatsRepo) getTotalCount(ctx context.Context, df internal.Date
 
 // Add inserts a new record
 func (va *OperatorStatsRepo) Add(ctx context.Context, r *internal.OperatorStats) error {
-	q := "INSERT INTO operator_stats  " +
-		"(" +
-		"date, " +
-		"operator_id, " +
-		"gender, " +
-		"completed_trips, " +
-		"days_since, " +
-		"age_range, " +
-		"hours_connected, " +
-		"trip_hours, " +
-		"tot_revenue" +
-		") " +
-		"VALUES (?,?,?,?,?,?,?,?,?)"
+	q := `INSERT INTO operator_stats (
+			operator_id, 
+			gender, 
+			completed_trips, 
+			days_since, 
+			age_range, 
+			hours_connected, 
+			trip_hours, 
+			tot_revenue,
+			produced_at
+		) 
+		VALUES (?,?,?,?,?,?,?,?,?)`
 
 	rr, err := va.db.Exec(ctx, q,
-		&r.Date,
 		&r.OperatorID,
 		&r.Gender,
 		&r.CompletedTrips,
@@ -134,6 +128,7 @@ func (va *OperatorStatsRepo) Add(ctx context.Context, r *internal.OperatorStats)
 		&r.HoursConnected,
 		&r.TripHours,
 		&r.TotRevenue,
+		&r.ProducedAt,
 	)
 	if err == nil {
 		r.ID, err = rr.LastInsertId()

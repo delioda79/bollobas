@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/beatlabs/patron/component/async"
 	"github.com/taxibeat/bollobas/internal"
+
+	"github.com/beatlabs/patron/component/async"
+	"github.com/beatlabs/patron/log"
 )
 
 type operatorStatsPayload struct {
@@ -23,7 +25,6 @@ type operatorStatsPayload struct {
 
 func (p operatorStatsPayload) toDomainModel() *internal.OperatorStats {
 	return &internal.OperatorStats{
-		Date:           time.Unix(p.Date/1000, 0),
 		OperatorID:     p.OperatorID,
 		Gender:         p.Gender,
 		CompletedTrips: p.CompletedTrips,
@@ -32,6 +33,7 @@ func (p operatorStatsPayload) toDomainModel() *internal.OperatorStats {
 		HoursConnected: p.HoursConnected,
 		TripHours:      p.TripHours,
 		TotRevenue:     p.TotRevenue,
+		ProducedAt:     time.Unix(p.Date/1000, 0),
 	}
 }
 
@@ -61,7 +63,9 @@ func (osp *OperatorStatsProcessor) Process(msg async.Message) error {
 	if err != nil || (payload == operatorStatsPayload{}) {
 		// If a key in the message is unknown we don't want to consume it again
 		msg.Ack()
-		return err
+		log.Error(err)
+		// We return nil because we have already ack the msg and logged the error.
+		return nil
 	}
 
 	if err := osp.store.Add(msg.Context(), payload.toDomainModel()); err != nil {

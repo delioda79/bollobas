@@ -99,7 +99,8 @@ info:
   contact:
     name: RDXP3
     url: https://confluence.taxibeat.com/display/TEAM404/RDXP3+-+TechnoMules
-  description: Bollobas microservice is responsible for any analytics that go through Beat's backend platform.
+  description: Bollobas microservice is responsible for any analytics that go through
+    Beat's backend platform.
   license:
     name: BEAT Mobility Services
   title: Bollobas
@@ -151,14 +152,6 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: start date (epoch time)
-        in: query
-        name: from
-        type: integer
-      - description: end date (epoch time)
-        in: query
-        name: to
-        type: integer
       - description: Limit Value
         in: query
         name: limit

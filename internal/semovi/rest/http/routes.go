@@ -189,8 +189,6 @@ type OperatorStatsHandler struct {
 // @Tags bollobas
 // @Accept json
 // @Produce json
-// @Param from query int false "start date (epoch time)"
-// @Param to query int false "end date (epoch time)"
 // @Param limit query int false "Limit Value"
 // @Param offset query int false "Offset Value"
 // @Success 200 {array} view.OperatorStats
@@ -207,7 +205,6 @@ func (o *OperatorStatsHandler) GetAll(ctx context.Context, f internal.DateFilter
 	for _, op := range ops {
 		v := view.OperatorStats{
 			ID:             op.ID,
-			Date:           op.Date.Format("2006-01-02T15:04:05"),
 			OperatorID:     op.OperatorID,
 			Gender:         op.Gender,
 			CompletedTrips: op.CompletedTrips,
@@ -251,13 +248,13 @@ func (t *TrafficIncidentsHandler) GetAll(ctx context.Context, f internal.DateFil
 	for _, ti := range tis {
 		v := view.TrafficIncident{
 			ID:             ti.ID,
-			Date:           ti.Date.Format("2006-01-02T15:04:05"),
 			Type:           ti.Type,
 			Plates:         ti.Plates,
 			Licence:        ti.Licence,
 			TravelDistance: ti.TravelDistance,
 			TravelTime:     ti.TravelTime,
 			Coordinates:    ti.Coordinates,
+			Date:           ti.Date.Format("2006-01-02T15:04:05"),
 		}
 		tisIntf = append(tisIntf, v)
 	}

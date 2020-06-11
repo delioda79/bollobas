@@ -1,0 +1,1 @@
+ALTER TABLE operator_stats DROP COLUMN `date`;

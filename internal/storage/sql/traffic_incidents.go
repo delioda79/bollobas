@@ -106,17 +106,17 @@ func (ti *TrafficIncidentsRepo) getTotalCount(ctx context.Context, df internal.D
 
 // Add inserts a new record
 func (ti *TrafficIncidentsRepo) Add(ctx context.Context, i *internal.TrafficIncident) error {
-	q := "INSERT INTO traffic_incidents  " +
-		"(" +
-		"date, " +
-		"type, " +
-		"plates, " +
-		"licence, " +
-		"travel_distance, " +
-		"travel_time, " +
-		"coordinates " +
-		") " +
-		"VALUES (?,?,?,?,?,?,?)"
+	q := `INSERT INTO traffic_incidents (
+			date,
+			type,
+			plates,
+			licence,
+			travel_distance,
+			travel_time,
+			coordinates,
+			produced_at
+		)
+		VALUES (?,?,?,?,?,?,?,?)`
 
 	rr, err := ti.db.Exec(ctx, q,
 		i.Date,
@@ -126,6 +126,7 @@ func (ti *TrafficIncidentsRepo) Add(ctx context.Context, i *internal.TrafficInci
 		i.TravelDistance,
 		i.TravelTime,
 		i.Coordinates,
+		i.ProducedAt,
 	)
 	if err != nil {
 		return err
