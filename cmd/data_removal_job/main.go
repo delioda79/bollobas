@@ -146,7 +146,7 @@ func (s *store) hardDelete(ctx context.Context, tables ...string) error {
 func (s *store) softDelete(ctx context.Context, tables ...string) error {
 	q := "UPDATE %s " +
 		"SET deleted_at = NOW() " +
-		"WHERE MONTH(date) = MONTH(NOW() - INTERVAL 1 MONTH)"
+		"WHERE MONTH(created_at) = MONTH(NOW())"
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
