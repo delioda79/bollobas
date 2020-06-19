@@ -17,8 +17,8 @@ service:
 
 dataHardDeleteJob:
   name: data.removal.hard
-  # runs every 3 months at 3:30am on 28th of the month
-  schedule: "30 3 28 */3 *"
+  # runs every 6 months at 3:30am on 28th of the month
+  schedule: "30 3 28 */6 *"
 
 dataSoftDeleteJob:
   name: data.removal.soft
