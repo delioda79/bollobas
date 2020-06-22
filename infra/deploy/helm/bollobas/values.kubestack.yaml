@@ -20,6 +20,9 @@ env:
   PATRON_HTTP_DEFAULT_PORT: 8700
   BOLLOBAS_KAFKA_DRIVER_TOPIC: driver_analytics
   BOLLOBAS_KAFKA_PASSENGER_TOPIC: passenger_analytics
+  BOLLOBAS_KAFKA_STATS_OPERADOR_TOPIC: semovi_drivers_with_at_least_one_ride
+  BOLLOBAS_KAFKA_HECHO_TRANSITO_TOPIC: semovi_beat_incidents
+  BOLLOBAS_KAFKA_VIAJES_AGREGADOS_TOPIC: semovi_beat_operation
   BOLLOBAS_KAFKA_TIMEOUT: 10s
   BOLLOBAS_KAFKA_CONNECTION_STRING: kafka:9092
   BOLLOBAS_KAFKA_GROUP: "arcns1"
@@ -27,7 +30,15 @@ env:
   BOLLOBAS_INIT_VECTOR: ""
   BOLLOBAS_LOCATION: "sandbox"
   BOLLOBAS_MIXPANEL_TOKEN: ""
+  DATA_CLEANUP_ENABLED: true
   MYSQL_DB: "bollobas"
+  MYSQL_USERNAME: root
+  MYSQL_PASS: a123456
+  MYSQL_WRITE: mysql57
+  MYSQL_READ: mysql57
+  MYSQL_PORT: 3306
+  STACK: 'kubestack'
+
 
 ingress:
   enabled: true
@@ -56,23 +67,28 @@ monitoring:
   path: /metrics
   port: 8700
 
+# This will enable blackbox exporter probes in the designated path.
+# If the probe get non 2xx responses for greates than "for:" period it will sent an alert to alertmanager
+# Alertmanager will route the notification according to severity to a slack channel or pagerduty
 blackboxProbe:
   enabled: true
-  path: /health
+  for: 5m
+  path: /alive
   severity: critical
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 8700
 
 tracing:
   enabled: true
 
 livenessProbe:
   httpGet:
-    path: /health
+    path: /alive
     port: 8700
 
-readinessProbe:
-  httpGet:
-    path: /health
-    port: 8700
 
 autoscaling:
   enabled: false

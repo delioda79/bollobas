@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-@Library("jenkins-devops-scripts") _
+@Library('jenkins-devops-scripts') _
 
 // Import needed libraries
 def stackUtils = new com.beat.utilities.stack()
@@ -8,14 +8,14 @@ def kubestackUtils = new com.beat.utilities.kubestack()
 
 
 // Project Configuration
-def setList = []
+def setList = [:]
 def stackEnv
-def grafanaDashboardsPath = "infra/observe/dashboard"
+def grafanaDashboardsPath = 'infra/observe/dashboard'
 
 
 // Project Service Configuration
-def project = "bollobas"
-def helmChartPath = "infra/deploy/helm/bollobas"
+def project = 'bollobas'
+def helmChartPath = 'infra/deploy/helm/bollobas'
 
 
 node('slave') {
@@ -36,21 +36,36 @@ node('slave') {
     }
 //// START : Docker Images & Docker Build Arguments
     def dockerMap = [
-        "bollobas"  : "-f infra/deploy/local/Dockerfile ."
+        'bollobas'  : '-f infra/deploy/local/Dockerfile .'
     ]
-    // Pass Variables to Central Pipeline
-    kubestack_deploy {
-        i_setList=setList
-        i_dockerMap=dockerMap
-        i_helmChartPath=helmChartPath
-        i_stack=kubestack_init_map.stack
-        i_project=project
-        i_stackEnv=kubestack_init_map.stackEnv
-        i_branch=kubestack_init_map.branch
-        i_uniqueCode=kubestack_init_map.uniqueCode
-        i_market=kubestack_init_map.market
-        i_kubestack=kubestack_init_map.kubestack
-        i_sandbox=kubestack_init_map.sandbox
-        i_grafanaDashboardsPath=grafanaDashboardsPath
+
+    // Add Secrets in setList
+        withCredentials([
+                        string(credentialsId: "REST_TAXIDMIN_KEY", variable: 'bollobas_rest_key')
+                    ]) {
+            def dockerFlags = ''
+            envVarMapping = stackUtils.stackVariables('dev')
+            version = env.TAG_NAME
+            setList += [
+                'main.version':"${version}",
+                'env.REST_KEY':"${bollobas_rest_key}",
+                'changeCause':"Jenkins=\"${RUN_DISPLAY_URL}\""
+            ]
+
+        // Pass Variables to Central Pipeline
+        kubestack_deploy {
+            i_setList=setList
+            i_dockerMap=dockerMap
+            i_helmChartPath=helmChartPath
+            i_stack=kubestack_init_map.stack
+            i_project=project
+            i_stackEnv=kubestack_init_map.stackEnv
+            i_branch=kubestack_init_map.branch
+            i_uniqueCode=kubestack_init_map.uniqueCode
+            i_market=kubestack_init_map.market
+            i_kubestack=kubestack_init_map.kubestack
+            i_sandbox=kubestack_init_map.sandbox
+            i_grafanaDashboardsPath=grafanaDashboardsPath
+        }
     }
 }
