@@ -231,7 +231,7 @@ node('slave') {
 
             stage('Apply Grafana rules if available') {
                 try {
-                    monitoring_utils.grafanaConfig("${kubeconfig_id}", "${namespace}", "infra/observe/dashboard")
+                    monitoringUtils.grafanaManagementConfig("${namespace}", "infra/observe/dashboard")
                 } catch (e) {
                     println("Exception on applying graphana rules")
                     println(e.toString())
