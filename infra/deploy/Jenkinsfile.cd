@@ -24,6 +24,10 @@ node('slave') {
     def prod = false
 
     stage('Clone repository') {
+        echo "Clearing folder..."
+        /* We delete the existing workspace for consistency. If we don't, git deleted files will still exist here. */
+        deleteDir()
+
         /* Let's make sure we have the repository cloned to our workspace */
         checkout scm
 
