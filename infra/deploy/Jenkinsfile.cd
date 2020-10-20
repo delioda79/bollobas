@@ -12,9 +12,11 @@ node('slave') {
     def staging_branch = "staging-develop"
     def namespace = "ride"
     def chartmuseumAPI = "https://chartmuseum.private.k8s.management.thebeat.co/api/charts"
+    def slackChannel = "#monitoring-squad9"
+    def slackToken = 'XRYLWly3TGSwMTQYlY5vgb8k'
     def monitoring_utils = new com.beat.utilities.monitoring()
-    def notification_utils = new com.beat.utilities.notifications('PXuE13AjQdnb2hB5kXt5Hj2X', project, env.BUILD_URL, env.BUILD_NUMBER)
-    notification_utils.defaultServerDeploymentsChannel = "#monitoring-squad9"
+    def notification_utils = new com.beat.utilities.notifications(slackToken, project, env.BUILD_URL, env.BUILD_NUMBER)
+    notification_utils.defaultServerDeploymentsChannel = slackChannel
 
     // Define the stacks you want to deploy to
     def stacks = []
