@@ -24,6 +24,10 @@ node('slave') {
     def prod = false
 
     stage('Clone repository') {
+        echo "Clearing folder..."
+        /* We delete the existing workspace for consistency. If we don't, git deleted files will still exist here. */
+        deleteDir()
+
         /* Let's make sure we have the repository cloned to our workspace */
         checkout scm
 
@@ -217,31 +221,30 @@ node('slave') {
                 throw e
             }
             notification_utils.slackNotifyDeploymentSuccess(stack)
+        }
 
-
-            stage('Apply Prometheus rules if available') {
-                try {
-                    monitoring_utils.prometheusConfig("${kubeconfig_id}", "${namespace}", "infra/observe/alerting")
-                } catch (e) {
-                    println("Exception on applying prometheus rules")
-                    println(e.toString())
-                    def message = "deployment failed on `${STAGE_NAME}` at ${stacks} for ${project} <${env.BUILD_URL}console|${env.BUILD_NUMBER}>"
-                    notification_utils.slackNotify('FAILURE', slackChannel, slackToken, message)
-                    throw e
-                }
+        stage("Apply Prometheus rules if available for ${stack}") {
+            try {
+                monitoring_utils.prometheusConfig("${kubeconfig_id}", "${namespace}", "infra/observe/alerting")
+            } catch (e) {
+                println("Exception on applying prometheus rules")
+                println(e.toString())
+                def message = "deployment failed on `${STAGE_NAME}` at ${stack} for ${project} <${env.BUILD_URL}console|${env.BUILD_NUMBER}>"
+                notification_utils.slackNotify('FAILURE', slackChannel, slackToken, message)
+                throw e
             }
+        }
+    }
 
-            stage('Apply Grafana rules if available') {
-                try {
-                    monitoringUtils.grafanaManagementConfig("${namespace}", "infra/observe/dashboard")
-                } catch (e) {
-                    println("Exception on applying graphana rules")
-                    println(e.toString())
-                    def message = "deployment failed on `${STAGE_NAME}` at ${stacks} for ${project} <${env.BUILD_URL}console|${env.BUILD_NUMBER}>"
-                    notification_utils.slackNotify('FAILURE', slackChannel, slackToken, message)
-                    throw e
-                }
-            }
+    stage("Apply Grafana rules if available") {
+        try {
+            monitoring_utils.grafanaManagementConfig("${namespace}", "infra/observe/dashboard")
+        } catch (e) {
+            println("Exception on applying graphana rules")
+            println(e.toString())
+            def message = "deployment failed on `${STAGE_NAME}` at Management for ${project} <${env.BUILD_URL}console|${env.BUILD_NUMBER}>"
+            notification_utils.slackNotify('FAILURE', slackChannel, slackToken, message)
+            throw e
         }
     }
 }
