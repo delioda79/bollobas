@@ -1,8 +1,8 @@
 groups:
 - name: bollobas.go_process.rules
   rules:
-  - alert: HighMemoryUsage
-    expr: avg(process_resident_memory_bytes) > 200000000
+  - alert: Bollobas-HighMemoryUsage
+    expr: sum by (kubernetes_pod_name)(rate(process_resident_memory_bytes{kubernetes_pod_name=~"^bollobas.*"}[5m])) > 200000000
     for: 5m
     labels:
       severity: critical
